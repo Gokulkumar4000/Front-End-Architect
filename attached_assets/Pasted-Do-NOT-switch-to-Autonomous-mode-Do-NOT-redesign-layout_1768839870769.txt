@@ -1,0 +1,105 @@
+Do NOT switch to Autonomous mode.
+Do NOT redesign layout.
+Do NOT remove the current step-based registration UI.
+
+This task is ONLY to RESTORE role context
+that was accidentally removed.
+
+----------------------------------
+GOAL OF THIS FIX
+----------------------------------
+- Keep the current multi-step registration flow
+- Bring back the ROLE CARD with description
+- Bring back ROLE JOURNEY explanation
+- Make the user always aware of:
+  “Which role am I registering as?”
+
+----------------------------------
+PART 1 – RESTORE ROLE CARD (LEFT SIDE)
+----------------------------------
+
+Reintroduce the ROLE CARD on the LEFT SIDE
+of the registration page.
+
+The role card must show:
+- Role icon
+- Role name (Developer / Investor / Idea Holder)
+- 4–5 bullet points explaining that role
+
+Example (Idea Holder):
+• Post ideas or problem statements  
+• Measure real-world necessity  
+• Attract investors  
+• Collaborate with developers  
+• Build, sell, or fundraise ideas  
+
+This role card must:
+- Stay visible across ALL registration steps
+- NOT change when user clicks Next / Back
+- Clearly indicate the selected role
+
+----------------------------------
+PART 2 – RESTORE ROLE JOURNEY CONTEXT
+----------------------------------
+
+Bring back a lightweight “Role Journey” section
+linked to the current step.
+
+Rules:
+- DO NOT reintroduce the old step-by-step roadmap UI
+- DO NOT add separate journey navigation
+
+Instead:
+- Above or below the form step title, show:
+  “Your journey as a <Role Name>”
+- Show 1–2 short contextual lines explaining:
+  Why this information is being asked
+  and how it helps that role
+
+Example:
+“Developers provide this information so investors
+can understand their experience and domain.”
+
+----------------------------------
+PART 3 – LAYOUT INTEGRATION
+----------------------------------
+
+Desktop layout:
+- Left: Role card (fixed width)
+- Right: Current registration step form
+
+Mobile layout:
+- Role card collapses into a small summary panel
+- Can be expanded if needed
+- Form remains primary focus
+
+----------------------------------
+PART 4 – WHAT MUST NOT CHANGE
+----------------------------------
+
+- DO NOT remove current step categories
+- DO NOT change collected fields
+- DO NOT change navigation buttons
+- DO NOT add step numbers
+- DO NOT add backend logic
+
+----------------------------------
+PART 5 – UX CONSISTENCY
+----------------------------------
+
+Ensure:
+- Visual balance between role card and form
+- No overflow or forced scrolling
+- Same dark + purple theme
+- Smooth transitions preserved
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+- User always knows which role they selected
+- Role responsibilities are visible during signup
+- Registration feels guided and contextual
+- No loss of existing improvements
+- Flow feels intentional and professional
+
+Proceed ONLY with restoring role context.
