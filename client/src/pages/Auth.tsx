@@ -29,31 +29,196 @@ const roadmapContent = {
   developer: {
     title: "DEVELOPER",
     steps: [
-      { number: "01", title: "Profile", desc: "Create your dev profile", icon: UserPlus },
-      { number: "02", title: "Explore", desc: "Find projects", icon: Code2 },
-      { number: "03", title: "Connect", desc: "Join teams", icon: Users },
-      { number: "04", title: "Build", desc: "Create products", icon: Rocket },
-      { number: "05", title: "Scale", desc: "Grow startup", icon: TrendingUp }
+      { 
+        number: "01", 
+        title: "Explore Ideas", 
+        desc: "Discover innovative startup ideas and problem statements waiting for a technical partner.",
+        bullets: [
+          "Browse a curated list of verified ideas",
+          "Filter by industry, tech stack, or complexity",
+          "View market necessity and demand data",
+          "Save promising ideas to your dashboard"
+        ],
+        icon: Lightbulb 
+      },
+      { 
+        number: "02", 
+        title: "Collaborate", 
+        desc: "Connect with idea holders and other developers to form high-impact teams.",
+        bullets: [
+          "Directly message idea owners",
+          "Join existing developer groups",
+          "Share your portfolio and skills",
+          "Form legal and technical agreements"
+        ],
+        icon: Users 
+      },
+      { 
+        number: "03", 
+        title: "Apply for Roles", 
+        desc: "Find full-time or part-time opportunities in emerging startup projects.",
+        bullets: [
+          "Apply to projects seeking your stack",
+          "Receive invitations from investors",
+          "Showcase your contributions in-app",
+          "Track your application status"
+        ],
+        icon: Briefcase 
+      },
+      { 
+        number: "04", 
+        title: "Build MVPs", 
+        desc: "Turn concepts into reality by developing Minimum Viable Products.",
+        bullets: [
+          "Access shared development resources",
+          "Use integrated project management tools",
+          "Securely share code and progress",
+          "Gather early user feedback"
+        ],
+        icon: Code2 
+      },
+      { 
+        number: "05", 
+        title: "Raise Funds", 
+        desc: "Leverage your built products to attract serious investment and scale.",
+        bullets: [
+          "Pitch your MVP to verified investors",
+          "Demonstrate technical feasibility",
+          "Discuss equity and milestones",
+          "Transition from project to startup"
+        ],
+        icon: Rocket 
+      }
     ]
   },
   "idea-holder": {
     title: "IDEA HOLDER",
     steps: [
-      { number: "01", title: "Post", desc: "Securely post ideas", icon: Lightbulb },
-      { number: "02", title: "Validate", desc: "Check demand", icon: ShieldCheck },
-      { number: "03", title: "Funding", desc: "Attract investors", icon: Briefcase },
-      { number: "04", title: "Team", desc: "Find developers", icon: Users },
-      { number: "05", title: "Launch", desc: "Build & launch", icon: Rocket }
+      { 
+        number: "01", 
+        title: "Post Your Idea", 
+        desc: "Share your idea or problem statement securely with the DevConnect community.",
+        bullets: [
+          "Choose category and visibility levels",
+          "Protect idea ownership through timestamps",
+          "Define the specific problem you're solving",
+          "Allow limited detail previews for safety"
+        ],
+        icon: Lightbulb 
+      },
+      { 
+        number: "02", 
+        title: "Measure Necessity", 
+        desc: "Track real-world demand and interest from potential users and partners.",
+        bullets: [
+          "View engagement and 'need' metrics",
+          "Get feedback from industry experts",
+          "See interest from developers and investors",
+          "Increase idea value through validation"
+        ],
+        icon: TrendingUp 
+      },
+      { 
+        number: "03", 
+        title: "Collaborate", 
+        desc: "Attract and accept collaboration requests from skilled developers.",
+        bullets: [
+          "Review developer profiles and portfolios",
+          "Select the right technical partners",
+          "Discuss implementation strategies",
+          "Convert your idea into an active project"
+        ],
+        icon: Users 
+      },
+      { 
+        number: "04", 
+        title: "Attract Funding", 
+        desc: "Present your validated idea to investors looking for the next big thing.",
+        bullets: [
+          "Showcase market demand data",
+          "Pitch to interested venture capitalists",
+          "Negotiate seed funding or grants",
+          "Receive guidance from financial mentors"
+        ],
+        icon: Briefcase 
+      },
+      { 
+        number: "05", 
+        title: "Build or Transfer", 
+        desc: "Bring the product to market or sell the validated concept to others.",
+        bullets: [
+          "Lead your new team to launch",
+          "Or sell ownership to interested buyers",
+          "Scale based on validated necessity",
+          "Complete your startup journey"
+        ],
+        icon: Rocket 
+      }
     ]
   },
   investor: {
     title: "INVESTOR",
     steps: [
-      { number: "01", title: "Browse", desc: "Discover ideas", icon: Briefcase },
-      { number: "02", title: "Analyze", desc: "Analyze demand", icon: TrendingUp },
-      { number: "03", title: "Deploy", desc: "Fund projects", icon: ShieldCheck },
-      { number: "04", title: "Hiring", desc: "Recruit talent", icon: Code2 },
-      { number: "05", title: "Portfolio", desc: "Build portfolio", icon: Fingerprint }
+      { 
+        number: "01", 
+        title: "Discover Ideas", 
+        desc: "Browse a stream of high-potential ideas backed by real market necessity.",
+        bullets: [
+          "Access early-stage innovation",
+          "Filter by validation score and sector",
+          "Monitor trending problem statements",
+          "Follow interesting idea holders"
+        ],
+        icon: Lightbulb 
+      },
+      { 
+        number: "02", 
+        title: "Analyze Demand", 
+        desc: "Use built-in analytics to understand the real-world demand for any project.",
+        bullets: [
+          "Review community 'necessity' votes",
+          "Analyze developer interest metrics",
+          "Examine competitive landscape data",
+          "Assess project growth potential"
+        ],
+        icon: TrendingUp 
+      },
+      { 
+        number: "03", 
+        title: "Fund Projects", 
+        desc: "Directly support promising projects with capital and strategic resources.",
+        bullets: [
+          "Initiate funding discussions",
+          "Set performance-based milestones",
+          "Secure equity or profit-sharing",
+          "Manage investments from one portal"
+        ],
+        icon: Briefcase 
+      },
+      { 
+        number: "04", 
+        title: "Recruit Talent", 
+        desc: "Help your funded projects scale by recruiting the best technical talent.",
+        bullets: [
+          "Browse top developer portfolios",
+          "Send invitations to skilled coders",
+          "Assist in forming core teams",
+          "Ensure technical success of assets"
+        ],
+        icon: UserPlus 
+      },
+      { 
+        number: "05", 
+        title: "Manage Portfolio", 
+        desc: "Track the growth and success of your entire startup portfolio.",
+        bullets: [
+          "Monitor project launch timelines",
+          "Track ROI and valuation growth",
+          "Facilitate exit opportunities",
+          "Build a legacy of successful ventures"
+        ],
+        icon: Fingerprint 
+      }
     ]
   }
 };
@@ -64,10 +229,11 @@ const roles = [
     title: "IDEA HOLDER",
     icon: Lightbulb,
     bullets: [
-      "Post ideas or problem statements",
-      "Measure real-world necessity",
-      "Get funding or sell ideas",
-      "No technical knowledge required"
+      "Post ideas or problem statements securely",
+      "Measure real-world necessity and demand",
+      "Attract investors based on interest",
+      "Collaborate with skilled developers",
+      "Build, sell, or fundraise for ideas"
     ]
   },
   {
@@ -75,10 +241,11 @@ const roles = [
     title: "DEVELOPER",
     icon: Code2,
     bullets: [
-      "Discover startup ideas",
+      "Explore ideas and startup projects",
       "Collaborate with other developers",
-      "Apply for jobs or projects",
-      "Build real products"
+      "Apply for full-time or part-time roles",
+      "Build MVPs and real products",
+      "Raise funds for your own ideas"
     ]
   },
   {
@@ -86,10 +253,11 @@ const roles = [
     title: "INVESTOR",
     icon: Briefcase,
     bullets: [
-      "Explore high-potential ideas",
+      "Discover high-potential ideas",
+      "Analyze necessity and market demand",
       "Fund promising projects",
       "Recruit skilled developers",
-      "Build a startup portfolio"
+      "Build and manage a startup portfolio"
     ]
   }
 ];
@@ -229,51 +397,94 @@ export default function Auth() {
           )}
 
           {mode === "signup" && step === "roadmap" && selectedRole && (
-            <motion.div key="roadmap" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="grid lg:grid-cols-[1fr_1.5fr] gap-6 items-start max-h-[80vh]">
-              <Card className="glass-card border-primary/20 p-6 rounded-2xl hidden lg:block">
+            <motion.div key="roadmap" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="grid lg:grid-cols-[0.8fr_1.2fr] gap-4 items-start max-h-[85vh]">
+              <Card className="glass-card border-primary/20 p-5 rounded-2xl hidden lg:block">
                 {(() => {
                   const roleData = roles.find(r => r.id === selectedRole)!;
                   return (
-                    <>
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                        <roleData.icon className="w-6 h-6 text-primary" />
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                          <roleData.icon className="w-5 h-5 text-primary" />
+                        </div>
+                        <h2 className="text-lg font-display font-bold uppercase tracking-tight">{roleData.title}</h2>
                       </div>
-                      <h2 className="text-xl font-display font-bold mb-2">{roleData.title}</h2>
-                      <div className="p-3 bg-primary/5 rounded-xl border border-primary/10">
-                        <ul className="space-y-2">
-                          {roleData.bullets.slice(0, 2).map((b, i) => (
-                            <li key={i} className="text-xs flex items-center gap-2">
-                              <CheckCircle2 className="w-3 h-3 text-primary" />
-                              {b}
+                      
+                      <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
+                        <ul className="space-y-3">
+                          {roleData.bullets.map((b, i) => (
+                            <li key={i} className="text-xs flex items-start gap-2 leading-relaxed text-muted-foreground">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+                              <span>{b}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
-                    </>
+
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setStep("role-selection")} 
+                        className="w-full text-xs font-bold border-primary/20 hover:bg-primary/5"
+                      >
+                        Change Role
+                      </Button>
+                    </div>
                   );
                 })()}
               </Card>
 
-              <Card className="glass-card border-white/5 overflow-hidden h-full">
-                <CardContent className="p-6 md:p-8 flex flex-col h-full">
-                  <div className="mb-6">
-                    <h2 className="text-xl md:text-2xl font-display font-bold">Your Journey</h2>
-                    <p className="text-muted-foreground text-sm">How it works as a <span className="text-primary">{roadmapContent[selectedRole].title}</span></p>
+              <Card className="glass-card border-white/5 overflow-hidden flex flex-col max-h-full">
+                <CardContent className="p-5 md:p-6 flex flex-col h-full overflow-hidden">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div>
+                      <h2 className="text-xl font-display font-bold">Your Journey</h2>
+                      <p className="text-muted-foreground text-xs">How it works as a <span className="text-primary font-bold">{roadmapContent[selectedRole].title}</span></p>
+                    </div>
+                    <div className="lg:hidden">
+                      <Button variant="ghost" size="sm" onClick={() => setStep("role-selection")} className="text-primary text-xs font-bold">
+                        Change Role
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex-1 relative flex items-center justify-center">
+
+                  <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar min-h-[300px]">
                     <AnimatePresence mode="wait">
-                      <motion.div key={roadmapStep} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 w-full">
+                      <motion.div 
+                        key={roadmapStep} 
+                        initial={{ opacity: 0, y: 10 }} 
+                        animate={{ opacity: 1, y: 0 }} 
+                        exit={{ opacity: 0, y: -10 }} 
+                        className="space-y-4"
+                      >
                         {(() => {
-                          const stepData = roadmapContent[selectedRole].steps[roadmapStep];
+                          const stepData = (roadmapContent[selectedRole] as any).steps[roadmapStep];
                           return (
-                            <div className="flex gap-6 items-start">
-                              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                                <stepData.icon className="w-8 h-8 text-primary" />
+                            <div className="space-y-4">
+                              <div className="flex gap-4 items-center">
+                                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                                  <stepData.icon className="w-6 h-6 text-primary" />
+                                </div>
+                                <div>
+                                  <div className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Step {stepData.number}</div>
+                                  <h3 className="text-lg font-display font-bold">{stepData.title}</h3>
+                                </div>
                               </div>
-                              <div className="space-y-2">
-                                <div className="text-xs font-bold text-primary uppercase tracking-widest">Step {stepData.number}</div>
-                                <h3 className="text-xl font-display font-bold">{stepData.title}</h3>
+                              
+                              <div className="space-y-4">
                                 <p className="text-muted-foreground text-sm leading-relaxed">{stepData.desc}</p>
+                                
+                                <div className="space-y-2 bg-white/5 p-4 rounded-xl border border-white/5">
+                                  <h4 className="text-xs font-bold uppercase text-white/50 tracking-wider">What happens:</h4>
+                                  <ul className="grid gap-2">
+                                    {stepData.bullets.map((bullet: string, idx: number) => (
+                                      <li key={idx} className="flex gap-2 text-xs text-muted-foreground leading-snug">
+                                        <div className="w-1 h-1 rounded-full bg-primary mt-1.5 shrink-0" />
+                                        <span>{bullet}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
                               </div>
                             </div>
                           );
@@ -281,22 +492,27 @@ export default function Auth() {
                       </motion.div>
                     </AnimatePresence>
                   </div>
-                  <div className="flex flex-col gap-4 mt-8 pt-6 border-t border-white/5">
-                    <div className="flex gap-4">
-                      <Button variant="ghost" size="sm" onClick={handleBackRoadmap} className="text-muted-foreground">
-                        <ChevronLeft className="w-4 h-4 mr-2" /> Back
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => setStep("role-selection")} className="text-primary font-bold">
-                        Change Role
-                      </Button>
-                      <Button onClick={handleNextRoadmap} className="ml-auto">
-                        {roadmapStep < roadmapContent[selectedRole].steps.length - 1 ? "Next Step" : "Continue"}
-                      </Button>
-                    </div>
-                    <div className="flex justify-center gap-2">
+
+                  <div className="mt-4 pt-4 border-t border-white/5 space-y-4">
+                    <div className="flex items-center gap-2 justify-center">
                       {roadmapContent[selectedRole].steps.map((_, i) => (
-                        <div key={i} className={`h-1 rounded-full transition-all ${i === roadmapStep ? "w-6 bg-primary" : "w-1 bg-white/10"}`} />
+                        <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === roadmapStep ? "w-8 bg-primary" : "w-1.5 bg-white/10"}`} />
                       ))}
+                    </div>
+
+                    <div className="flex items-center justify-between gap-3">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={handleBackRoadmap} 
+                        className="text-muted-foreground hover:text-white px-2"
+                      >
+                        <ChevronLeft className="w-4 h-4 mr-1" /> {roadmapStep === 0 ? "Roles" : "Back"}
+                      </Button>
+                      
+                      <Button onClick={handleNextRoadmap} className="px-8 shadow-lg shadow-primary/20 font-bold">
+                        {roadmapStep < roadmapContent[selectedRole].steps.length - 1 ? "Next Step" : "Get Started"}
+                      </Button>
                     </div>
                   </div>
                 </CardContent>

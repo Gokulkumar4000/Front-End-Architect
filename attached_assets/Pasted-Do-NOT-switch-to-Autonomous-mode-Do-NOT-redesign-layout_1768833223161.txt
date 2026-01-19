@@ -1,0 +1,144 @@
+Do NOT switch to Autonomous mode.
+Do NOT redesign layout.
+Do NOT restructure folders.
+Do NOT add backend logic.
+
+This task is ONLY to IMPROVE CONTENT & CLARITY
+of the existing Role Selection + Journey screen.
+
+----------------------------------
+GOAL OF THIS CHANGE
+----------------------------------
+When a user selects a role:
+- They should CLEARLY understand the role
+- Both left role card and right journey panel
+  should explain the SAME role in detail
+- Each step should feel informative, not empty
+
+----------------------------------
+PART 1 – LEFT ROLE CARD CONTENT FIX
+----------------------------------
+
+Currently, the left role card shows only 1–2 bullets.
+This is NOT enough.
+
+Update the LEFT ROLE CARD to show
+the FULL role summary using 4–5 bullet points.
+
+Example:
+
+🧠 IDEA HOLDER – LEFT CARD
+• Post ideas or problem statements securely  
+• Measure real-world necessity and demand  
+• Attract investors based on interest  
+• Collaborate with developers  
+• Build, sell, or fundraise for ideas  
+
+💻 DEVELOPER – LEFT CARD
+• Explore ideas and startup projects  
+• Collaborate with other developers  
+• Apply for full-time or part-time roles  
+• Build MVPs and real products  
+• Raise funds for your own ideas  
+
+💼 INVESTOR – LEFT CARD
+• Discover high-potential ideas  
+• Analyze necessity and market demand  
+• Fund promising projects  
+• Recruit skilled developers  
+• Build and manage a startup portfolio  
+
+The LEFT CARD must ALWAYS show these bullets
+for the selected role.
+
+----------------------------------
+PART 2 – RIGHT “YOUR JOURNEY” PANEL FIX
+----------------------------------
+
+Currently, each step is too small and vague.
+
+Enhance EACH STEP to include:
+- Step title
+- Short explanation
+- 4–5 bullet points explaining WHAT happens
+
+----------------------------------
+ROLE-SPECIFIC STEP CONTENT
+----------------------------------
+
+🧠 IDEA HOLDER – STEP EXAMPLE
+
+STEP 01 – Post Your Idea
+• Share your idea or problem statement securely  
+• Choose category and visibility  
+• Protect idea ownership  
+• Allow others to view limited details  
+
+STEP 02 – Measure Necessity
+• Users express real-world need  
+• Track interest from developers and investors  
+• Improve idea visibility  
+• Increase idea value  
+
+STEP 03 – Collaborate or Fund
+• Accept developer collaboration  
+• Approach investors for funding  
+• Convert idea into a project  
+
+STEP 04 – Build or Transfer
+• Build your idea with a team  
+• Or sell the idea to investors/developers  
+
+----------------------------------
+PART 3 – NAVIGATION IMPROVEMENT
+----------------------------------
+
+- Keep “Next Step” and “Back”
+- KEEP “Change Role” clearly visible
+- “Change Role” must immediately return
+  to role selection (one click)
+
+----------------------------------
+PART 4 – VISUAL BALANCE FIX
+----------------------------------
+
+- Reduce oversized icons
+- Reduce excessive spacing
+- Ensure text fits without scrolling
+- Use scroll INSIDE journey panel if needed,
+  not full page scroll
+
+----------------------------------
+PART 5 – RESPONSIVENESS
+----------------------------------
+
+Mobile:
+- Left role card on top
+- Journey panel below
+- Bullet points readable
+- No oversized fonts
+
+Desktop:
+- Role card on left
+- Journey panel on right
+- Balanced spacing
+
+----------------------------------
+STRICT RULES
+----------------------------------
+- UI-only changes
+- NO logic changes
+- NO backend
+- NO routing changes
+- NO additional steps
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+- Role meaning is VERY clear
+- Left and right panels are consistent
+- Journey feels informative and professional
+- No empty-looking steps
+- Ready for final-year demo
+
+Proceed ONLY with content and clarity improvements.
