@@ -34,7 +34,7 @@ const item = {
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-background overflow-hidden selection:bg-primary/30 selection:text-white">
+    <div className="min-h-screen bg-background overflow-hidden selection:bg-primary/30 selection:text-white scroll-smooth">
       <Navbar />
 
       {/* Hero Section */}
