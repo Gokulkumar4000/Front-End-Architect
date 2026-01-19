@@ -53,12 +53,12 @@ export default function Landing() {
             Join the future of innovation
           </motion.div>
           
-          <motion.h1 variants={item} className="text-4xl md:text-7xl lg:text-8xl font-display font-bold mb-8 leading-[1.1]">
+          <motion.h1 variants={item} className="text-3xl md:text-7xl lg:text-8xl font-display font-bold mb-6 md:mb-8 leading-[1.1]">
             Turn Ideas Into <br />
             <span className="text-gradient-primary">DevConnect</span>
           </motion.h1>
           
-          <motion.p variants={item} className="text-base md:text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed">
+          <motion.p variants={item} className="text-sm md:text-xl text-muted-foreground max-w-2xl mb-8 md:mb-10 leading-relaxed">
             Where Ideas Meet Code and Capital. Connect with visionaries, builders, and investors in an all-in-one ecosystem.
           </motion.p>
           
@@ -118,11 +118,11 @@ export default function Landing() {
             </div>
             
             <div className="order-1 md:order-2">
-              <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">
+              <h2 className="text-2xl md:text-5xl font-display font-bold mb-4 md:mb-6">
                 Not just a platform, <br />
                 <span className="text-primary">an ecosystem.</span>
               </h2>
-              <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+              <p className="text-muted-foreground text-base md:text-lg mb-6 md:mb-8 leading-relaxed">
                 We bridge the gap between brilliant ideas and successful execution. Whether you have the concept, the capital, or the code – this is where it comes together.
               </p>
               
@@ -149,15 +149,15 @@ export default function Landing() {
       </section>
 
       {/* Roles Section */}
-      <section id="roles" className="py-24 container mx-auto px-4 md:px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-display font-bold mb-4">Find Your Role</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+      <section id="roles" className="py-16 md:py-24 container mx-auto px-4 md:px-6">
+        <div className="text-center mb-10 md:mb-16">
+          <h2 className="text-2xl md:text-5xl font-display font-bold mb-3 md:mb-4">Find Your Role</h2>
+          <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
             Everyone has a part to play in the innovation economy. Where do you fit in?
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {[
             { 
               title: "The Innovator", 
@@ -187,13 +187,13 @@ export default function Landing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="glass-card p-8 rounded-2xl group cursor-pointer"
+              className="glass-card p-6 md:p-8 rounded-2xl group cursor-pointer"
             >
-              <div className={`w-14 h-14 rounded-xl ${role.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                <role.icon className={`w-7 h-7 ${role.color}`} />
+              <div className={`w-12 h-12 md:w-14 md:h-14 rounded-xl ${role.bg} flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                <role.icon className={`w-6 h-6 md:w-7 md:h-7 ${role.color}`} />
               </div>
-              <h3 className="text-2xl font-bold font-display mb-3 group-hover:text-primary transition-colors">{role.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{role.desc}</p>
+              <h3 className="text-xl md:text-2xl font-bold font-display mb-2 md:mb-3 group-hover:text-primary transition-colors">{role.title}</h3>
+              <p className="text-muted-foreground text-sm md:text-base leading-relaxed">{role.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -234,11 +234,11 @@ export default function Landing() {
       </section>
 
       {/* Privacy Section */}
-      <section id="privacy" className="py-24 container mx-auto px-4 md:px-6">
-        <div className="grid lg:grid-cols-2 gap-16">
+      <section id="privacy" className="py-16 md:py-24 container mx-auto px-4 md:px-6">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
           <div>
-            <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">Security First. <br />Always.</h2>
-            <p className="text-muted-foreground text-lg mb-8">
+            <h2 className="text-2xl md:text-5xl font-display font-bold mb-4 md:mb-6">Security First. <br />Always.</h2>
+            <p className="text-muted-foreground text-base md:text-lg mb-6 md:mb-8">
               We understand that your intellectual property is your most valuable asset. Our platform is built with enterprise-grade security to protect your vision.
             </p>
             <div className="flex gap-4">
@@ -266,15 +266,15 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-primary/20 blur-[100px] z-0" />
         <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-          <h2 className="text-4xl md:text-6xl font-display font-bold mb-8">Ready to build the future?</h2>
-          <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-6xl font-display font-bold mb-6 md:mb-8">Ready to build the future?</h2>
+          <p className="text-lg md:text-xl text-muted-foreground mb-8 md:mb-10 max-w-2xl mx-auto">
             Join thousands of founders, creators, and investors turning dreams into reality.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="px-10 py-5 rounded-xl bg-primary text-white font-bold text-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-1 transition-all duration-300">
+            <button className="px-8 md:px-10 py-4 md:py-5 rounded-xl bg-primary text-white font-bold text-lg md:text-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-1 transition-all duration-300">
               Get Started for Free
             </button>
           </div>
