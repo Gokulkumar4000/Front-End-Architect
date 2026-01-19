@@ -1,0 +1,167 @@
+Do NOT switch to Autonomous mode.
+Do NOT restructure folders.
+Do NOT add backend or real logic.
+
+This task is ONLY to ENHANCE the ROLE SELECTION UI
+with animations and visual explanation.
+
+Everything remains UI-only and mock.
+
+----------------------------------
+GOAL OF THIS ENHANCEMENT
+----------------------------------
+When a user selects a role:
+
+- The chosen role card becomes the focus
+- Other role cards smoothly disappear
+- A visual “role roadmap” appears
+- User understands how that role works step by step
+- Finally, user continues as that role
+
+----------------------------------
+PART 1 – ROLE CARD SELECTION BEHAVIOR
+----------------------------------
+
+On clicking “Continue” on a role card:
+
+1. Selected role card:
+   - Moves to the LEFT side of the screen
+   - Scales slightly larger
+   - Remains visible
+
+2. Other two role cards:
+   - Fade out
+   - Slide away
+   - Are removed from view
+
+Use Framer Motion animations:
+- fade
+- slide
+- scale
+
+This is VISUAL ONLY.
+No state persistence needed beyond UI.
+
+----------------------------------
+PART 2 – ROLE ROADMAP PANEL (RIGHT SIDE)
+----------------------------------
+
+After role selection, show a new panel on the RIGHT side.
+
+This panel explains:
+“How this role works on DevConnect”
+
+Layout:
+- Title: “Your Journey as a <Role Name>”
+- Step-by-step visual roadmap
+- One step visible at a time
+
+----------------------------------
+PART 3 – ROLE-SPECIFIC ROADMAP CONTENT
+----------------------------------
+
+### 💻 DEVELOPER ROADMAP
+Steps:
+1. Create your developer profile
+2. Explore ideas and projects
+3. Collaborate or apply for roles
+4. Build products with teams
+5. Raise funds or grow your startup
+
+----------------------------------
+
+### 🧠 IDEA HOLDER ROADMAP
+Steps:
+1. Post your idea securely
+2. Measure real-world necessity
+3. Get investor interest
+4. Collaborate with developers
+5. Build or sell your idea
+
+----------------------------------
+
+### 💼 INVESTOR ROADMAP
+Steps:
+1. Explore innovative ideas
+2. Analyze necessity and demand
+3. Fund promising projects
+4. Recruit skilled developers
+5. Build your investment portfolio
+
+----------------------------------
+PART 4 – STEP-BY-STEP INTERACTION
+----------------------------------
+
+- Show ONE roadmap step at a time
+- Include:
+  - Step number
+  - Short description
+  - Simple icon or illustration
+
+- Buttons:
+  - “Next” → shows next step
+  - “Back” → previous step (optional)
+
+No data storage.
+Pure UI flow.
+
+----------------------------------
+PART 5 – FINAL ACTION BUTTON
+----------------------------------
+
+After the last roadmap step:
+
+Show a prominent button:
+“Continue as <Role Name>”
+
+This button:
+- Navigates to the next page (placeholder)
+- No real auth
+- No role persistence logic
+
+----------------------------------
+PART 6 – RESPONSIVENESS (MANDATORY)
+----------------------------------
+
+Mobile behavior:
+- Selected role card at top
+- Roadmap appears below
+- Steps stack vertically
+- Smooth swipe / tap-friendly buttons
+
+Desktop behavior:
+- Selected role card on left
+- Roadmap panel on right
+- Clean spacing
+
+----------------------------------
+PART 7 – DESIGN & ANIMATION RULES
+----------------------------------
+
+- Dark theme
+- Purple accent
+- Glassmorphism panels
+- Smooth Framer Motion transitions
+- Clear visual hierarchy
+- Accessible text sizes
+
+----------------------------------
+STRICT RULES
+----------------------------------
+- NO backend
+- NO real auth
+- NO routing changes
+- NO folder reorganization
+- UI ONLY
+- FAST MODE SAFE
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+- Role selection feels interactive and premium
+- User clearly understands chosen role
+- Smooth animated transition
+- Roadmap explains platform flow
+- Final “Continue as Role” feels meaningful
+
+Proceed ONLY with this role-selection animation enhancement.

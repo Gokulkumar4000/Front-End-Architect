@@ -1,0 +1,190 @@
+Do NOT switch to Autonomous mode.
+Do NOT refactor other pages.
+Do NOT touch dashboards, auth logic, or routing.
+
+IMPORTANT:
+ALL UI BUILT IN THIS STEP MUST BE FULLY RESPONSIVE
+(mobile, tablet, laptop, desktop).
+
+----------------------------------
+GOAL OF THIS STEP
+----------------------------------
+Create a modern, MOBILE-FIRST landing page with:
+- A public navbar
+- Section-based navigation
+- Login & Sign Up buttons
+- Smooth animations
+- Clear explanation of the platform
+- Proper layout on all screen sizes
+
+----------------------------------
+FILES TO TOUCH
+----------------------------------
+- src/pages/Landing.jsx
+- (Optional) src/components/LandingNavbar.jsx
+
+----------------------------------
+GLOBAL RESPONSIVENESS RULE (MANDATORY)
+----------------------------------
+- Use mobile-first Tailwind classes
+- Layout must adapt for:
+  - Small screens (phones)
+  - Medium screens (tablets)
+  - Large screens (desktops)
+- No horizontal scrolling
+- Text must wrap properly
+- Buttons must be tap-friendly
+
+----------------------------------
+PART 1 – RESPONSIVE LANDING PAGE NAVBAR
+----------------------------------
+
+Navbar appears ONLY on the landing page.
+
+Navbar layout:
+- Mobile:
+  - Logo on left
+  - Hamburger menu on right
+  - Menu opens full-width overlay or dropdown
+- Desktop:
+  - Logo on left
+  - Center navigation links
+  - Login / Sign Up on right
+
+Navbar links (scroll-based, not route-based):
+- About
+- Roles
+- How It Works
+- Privacy
+
+Buttons:
+- Login → /login (placeholder)
+- Sign Up → /register (placeholder)
+
+Navbar behavior:
+- Fixed top
+- Glass / blur background
+- Smooth scroll to sections
+- Active section highlight (optional)
+
+----------------------------------
+PART 2 – HERO SECTION (#about)
+----------------------------------
+
+Mobile:
+- Text centered
+- Buttons stacked vertically
+
+Desktop:
+- Wider text
+- Buttons side by side
+
+Include:
+- Headline
+- Subheading
+- CTA buttons
+- Entry animation (Framer Motion)
+
+----------------------------------
+PART 3 – ABOUT THE PLATFORM
+----------------------------------
+
+Mobile:
+- Single column
+
+Desktop:
+- Two-column or card layout
+
+Explain:
+- Platform purpose
+- Unique value
+
+----------------------------------
+PART 4 – USER ROLES (#roles)
+----------------------------------
+
+Mobile:
+- Role cards stacked vertically
+
+Tablet:
+- 2-column grid
+
+Desktop:
+- 3-column grid
+
+Each card:
+- Icon
+- Role name
+- Description
+- Hover / tap animation
+
+----------------------------------
+PART 5 – HOW IT WORKS (#working)
+----------------------------------
+
+Mobile:
+- Vertical step list
+
+Desktop:
+- Horizontal timeline
+
+Clear step numbering and icons.
+
+----------------------------------
+PART 6 – PRIVACY & SECURITY (#privacy)
+----------------------------------
+
+Mobile:
+- Stacked info cards
+
+Desktop:
+- Grid layout
+
+Explain visually:
+- Role-based visibility
+- Idea protection
+- In-platform chat
+- Ownership control
+
+----------------------------------
+PART 7 – FINAL CTA
+----------------------------------
+
+Mobile:
+- Centered text
+- Full-width button
+
+Desktop:
+- Larger typography
+- Prominent button
+
+----------------------------------
+DESIGN RULES
+----------------------------------
+- Dark theme
+- Purple accent
+- Glassmorphism
+- Smooth spacing
+- Framer Motion animations
+- Accessible contrast
+
+----------------------------------
+STRICT RULES
+----------------------------------
+- NO backend
+- NO auth logic
+- NO dashboard navbar
+- NO role logic
+- UI ONLY
+- RESPONSIVENESS IS NOT OPTIONAL
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+- Landing page looks perfect on phone, tablet, desktop
+- Navbar works on mobile & desktop
+- Smooth scrolling between sections
+- Professional startup-level UI
+- Ready to extend to login/register pages
+
+Proceed ONLY with responsive landing page UI.

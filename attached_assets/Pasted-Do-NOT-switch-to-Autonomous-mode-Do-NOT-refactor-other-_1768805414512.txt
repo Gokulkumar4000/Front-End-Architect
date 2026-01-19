@@ -1,0 +1,152 @@
+Do NOT switch to Autonomous mode.
+Do NOT refactor other pages.
+Do NOT touch dashboards or feed yet.
+
+IMPORTANT:
+ALL UI MUST BE FULLY RESPONSIVE (mobile-first).
+This step is UI-ONLY and MOCK-ONLY.
+
+----------------------------------
+PART 1 – FIX LANDING PAGE BRANDING
+----------------------------------
+
+In the existing Landing page:
+
+- Replace any generic name like “Startup Company” with:
+  - DevConnect
+  - Tagline: “Where Ideas Meet Code and Capital”
+
+Ensure consistency in:
+- Navbar logo text
+- Hero headline
+- CTA text
+- Section headings
+
+Text change ONLY.
+No layout change.
+
+----------------------------------
+PART 2 – AUTH ENTRY PAGE (PUBLIC)
+----------------------------------
+
+Create or update:
+- src/pages/Auth.jsx (or Login.jsx if already exists)
+
+This page is PUBLIC.
+No real authentication logic.
+
+----------------------------------
+PART 3 – LOGIN & SIGN UP ENTRY
+----------------------------------
+
+Show two main cards:
+
+1. Login
+2. Sign Up
+
+Mobile:
+- Stack vertically
+
+Desktop:
+- Side by side
+
+Each card includes:
+- Icon
+- Short description
+- Button (UI only)
+
+----------------------------------
+PART 4 – ROLE SELECTION (SIGN UP FLOW)
+----------------------------------
+
+Below Sign Up, show 3 ROLE CARDS.
+
+Each role card must include:
+
+### 🧠 IDEA HOLDER
+Bullet points:
+- Post ideas or problem statements
+- Measure real-world necessity
+- Get funding or sell ideas
+- No technical knowledge required
+
+### 💻 DEVELOPER
+Bullet points:
+- Discover startup ideas
+- Collaborate with other developers
+- Apply for jobs or projects
+- Build real products
+
+### 💼 INVESTOR
+Bullet points:
+- Explore high-potential ideas
+- Fund promising projects
+- Recruit skilled developers
+- Build a startup portfolio
+
+----------------------------------
+ROLE CARD UI RULES
+----------------------------------
+- Icon at top
+- Role name
+- 3–4 bullet points
+- “Continue” button (UI only)
+
+Responsive layout:
+- Mobile: cards stacked
+- Tablet: 2-column grid
+- Desktop: 3-column grid
+
+----------------------------------
+PART 5 – ROLE-BASED FORM PLACEHOLDERS
+----------------------------------
+
+When a role is selected, show a SIMPLE placeholder form (UI only):
+
+Idea Holder:
+- Full Name
+- Email
+
+Developer:
+- Full Name
+- Email
+- Skills
+
+Investor:
+- Full Name
+- Email
+- Organization
+
+Buttons do NOTHING.
+No validation.
+
+----------------------------------
+DESIGN RULES
+----------------------------------
+- Dark theme
+- Purple accent
+- Same design language as landing page
+- Smooth animations
+- Touch-friendly spacing
+- Clear bullet typography
+
+----------------------------------
+STRICT RULES
+----------------------------------
+- NO backend
+- NO auth logic
+- NO routing changes
+- NO dashboards
+- UI ONLY
+- MUST BE RESPONSIVE
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+- Clear role explanation before signup
+- Users understand what each role does
+- Clean, professional auth UI
+- Works perfectly on mobile, tablet, desktop
+- Ready to move to Feed page next
+
+Proceed ONLY with these changes.

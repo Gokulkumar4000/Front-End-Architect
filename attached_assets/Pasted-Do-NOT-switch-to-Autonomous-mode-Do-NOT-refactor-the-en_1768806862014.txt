@@ -1,0 +1,191 @@
+Do NOT switch to Autonomous mode.
+Do NOT refactor the entire app.
+Do NOT add backend or APIs.
+
+This task is ONLY to FIX UX and FLOW LOGIC
+in the existing LANDING page and AUTH page.
+
+----------------------------------
+GLOBAL UX PRINCIPLE (IMPORTANT)
+----------------------------------
+- Do NOT repeat the same action on multiple pages
+- Do NOT ask the user the same question twice
+- Do NOT force unnecessary steps
+- UI should guide, not confuse
+
+----------------------------------
+PART 1 – LANDING PAGE FIXES
+----------------------------------
+
+1. HERO SECTION BUTTONS
+   - REMOVE extra buttons like:
+     - “Start Building”
+     - “Explore Projects”
+   - Keep ONLY ONE primary button:
+     - “Get Started”
+
+2. “Get Started” button behavior:
+   - Navigates to Auth page (/login or /auth)
+   - NOT another landing-style page
+
+3. NAVBAR SCROLL FIX
+   - Navbar links (About, Roles, Working, Privacy)
+     MUST scroll smoothly to sections
+   - Use smooth scrolling behavior
+   - Clicking navbar items must NOT reload page
+
+4. RESPONSIVE FONT FIX
+   - Text and headings are TOO LARGE on mobile
+   - Reduce font sizes using responsive classes
+   - Ensure:
+     - Headings scale down on small screens
+     - Buttons are not oversized
+     - Content fits without overflow
+
+----------------------------------
+PART 2 – AUTH PAGE STRUCTURE (VERY IMPORTANT)
+----------------------------------
+
+The Auth flow currently has LOGICAL ERRORS.
+Fix the flow as follows:
+
+----------------------------------
+CORRECT AUTH FLOW (RULES)
+----------------------------------
+
+A. LOGIN FLOW (EXISTING USER)
+----------------------------------
+- Login page should show ONLY:
+  - Email
+  - Password
+  - Login button
+
+- NO role selection
+- NO roadmap
+- NO extra steps
+
+Reason:
+If user already has an account,
+they already have a role.
+
+----------------------------------
+B. SIGN UP FLOW (NEW USER)
+----------------------------------
+
+Only NEW USERS should see:
+- Role selection
+- Role roadmap
+- Role-specific registration form
+
+----------------------------------
+PART 3 – ROLE SELECTION LOGIC FIX
+----------------------------------
+
+1. Role selection page must be shown ONLY when:
+   - User clicks “Sign Up”
+
+2. If user clicks “Login”:
+   - Go DIRECTLY to login form
+   - Skip role selection completely
+
+----------------------------------
+PART 4 – ROLE ROADMAP FIXES
+----------------------------------
+
+Current issues:
+- Steps are too large
+- Content is missing
+- No clear exit
+- Navigation is confusing
+
+Fix as follows:
+
+1. Roadmap steps:
+   - Reduce step size
+   - Each step must have:
+     - Title
+     - 1–2 line explanation
+
+2. Navigation buttons:
+   - “Next” → next step
+   - “Back” → previous step
+   - Add a clear “Change Role” button
+     → returns to role selection immediately
+     → NOT step-by-step back clicking
+
+3. After last step:
+   - Show ONE clear button:
+     “Continue as <Role Name>”
+
+----------------------------------
+PART 5 – ROLE-SPECIFIC SIGN-UP FORMS
+----------------------------------
+
+STOP using same form for all roles.
+
+Use DIFFERENT fields:
+
+🧠 IDEA HOLDER SIGN UP:
+- Full Name
+- Email
+- Country / Interest (simple)
+
+💻 DEVELOPER SIGN UP:
+- Full Name
+- Email
+- Skills
+- Experience
+
+💼 INVESTOR SIGN UP:
+- Full Name
+- Email
+- Organization
+- Investment Interest
+
+Forms are UI-only.
+No validation.
+No submit logic.
+
+----------------------------------
+PART 6 – SCROLLING & PAGE HEIGHT FIX
+----------------------------------
+
+1. Auth page should NOT be scrollable unnecessarily.
+2. Content should fit within viewport.
+3. Use internal sections or steps instead of page scrolling.
+
+----------------------------------
+PART 7 – BACK NAVIGATION FIX
+----------------------------------
+
+Current issue:
+User must click “Back” many times to change role.
+
+Fix:
+- Add a direct “Change Role” action
+- One click returns to role selection
+
+----------------------------------
+STRICT RULES
+----------------------------------
+- DO NOT add backend
+- DO NOT add authentication logic
+- DO NOT add state persistence
+- DO NOT change routing structure
+- UI + basic conditional rendering ONLY
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+- Landing page is clean and simple
+- Only ONE “Get Started” entry point
+- Smooth navbar scrolling works
+- Mobile UI looks balanced
+- Login is simple and direct
+- Signup is guided and logical
+- Role selection happens ONLY once
+- Role roadmap is clear and controllable
+- Different roles see different forms
+- No unnecessary back clicks
+
+Fix ONLY these logical issues.
