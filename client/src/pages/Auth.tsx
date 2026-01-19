@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LogIn, 
@@ -23,7 +23,9 @@ import {
   Target,
   Trophy,
   User,
-  Info
+  Info,
+  Plus,
+  Search
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -147,6 +149,107 @@ const roles = [
   }
 ];
 
+const DOMAINS = ["FinTech", "SaaS", "AI/ML", "HealthTech", "Web3", "E-commerce", "CleanTech", "EdTech"];
+const TECH_STACK = ["React", "Node.js", "Python", "Rust", "Go", "AWS", "Firebase", "PostgreSQL", "TailwindCSS"];
+
+interface SearchableInputProps {
+  label: string;
+  placeholder: string;
+  options: string[];
+  value: string;
+  onChange: (val: string) => void;
+  onAdd?: () => void;
+  showPlus?: boolean;
+}
+
+function SearchableInput({ label, placeholder, options, value, onChange, onAdd, showPlus }: SearchableInputProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredOptions = useMemo(() => {
+    return options.filter(opt => opt.toLowerCase().includes(searchTerm.toLowerCase()));
+  }, [options, searchTerm]);
+
+  return (
+    <div className="space-y-2 relative">
+      <Label>{label}</Label>
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Select 
+            open={isOpen} 
+            onOpenChange={setIsOpen}
+            value={value}
+            onValueChange={onChange}
+          >
+            <SelectTrigger className="bg-white/5 border-white/10 h-11">
+              <SelectValue placeholder={placeholder} />
+            </SelectTrigger>
+            <SelectContent className="glass-card border-white/10 p-2">
+              <div className="flex items-center gap-2 px-2 pb-2 mb-2 border-b border-white/5">
+                <Search className="w-3.5 h-3.5 text-muted-foreground" />
+                <input 
+                  className="bg-transparent border-none outline-none text-xs w-full"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+              <div className="max-h-[200px] overflow-y-auto">
+                {filteredOptions.length > 0 ? (
+                  filteredOptions.map(opt => (
+                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                  ))
+                ) : (
+                  <div className="text-[10px] text-muted-foreground p-2">No results found</div>
+                )}
+              </div>
+            </SelectContent>
+          </Select>
+        </div>
+        {showPlus && onAdd && (
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={onAdd}
+            className="h-11 w-11 shrink-0 bg-white/5 border-white/10 hover:border-primary/50"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+interface MultiInputProps {
+  label: string;
+  placeholder: string;
+  options: string[];
+  values: string[];
+  onChange: (index: number, val: string) => void;
+  onAdd: () => void;
+}
+
+function MultiInput({ label, placeholder, options, values, onChange, onAdd }: MultiInputProps) {
+  return (
+    <div className="space-y-3">
+      {values.map((v, i) => (
+        <SearchableInput 
+          key={i}
+          label={i === 0 ? label : ""}
+          placeholder={placeholder}
+          options={options}
+          value={v}
+          onChange={(val) => onChange(i, val)}
+          onAdd={i === values.length - 1 ? onAdd : undefined}
+          showPlus={i === values.length - 1}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function Auth() {
   const [location] = useLocation();
   const initialMode: AuthMode = location.includes("register") ? "signup" : "login";
@@ -155,7 +258,11 @@ export default function Auth() {
   const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>(initialMode === "signup" ? "role-selection" : "registration");
   const [signupStep, setSignupStep] = useState<SignupStep>("basic-profile");
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<any>({
+    interests: [""],
+    problemDomains: [""],
+    skills: [""]
+  });
   const [isRoleCardExpanded, setIsRoleCardExpanded] = useState(false);
 
   const containerVariants = {
@@ -353,7 +460,7 @@ export default function Auth() {
                     {renderRoleCard()}
                   </div>
                   <Card className="glass-card border-white/5 overflow-hidden">
-                    <CardContent className="p-8 space-y-8">
+                    <CardContent className="p-8 space-y-8 min-h-[550px]">
                       {(() => {
                         const role = roles.find(r => r.id === selectedRole)!;
                         return (
@@ -427,18 +534,22 @@ export default function Auth() {
                     </AnimatePresence>
                   </div>
 
-                  <div className="w-full">
-                    <Card className="glass-card border-white/5 overflow-hidden">
-                      <CardContent className="p-6 md:p-8 relative">
-                        <div className="absolute right-4 top-4 z-10">
-                          <TooltipProvider>
+                  <div className="w-full relative z-0">
+                    <Card className="glass-card border-white/5 overflow-hidden h-[600px] flex flex-col">
+                      <CardContent className="p-6 md:p-8 relative flex-1 overflow-hidden flex flex-col">
+                        <div className="absolute right-4 top-4 z-[50]">
+                          <TooltipProvider delayDuration={0}>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="w-6 h-6 rounded-full bg-primary/10 hover:bg-primary/20">
+                                <Button variant="ghost" size="icon" className="w-6 h-6 rounded-full bg-primary/10 hover:bg-primary/20 cursor-pointer">
                                   <Info className="w-3.5 h-3.5 text-primary" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent className="glass-card border-primary/20 max-w-xs p-4 bg-background/95 backdrop-blur-md">
+                              <TooltipContent 
+                                side="left"
+                                align="start"
+                                className="glass-card border-primary/20 max-w-xs p-4 bg-background/95 backdrop-blur-md z-[60] shadow-2xl"
+                              >
                                 <div className="space-y-1">
                                   <p className="text-xs font-bold text-primary uppercase tracking-wider">Your journey as a {roles.find(r => r.id === selectedRole)?.title}</p>
                                   <p className="text-xs text-muted-foreground leading-relaxed">
@@ -450,430 +561,439 @@ export default function Auth() {
                           </TooltipProvider>
                         </div>
 
-                        {signupStep === "basic-profile" && (
-                          <>
-                            {renderStepHeader("Basic Profile Details", "Tell us who you are")}
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <Label>Full Name</Label>
-                                  <div className="relative">
-                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                                    <Input 
-                                      className="pl-10 bg-white/5 border-white/10 h-11" 
-                                      placeholder="Enter your full name" 
-                                      value={formData.fullName || ""}
-                                      onChange={(e) => updateFormData("fullName", e.target.value)}
-                                    />
-                                  </div>
-                                </div>
-                                <div className="space-y-2">
-                                  <Label>Email Address</Label>
-                                  <Input 
-                                    className="bg-white/5 border-white/10 h-11" 
-                                    placeholder="john@example.com" 
-                                    type="email"
-                                    value={formData.email || ""}
-                                    onChange={(e) => updateFormData("email", e.target.value)}
-                                  />
-                                </div>
-                              </div>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <Label>Country / Location</Label>
-                                  <Select onValueChange={(v) => updateFormData("location", v)} value={formData.location}>
-                                    <SelectTrigger className="bg-white/5 border-white/10 h-11">
-                                      <div className="flex items-center gap-2">
-                                        <Globe className="w-4 h-4 text-muted-foreground" />
-                                        <SelectValue placeholder="Select location" />
-                                      </div>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="us">United States</SelectItem>
-                                      <SelectItem value="uk">United Kingdom</SelectItem>
-                                      <SelectItem value="in">India</SelectItem>
-                                      <SelectItem value="ca">Canada</SelectItem>
-                                      <SelectItem value="de">Germany</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                                <div className="space-y-2">
-                                  <Label>Time Zone</Label>
-                                  <Select onValueChange={(v) => updateFormData("timezone", v)} value={formData.timezone}>
-                                    <SelectTrigger className="bg-white/5 border-white/10 h-11">
-                                      <div className="flex items-center gap-2">
-                                        <Clock className="w-4 h-4 text-muted-foreground" />
-                                        <SelectValue placeholder="Select timezone" />
-                                      </div>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="utc-5">UTC-5 (EST)</SelectItem>
-                                      <SelectItem value="utc-0">UTC+0 (GMT)</SelectItem>
-                                      <SelectItem value="utc+5.5">UTC+5:30 (IST)</SelectItem>
-                                      <SelectItem value="utc+1">UTC+1 (CET)</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                              </div>
-                            </div>
-                          </>
-                        )}
-
-                        {signupStep === "professional-identity" && (
-                          <>
-                            {renderStepHeader("Professional Identity", "Help us understand your background")}
-                            <div className="space-y-6">
-                              {selectedRole === "idea-holder" && (
+                        <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                          <AnimatePresence mode="wait">
+                            <motion.div 
+                              key={signupStep}
+                              variants={containerVariants}
+                              initial="hidden"
+                              animate="visible"
+                              exit="exit"
+                              className="h-full"
+                            >
+                              {signupStep === "basic-profile" && (
                                 <>
-                                  <div className="space-y-3">
-                                    <Label>Primary interest area</Label>
-                                    <div className="flex flex-wrap gap-2">
-                                      {["FinTech", "SaaS", "AI/ML", "HealthTech", "Web3"].map(area => (
-                                        <Badge 
-                                          key={area}
-                                          className={cn(
-                                            "cursor-pointer transition-all h-8 px-4 text-xs font-medium",
-                                            formData.interests?.includes(area) ? "bg-primary text-white" : "bg-white/5 hover:bg-white/10 text-muted-foreground"
-                                          )}
-                                          onClick={() => {
-                                            const current = formData.interests || [];
-                                            updateFormData("interests", current.includes(area) ? current.filter((i: any) => i !== area) : [...current, area]);
+                                  {renderStepHeader("Basic Profile Details", "Tell us who you are")}
+                                  <div className="space-y-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <div className="space-y-2">
+                                        <Label>Full Name</Label>
+                                        <div className="relative">
+                                          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                          <Input 
+                                            className="pl-10 bg-white/5 border-white/10 h-11" 
+                                            placeholder="Enter your full name" 
+                                            value={formData.fullName || ""}
+                                            onChange={(e) => updateFormData("fullName", e.target.value)}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Email Address</Label>
+                                        <Input 
+                                          className="bg-white/5 border-white/10 h-11" 
+                                          placeholder="john@example.com" 
+                                          type="email"
+                                          value={formData.email || ""}
+                                          onChange={(e) => updateFormData("email", e.target.value)}
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <div className="space-y-2">
+                                        <Label>Country / Location</Label>
+                                        <Select onValueChange={(v) => updateFormData("location", v)} value={formData.location}>
+                                          <SelectTrigger className="bg-white/5 border-white/10 h-11">
+                                            <div className="flex items-center gap-2">
+                                              <Globe className="w-4 h-4 text-muted-foreground" />
+                                              <SelectValue placeholder="Select location" />
+                                            </div>
+                                          </SelectTrigger>
+                                          <SelectContent className="z-[70]">
+                                            <SelectItem value="us">United States</SelectItem>
+                                            <SelectItem value="uk">United Kingdom</SelectItem>
+                                            <SelectItem value="in">India</SelectItem>
+                                            <SelectItem value="ca">Canada</SelectItem>
+                                            <SelectItem value="de">Germany</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Time Zone</Label>
+                                        <Select onValueChange={(v) => updateFormData("timezone", v)} value={formData.timezone}>
+                                          <SelectTrigger className="bg-white/5 border-white/10 h-11">
+                                            <div className="flex items-center gap-2">
+                                              <Clock className="w-4 h-4 text-muted-foreground" />
+                                              <SelectValue placeholder="Select timezone" />
+                                            </div>
+                                          </SelectTrigger>
+                                          <SelectContent className="z-[70]">
+                                            <SelectItem value="utc-5">UTC-5 (EST)</SelectItem>
+                                            <SelectItem value="utc-0">UTC+0 (GMT)</SelectItem>
+                                            <SelectItem value="utc+5.5">UTC+5:30 (IST)</SelectItem>
+                                            <SelectItem value="utc+1">UTC+1 (CET)</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+
+                              {signupStep === "professional-identity" && (
+                                <>
+                                  {renderStepHeader("Professional Identity", "Help us understand your background")}
+                                  <div className="space-y-6">
+                                    {selectedRole === "idea-holder" && (
+                                      <>
+                                        <MultiInput 
+                                          label="Primary interest area"
+                                          placeholder="Select domain"
+                                          options={DOMAINS}
+                                          values={formData.interests || [""]}
+                                          onChange={(i, val) => {
+                                            const current = [...(formData.interests || [""])];
+                                            current[i] = val;
+                                            updateFormData("interests", current);
                                           }}
-                                        >
-                                          {area}
-                                        </Badge>
-                                      ))}
-                                    </div>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Problem domains you care about</Label>
-                                    <Input className="bg-white/5 border-white/10 h-11" placeholder="e.g. Sustainable energy, education access" />
-                                  </div>
-                                  <div className="space-y-3">
-                                    <Label>Have you previously worked on ideas?</Label>
-                                    <RadioGroup onValueChange={(v) => updateFormData("prevIdeas", v)} value={formData.prevIdeas} className="flex gap-6">
-                                      <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="yes" id="yes" />
-                                        <Label htmlFor="yes" className="cursor-pointer">Yes</Label>
-                                      </div>
-                                      <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="no" id="no" />
-                                        <Label htmlFor="no" className="cursor-pointer">No</Label>
-                                      </div>
-                                    </RadioGroup>
-                                  </div>
-                                </>
-                              )}
-                              {selectedRole === "developer" && (
-                                <>
-                                  <div className="space-y-2">
-                                    <Label>Primary technical domain</Label>
-                                    <Select onValueChange={(v) => updateFormData("techDomain", v)} value={formData.techDomain}>
-                                      <SelectTrigger className="bg-white/5 border-white/10 h-11">
-                                        <SelectValue placeholder="Select domain" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="frontend">Frontend Development</SelectItem>
-                                        <SelectItem value="backend">Backend Development</SelectItem>
-                                        <SelectItem value="fullstack">Full Stack</SelectItem>
-                                        <SelectItem value="mobile">Mobile Development</SelectItem>
-                                        <SelectItem value="data">Data Science / AI</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Current Status</Label>
-                                    <Select onValueChange={(v) => updateFormData("status", v)} value={formData.status}>
-                                      <SelectTrigger className="bg-white/5 border-white/10 h-11">
-                                        <SelectValue placeholder="Select status" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="student">Student</SelectItem>
-                                        <SelectItem value="professional">Working Professional</SelectItem>
-                                        <SelectItem value="freelancer">Freelancer</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Years of experience</Label>
-                                    <Input type="number" className="bg-white/5 border-white/10 h-11" placeholder="0" />
-                                  </div>
-                                </>
-                              )}
-                              {selectedRole === "investor" && (
-                                <>
-                                  <div className="space-y-2">
-                                    <Label>Investor Category</Label>
-                                    <Select onValueChange={(v) => updateFormData("investorCat", v)} value={formData.investorCat}>
-                                      <SelectTrigger className="bg-white/5 border-white/10 h-11">
-                                        <SelectValue placeholder="Select category" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="individual">Individual</SelectItem>
-                                        <SelectItem value="angel">Angel</SelectItem>
-                                        <SelectItem value="vc">Venture Capitalist</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Years of investing experience</Label>
-                                    <Input type="number" className="bg-white/5 border-white/10 h-11" placeholder="0" />
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          </>
-                        )}
-
-                        {signupStep === "working-preferences" && (
-                          <>
-                            {renderStepHeader("Working Preferences", "How do you want to engage on DevConnect?")}
-                            <div className="space-y-6">
-                              {selectedRole === "idea-holder" && (
-                                <>
-                                  <div className="space-y-3">
-                                    <Label>What are you looking for?</Label>
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                      {["Funding", "Developers", "Selling idea"].map(item => (
-                                        <div key={item} className="flex items-center space-x-2 bg-white/5 p-4 rounded-xl border border-white/10 hover:border-primary/20 transition-colors cursor-pointer">
-                                          <Checkbox id={item} className="data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
-                                          <label htmlFor={item} className="text-sm font-medium leading-none cursor-pointer">{item}</label>
+                                          onAdd={() => updateFormData("interests", [...(formData.interests || [""]), ""])}
+                                        />
+                                        <MultiInput 
+                                          label="Problem domains you care about"
+                                          placeholder="Select problem domain"
+                                          options={["Sustainable energy", "Education access", "Healthcare", "Financial Inclusion"]}
+                                          values={formData.problemDomains || [""]}
+                                          onChange={(i, val) => {
+                                            const current = [...(formData.problemDomains || [""])];
+                                            current[i] = val;
+                                            updateFormData("problemDomains", current);
+                                          }}
+                                          onAdd={() => updateFormData("problemDomains", [...(formData.problemDomains || [""]), ""])}
+                                        />
+                                        <div className="space-y-3">
+                                          <Label>Have you previously worked on ideas?</Label>
+                                          <RadioGroup onValueChange={(v) => updateFormData("prevIdeas", v)} value={formData.prevIdeas} className="flex gap-6">
+                                            <div className="flex items-center space-x-2">
+                                              <RadioGroupItem value="yes" id="yes" />
+                                              <Label htmlFor="yes" className="cursor-pointer">Yes</Label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                              <RadioGroupItem value="no" id="no" />
+                                              <Label htmlFor="no" className="cursor-pointer">No</Label>
+                                            </div>
+                                          </RadioGroup>
                                         </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Preferred collaboration style</Label>
-                                    <Textarea className="bg-white/5 border-white/10 min-h-[120px] rounded-xl" placeholder="Describe how you like to work with others..." />
-                                  </div>
-                                </>
-                              )}
-                              {selectedRole === "developer" && (
-                                <>
-                                  <div className="space-y-2">
-                                    <Label>Work preference</Label>
-                                    <Select onValueChange={(v) => updateFormData("workPref", v)} value={formData.workPref}>
-                                      <SelectTrigger className="bg-white/5 border-white/10 h-11">
-                                        <SelectValue placeholder="Select preference" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="fulltime">Full-time</SelectItem>
-                                        <SelectItem value="parttime">Part-time</SelectItem>
-                                        <SelectItem value="contract">Contract</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Availability (hours/week)</Label>
-                                    <Input type="number" className="bg-white/5 border-white/10 h-11" placeholder="0" />
-                                  </div>
-                                  <div className="space-y-3">
-                                    <Label>Interested in equity-based work?</Label>
-                                    <RadioGroup defaultValue="no" className="flex gap-6">
-                                      <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="yes" id="e-yes" />
-                                        <Label htmlFor="e-yes" className="cursor-pointer">Yes</Label>
-                                      </div>
-                                      <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="no" id="e-no" />
-                                        <Label htmlFor="e-no" className="cursor-pointer">No</Label>
-                                      </div>
-                                    </RadioGroup>
-                                  </div>
-                                </>
-                              )}
-                              {selectedRole === "investor" && (
-                                <>
-                                  <div className="space-y-2">
-                                    <Label>Preferred involvement</Label>
-                                    <Select onValueChange={(v) => updateFormData("involvement", v)} value={formData.involvement}>
-                                      <SelectTrigger className="bg-white/5 border-white/10 h-11">
-                                        <SelectValue placeholder="Select involvement" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="passive">Passive</SelectItem>
-                                        <SelectItem value="advisory">Advisory</SelectItem>
-                                        <SelectItem value="active">Active</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Investment stage preference</Label>
-                                    <div className="flex flex-wrap gap-2">
-                                      {["Idea", "MVP", "Scaling"].map(stage => (
-                                        <Badge key={stage} className="bg-white/5 hover:bg-white/10 cursor-pointer h-8 px-4 text-xs font-medium text-muted-foreground">{stage}</Badge>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          </>
-                        )}
-
-                        {signupStep === "org-affiliation" && (
-                          <>
-                            {renderStepHeader("Organization & Affiliation", "Optional professional associations")}
-                            <div className="space-y-6">
-                              {selectedRole === "idea-holder" && (
-                                <div className="space-y-2">
-                                  <Label>Are you part of any community or startup group?</Label>
-                                  <Input className="bg-white/5 border-white/10 h-11" placeholder="Community names..." />
-                                </div>
-                              )}
-                              {selectedRole === "developer" && (
-                                <>
-                                  <div className="space-y-2">
-                                    <Label>Current / Previous company</Label>
-                                    <div className="relative">
-                                      <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                                      <Input className="pl-10 bg-white/5 border-white/10 h-11" placeholder="Company name" />
-                                    </div>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Portfolio Link (optional)</Label>
-                                    <div className="relative">
-                                      <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                                      <Input className="pl-10 bg-white/5 border-white/10 h-11" placeholder="https://..." />
-                                    </div>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>GitHub Profile (optional)</Label>
-                                    <div className="relative">
-                                      <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                                      <Input className="pl-10 bg-white/5 border-white/10 h-11" placeholder="github.com/username" />
-                                    </div>
-                                  </div>
-                                </>
-                              )}
-                              {selectedRole === "investor" && (
-                                <>
-                                  <div className="space-y-3">
-                                    <Label>Do you represent an organization?</Label>
-                                    <RadioGroup onValueChange={(v) => updateFormData("isOrg", v)} value={formData.isOrg || "no"} className="flex gap-6">
-                                      <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="yes" id="org-yes" />
-                                        <Label htmlFor="org-yes" className="cursor-pointer">Yes</Label>
-                                      </div>
-                                      <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="no" id="org-no" />
-                                        <Label htmlFor="org-no" className="cursor-pointer">No</Label>
-                                      </div>
-                                    </RadioGroup>
-                                  </div>
-                                  <AnimatePresence>
-                                    {formData.isOrg === "yes" && (
-                                      <motion.div 
-                                        initial={{ opacity: 0, height: 0 }} 
-                                        animate={{ opacity: 1, height: "auto" }} 
-                                        exit={{ opacity: 0, height: 0 }}
-                                        className="space-y-4 pt-2 overflow-hidden"
-                                      >
-                                        <div className="space-y-2">
-                                          <Label>Organization Name</Label>
-                                          <Input className="bg-white/5 border-white/10 h-11" placeholder="Org name" />
-                                        </div>
-                                        <div className="space-y-2">
-                                          <Label>Your Role</Label>
-                                          <Input className="bg-white/5 border-white/10 h-11" placeholder="Partner, Associate, etc." />
-                                        </div>
-                                        <div className="space-y-2">
-                                          <Label>Organization Type</Label>
-                                          <Input className="bg-white/5 border-white/10 h-11" placeholder="e.g. VC Firm, Angel Group" />
-                                        </div>
-                                      </motion.div>
+                                      </>
                                     )}
-                                  </AnimatePresence>
+                                    {selectedRole === "developer" && (
+                                      <>
+                                        <SearchableInput 
+                                          label="Primary technical domain"
+                                          placeholder="Select domain"
+                                          options={DOMAINS}
+                                          value={formData.techDomain || ""}
+                                          onChange={(v) => updateFormData("techDomain", v)}
+                                        />
+                                        <div className="space-y-2">
+                                          <Label>Current Status</Label>
+                                          <Select onValueChange={(v) => updateFormData("status", v)} value={formData.status}>
+                                            <SelectTrigger className="bg-white/5 border-white/10 h-11">
+                                              <SelectValue placeholder="Select status" />
+                                            </SelectTrigger>
+                                            <SelectContent className="z-[70]">
+                                              <SelectItem value="student">Student</SelectItem>
+                                              <SelectItem value="professional">Working Professional</SelectItem>
+                                              <SelectItem value="freelancer">Freelancer</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                          <Label>Years of experience</Label>
+                                          <Input type="number" className="bg-white/5 border-white/10 h-11" placeholder="0" />
+                                        </div>
+                                      </>
+                                    )}
+                                    {selectedRole === "investor" && (
+                                      <>
+                                        <div className="space-y-2">
+                                          <Label>Investor Category</Label>
+                                          <Select onValueChange={(v) => updateFormData("investorCat", v)} value={formData.investorCat}>
+                                            <SelectTrigger className="bg-white/5 border-white/10 h-11">
+                                              <SelectValue placeholder="Select category" />
+                                            </SelectTrigger>
+                                            <SelectContent className="z-[70]">
+                                              <SelectItem value="individual">Individual</SelectItem>
+                                              <SelectItem value="angel">Angel</SelectItem>
+                                              <SelectItem value="vc">Venture Capitalist</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                          <Label>Years of investing experience</Label>
+                                          <Input type="number" className="bg-white/5 border-white/10 h-11" placeholder="0" />
+                                        </div>
+                                      </>
+                                    )}
+                                  </div>
                                 </>
                               )}
-                            </div>
-                          </>
-                        )}
 
-                        {signupStep === "interests-goals" && (
-                          <>
-                            {renderStepHeader("Interests & Goals", "What are you aiming to achieve?")}
-                            <div className="space-y-6">
-                              <div className="space-y-2">
-                                <Label>Domains you are interested in</Label>
-                                <div className="flex flex-wrap gap-2">
-                                  {["Health", "Education", "Energy", "Finance", "Infrastructure"].map(d => (
-                                    <Badge key={d} className="bg-white/5 hover:bg-white/10 cursor-pointer h-8 px-4 text-xs font-medium text-muted-foreground">{d}</Badge>
-                                  ))}
-                                </div>
-                              </div>
-                              <div className="space-y-2">
-                                <Label>Long-term goal on DevConnect</Label>
-                                <div className="relative">
-                                  <Target className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                                  <Textarea className="pl-10 bg-white/5 border-white/10 min-h-[100px] rounded-xl" placeholder="What is your main objective?" />
-                                </div>
-                              </div>
-                              <div className="space-y-2">
-                                <Label>What success looks like for you (short text)</Label>
-                                <div className="relative">
-                                  <Trophy className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                                  <Textarea className="pl-10 bg-white/5 border-white/10 min-h-[100px] rounded-xl" placeholder="Describe your definition of success..." />
-                                </div>
-                              </div>
-                            </div>
-                          </>
-                        )}
+                              {signupStep === "working-preferences" && (
+                                <>
+                                  {renderStepHeader("Working Preferences", "How do you want to engage on DevConnect?")}
+                                  <div className="space-y-6">
+                                    {selectedRole === "idea-holder" && (
+                                      <>
+                                        <div className="space-y-3">
+                                          <Label>What are you looking for?</Label>
+                                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            {["Funding", "Developers", "Selling idea"].map(item => (
+                                              <div key={item} className="flex items-center space-x-2 bg-white/5 p-4 rounded-xl border border-white/10 hover:border-primary/20 transition-colors cursor-pointer">
+                                                <Checkbox id={item} className="data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
+                                                <label htmlFor={item} className="text-sm font-medium leading-none cursor-pointer">{item}</label>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                          <Label>Preferred collaboration style</Label>
+                                          <Textarea className="bg-white/5 border-white/10 min-h-[120px] rounded-xl" placeholder="Describe how you like to work with others..." />
+                                        </div>
+                                      </>
+                                    )}
+                                    {selectedRole === "developer" && (
+                                      <>
+                                        <div className="space-y-2">
+                                          <Label>Work preference</Label>
+                                          <Select onValueChange={(v) => updateFormData("workPref", v)} value={formData.workPref}>
+                                            <SelectTrigger className="bg-white/5 border-white/10 h-11">
+                                              <SelectValue placeholder="Select preference" />
+                                            </SelectTrigger>
+                                            <SelectContent className="z-[70]">
+                                              <SelectItem value="fulltime">Full-time</SelectItem>
+                                              <SelectItem value="parttime">Part-time</SelectItem>
+                                              <SelectItem value="contract">Contract</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                          <Label>Availability (hours/week)</Label>
+                                          <Input type="number" className="bg-white/5 border-white/10 h-11" placeholder="0" />
+                                        </div>
+                                        <div className="space-y-3">
+                                          <Label>Interested in equity-based work?</Label>
+                                          <RadioGroup defaultValue="no" className="flex gap-6">
+                                            <div className="flex items-center space-x-2">
+                                              <RadioGroupItem value="yes" id="e-yes" />
+                                              <Label htmlFor="e-yes" className="cursor-pointer">Yes</Label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                              <RadioGroupItem value="no" id="e-no" />
+                                              <Label htmlFor="e-no" className="cursor-pointer">No</Label>
+                                            </div>
+                                          </RadioGroup>
+                                        </div>
+                                      </>
+                                    )}
+                                    {selectedRole === "investor" && (
+                                      <>
+                                        <div className="space-y-2">
+                                          <Label>Preferred involvement</Label>
+                                          <Select onValueChange={(v) => updateFormData("involvement", v)} value={formData.involvement}>
+                                            <SelectTrigger className="bg-white/5 border-white/10 h-11">
+                                              <SelectValue placeholder="Select involvement" />
+                                            </SelectTrigger>
+                                            <SelectContent className="z-[70]">
+                                              <SelectItem value="passive">Passive</SelectItem>
+                                              <SelectItem value="advisory">Advisory</SelectItem>
+                                              <SelectItem value="active">Active</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                          <Label>Investment stage preference</Label>
+                                          <div className="flex flex-wrap gap-2">
+                                            {["Idea", "MVP", "Scaling"].map(stage => (
+                                              <Badge key={stage} className="bg-white/5 hover:bg-white/10 cursor-pointer h-8 px-4 text-xs font-medium text-muted-foreground">{stage}</Badge>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      </>
+                                    )}
+                                  </div>
+                                </>
+                              )}
 
-                        {signupStep === "about-you" && (
-                          <>
-                            {renderStepHeader("About You", "Introduce yourself to the community")}
-                            <div className="space-y-6">
-                              <div className="space-y-2">
-                                <Label>Short Bio</Label>
-                                <Textarea className="bg-white/5 border-white/10 min-h-[150px] rounded-xl" placeholder="A bit about your background and experience..." />
-                              </div>
-                              <div className="space-y-2">
-                                <Label>Optional Tagline</Label>
-                                <Input className="bg-white/5 border-white/10 h-11" placeholder="One sentence that defines you" />
-                              </div>
-                            </div>
-                          </>
-                        )}
+                              {signupStep === "org-affiliation" && (
+                                <>
+                                  {renderStepHeader("Organization & Affiliation", "Optional professional associations")}
+                                  <div className="space-y-6">
+                                    {selectedRole === "idea-holder" && (
+                                      <div className="space-y-2">
+                                        <Label>Are you part of any community or startup group?</Label>
+                                        <Input className="bg-white/5 border-white/10 h-11" placeholder="Community names..." />
+                                      </div>
+                                    )}
+                                    {selectedRole === "developer" && (
+                                      <>
+                                        <div className="space-y-2">
+                                          <Label>Current / Previous company</Label>
+                                          <div className="relative">
+                                            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                            <Input className="pl-10 bg-white/5 border-white/10 h-11" placeholder="Company name" />
+                                          </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                          <Label>Portfolio Link (optional)</Label>
+                                          <div className="relative">
+                                            <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                            <Input className="pl-10 bg-white/5 border-white/10 h-11" placeholder="https://..." />
+                                          </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                          <Label>GitHub Profile (optional)</Label>
+                                          <div className="relative">
+                                            <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                            <Input className="pl-10 bg-white/5 border-white/10 h-11" placeholder="github.com/username" />
+                                          </div>
+                                        </div>
+                                      </>
+                                    )}
+                                    {selectedRole === "investor" && (
+                                      <>
+                                        <div className="space-y-3">
+                                          <Label>Do you represent an organization?</Label>
+                                          <RadioGroup onValueChange={(v) => updateFormData("isOrg", v)} value={formData.isOrg || "no"} className="flex gap-6">
+                                            <div className="flex items-center space-x-2">
+                                              <RadioGroupItem value="yes" id="org-yes" />
+                                              <Label htmlFor="org-yes" className="cursor-pointer">Yes</Label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                              <RadioGroupItem value="no" id="org-no" />
+                                              <Label htmlFor="org-no" className="cursor-pointer">No</Label>
+                                            </div>
+                                          </RadioGroup>
+                                        </div>
+                                        <AnimatePresence>
+                                          {formData.isOrg === "yes" && (
+                                            <motion.div 
+                                              initial={{ opacity: 0, height: 0 }} 
+                                              animate={{ opacity: 1, height: "auto" }} 
+                                              exit={{ opacity: 0, height: 0 }}
+                                              className="space-y-4 pt-2 overflow-hidden"
+                                            >
+                                              <div className="space-y-2">
+                                                <Label>Organization Name</Label>
+                                                <Input className="bg-white/5 border-white/10 h-11" placeholder="Org name" />
+                                              </div>
+                                              <div className="space-y-2">
+                                                <Label>Your Role</Label>
+                                                <Input className="bg-white/5 border-white/10 h-11" placeholder="Partner, Associate, etc." />
+                                              </div>
+                                              <div className="space-y-2">
+                                                <Label>Organization Type</Label>
+                                                <Input className="bg-white/5 border-white/10 h-11" placeholder="e.g. VC Firm, Angel Group" />
+                                              </div>
+                                            </motion.div>
+                                          )}
+                                        </AnimatePresence>
+                                      </>
+                                    )}
+                                  </div>
+                                </>
+                              )}
 
-                        {signupStep === "summary" && (
-                          <>
-                            {renderStepHeader("Summary Preview", "Review your details before joining")}
-                            <div className="space-y-6">
-                              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
-                                <div className="flex justify-between items-center pb-4 border-b border-white/10">
-                                  <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                                      <User className="w-6 h-6 text-primary" />
+                              {signupStep === "interests-goals" && (
+                                <>
+                                  {renderStepHeader("Interests & Goals", "What are you aiming to achieve?")}
+                                  <div className="space-y-6">
+                                    <MultiInput 
+                                      label="Domains you are interested in"
+                                      placeholder="Select domain"
+                                      options={DOMAINS}
+                                      values={formData.interests || [""]}
+                                      onChange={(i, val) => {
+                                        const current = [...(formData.interests || [""])];
+                                        current[i] = val;
+                                        updateFormData("interests", current);
+                                      }}
+                                      onAdd={() => updateFormData("interests", [...(formData.interests || [""]), ""])}
+                                    />
+                                    <div className="space-y-2">
+                                      <Label>Long-term goal on DevConnect</Label>
+                                      <div className="relative">
+                                        <Target className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                                        <Textarea className="pl-10 bg-white/5 border-white/10 min-h-[100px] rounded-xl" placeholder="What is your main objective?" />
+                                      </div>
                                     </div>
-                                    <div>
-                                      <h4 className="font-bold text-lg">{formData.fullName || "John Doe"}</h4>
-                                      <p className="text-xs text-muted-foreground">{formData.email || "john@example.com"}</p>
+                                    <div className="space-y-2">
+                                      <Label>What success looks like for you (short text)</Label>
+                                      <div className="relative">
+                                        <Trophy className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                                        <Textarea className="pl-10 bg-white/5 border-white/10 min-h-[100px] rounded-xl" placeholder="Describe your definition of success..." />
+                                      </div>
                                     </div>
                                   </div>
-                                  <Badge className="bg-primary/20 text-primary border-primary/20 uppercase text-[10px] font-bold h-6 px-3">
-                                    {selectedRole?.replace("-", " ")}
-                                  </Badge>
-                                </div>
-                                <div className="grid grid-cols-2 gap-y-6 gap-x-8 pt-2">
-                                  <div>
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Location</p>
-                                    <p className="text-sm font-medium">{formData.location?.toUpperCase() || "N/A"}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Timezone</p>
-                                    <p className="text-sm font-medium">{formData.timezone || "N/A"}</p>
-                                  </div>
-                                </div>
-                              </div>
-                              <Button className="w-full py-7 font-bold text-lg shadow-lg shadow-primary/20 rounded-xl">
-                                Create Account as {roles.find(r => r.id === selectedRole)?.title}
-                              </Button>
-                            </div>
-                          </>
-                        )}
+                                </>
+                              )}
 
-                        <div className="mt-8 pt-8 border-t border-white/10 flex items-center justify-between">
+                              {signupStep === "about-you" && (
+                                <>
+                                  {renderStepHeader("About You", "Introduce yourself to the community")}
+                                  <div className="space-y-6">
+                                    <div className="space-y-2">
+                                      <Label>Short Bio</Label>
+                                      <Textarea className="bg-white/5 border-white/10 min-h-[150px] rounded-xl" placeholder="A bit about your background and experience..." />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label>Optional Tagline</Label>
+                                      <Input className="bg-white/5 border-white/10 h-11" placeholder="One sentence that defines you" />
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+
+                              {signupStep === "summary" && (
+                                <>
+                                  {renderStepHeader("Summary Preview", "Review your details before joining")}
+                                  <div className="space-y-6">
+                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
+                                      <div className="flex justify-between items-center pb-4 border-b border-white/10">
+                                        <div className="flex items-center gap-4">
+                                          <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                                            <User className="w-6 h-6 text-primary" />
+                                          </div>
+                                          <div>
+                                            <h4 className="font-bold text-lg">{formData.fullName || "John Doe"}</h4>
+                                            <p className="text-xs text-muted-foreground">{formData.email || "john@example.com"}</p>
+                                          </div>
+                                        </div>
+                                        <Badge className="bg-primary/20 text-primary border-primary/20 uppercase text-[10px] font-bold h-6 px-3">
+                                          {selectedRole?.replace("-", " ")}
+                                        </Badge>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-y-6 gap-x-8 pt-2">
+                                        <div>
+                                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Location</p>
+                                          <p className="text-sm font-medium">{formData.location?.toUpperCase() || "N/A"}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Timezone</p>
+                                          <p className="text-sm font-medium">{formData.timezone || "N/A"}</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <Button className="w-full py-7 font-bold text-lg shadow-lg shadow-primary/20 rounded-xl">
+                                      Create Account as {roles.find(r => r.id === selectedRole)?.title}
+                                    </Button>
+                                  </div>
+                                </>
+                              )}
+                            </motion.div>
+                          </AnimatePresence>
+                        </div>
+
+                        <div className="mt-8 pt-8 border-t border-white/10 flex items-center justify-between bg-background/50 backdrop-blur-sm -mx-8 px-8 pb-8">
                           <Button variant="ghost" onClick={prevStep} className="text-muted-foreground hover:text-white h-11 px-6">
                             <ChevronLeft className="w-4 h-4 mr-2" />
                             Back

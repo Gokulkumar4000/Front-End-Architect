@@ -1,0 +1,171 @@
+Do NOT switch to Autonomous mode.
+Do NOT redesign UI.
+Do NOT change colors, layout structure, or content.
+Do NOT remove or add steps.
+Do NOT refactor routing or logic.
+Do NOT touch any other pages.
+
+This task is ONLY to FIX BEHAVIOR & USABILITY ISSUES
+in the EXISTING ROLE OVERVIEW + REGISTRATION FLOW.
+
+----------------------------------
+ABSOLUTE RULE (IMPORTANT)
+----------------------------------
+DO NOT change how the UI looks.
+DO NOT change text content.
+ONLY FIX sizing, stability, visibility, and input behavior.
+
+----------------------------------
+PART 1 – REGISTRATION FORM SIZE STABILITY
+----------------------------------
+
+Current issue:
+- Registration form resizes on every step
+- Layout height changes
+- Page feels like it reflows
+
+FIX:
+- Registration form container must have a FIXED HEIGHT
+- Height must NOT change between steps
+- Content inside should adjust, NOT the container
+
+Implementation rule:
+- Use a fixed-height card for the right panel
+- Align all steps to fit within that height
+- No layout jump when clicking Next / Back
+
+----------------------------------
+PART 2 – INPUT ALIGNMENT & FIT
+----------------------------------
+
+Ensure:
+- All inputs fit cleanly inside the fixed container
+- No overflow
+- No excessive spacing
+- Inputs aligned in consistent grid
+- Same spacing across all steps
+
+DO NOT change input styles.
+Only fix alignment and sizing.
+
+----------------------------------
+PART 3 – ROLE OVERVIEW STEP BEHAVIOR (KEEP AS IS)
+----------------------------------
+
+The role overview screen with:
+- Role steps
+- “Continue as <ROLE>” button
+
+This is CORRECT and must remain.
+
+DO NOT remove.
+DO NOT reorder.
+DO NOT redesign.
+
+----------------------------------
+PART 4 – INFO TOOLTIP (!) VISIBILITY FIX
+----------------------------------
+
+Current issue:
+- Tooltip is hidden by outer container
+- Not visible when hovered
+
+FIX:
+- Ensure tooltip renders ABOVE all containers
+- Use proper z-index
+- Prevent clipping by parent overflow
+
+Behavior rules:
+- “!” icon remains at top-right of form card
+- Tooltip appears ONLY on hover (desktop)
+- Tooltip appears on tap (mobile)
+- Tooltip auto-hides on mouse leave
+
+DO NOT make tooltip always visible.
+
+----------------------------------
+PART 5 – SEARCHABLE INPUT FIELDS
+----------------------------------
+
+Enhance ONLY specific inputs with search behavior
+WITHOUT changing UI appearance.
+
+Fields that must be searchable:
+- Domain selection
+- Interest areas
+- Problem domains
+- Skills / Tech stack
+
+Behavior:
+- User can type to search
+- Matching options filter dynamically
+- User can select from results
+
+DO NOT add external libraries.
+Implement lightweight search inside existing dropdowns.
+
+----------------------------------
+PART 6 – ADD MORE INPUTS (+ ICON)
+----------------------------------
+
+For inputs where multiple values are expected:
+
+Examples:
+- Skills
+- Domains
+- Interests
+
+Add:
+- Small “+” icon next to input
+- Clicking “+” adds another input row
+- Inputs stack neatly
+- No layout expansion outside fixed container
+
+This is UI-only.
+No data persistence.
+
+----------------------------------
+PART 7 – NO GLOBAL RE-RENDER (MANDATORY)
+----------------------------------
+
+Ensure:
+- DevConnect header does NOT re-render
+- Login / SignUp tabs do NOT animate again
+- Left role card stays STATIC
+- ONLY inner form content changes
+
+----------------------------------
+PART 8 – RESPONSIVENESS (DO NOT CHANGE DESIGN)
+----------------------------------
+
+Mobile:
+- Fixed container still applies
+- Inputs stack vertically
+- Tooltip works on tap
+
+Desktop:
+- Left role card fixed
+- Right panel stable
+
+----------------------------------
+STRICT DO-NOT-LIST
+----------------------------------
+❌ Do NOT change UI design
+❌ Do NOT change content
+❌ Do NOT add steps
+❌ Do NOT remove steps
+❌ Do NOT add animations
+❌ Do NOT refactor structure
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+- Registration card does NOT resize
+- No layout jumping
+- Inputs aligned and clean
+- Tooltip visible and usable
+- Searchable dropdowns work
+- “+” icon allows adding multiple values
+- Everything else remains EXACTLY the same
+
+Proceed ONLY with these fixes.
