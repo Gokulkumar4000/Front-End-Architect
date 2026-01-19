@@ -9,6 +9,7 @@ import {
   ArrowRight,
   CheckCircle2,
   ChevronLeft,
+  ChevronDown,
   Users,
   Rocket,
   TrendingUp,
