@@ -13,13 +13,27 @@ import {
   Rocket,
   ShieldCheck,
   TrendingUp,
-  Fingerprint
+  Fingerprint,
+  ChevronDown,
+  MapPin,
+  Check
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 
 type AuthMode = "login" | "signup";
 type AuthStep = "role-selection" | "roadmap" | "form";
@@ -521,57 +535,249 @@ export default function Auth() {
           )}
 
           {mode === "signup" && step === "form" && selectedRole && (
-            <motion.div key="form" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="max-w-md mx-auto w-full">
+            <motion.div key="form" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="max-w-2xl mx-auto w-full">
               <Card className="glass-card border-white/5 overflow-hidden">
-                <CardContent className="p-8 space-y-6">
+                <CardContent className="p-8 space-y-8">
                   <div className="text-center space-y-2 mb-4">
-                    <h2 className="text-2xl font-display font-bold">Final Step</h2>
-                    <p className="text-muted-foreground">Registering as a <span className="text-primary font-bold">{selectedRole.toUpperCase()}</span></p>
+                    <h2 className="text-3xl font-display font-bold">Registration</h2>
+                    <p className="text-muted-foreground">Joining as a <span className="text-primary font-bold">{selectedRole.replace("-", " ").toUpperCase()}</span></p>
                   </div>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input id="name" placeholder="John Doe" className="bg-white/5 border-white/10" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="john@example.com" className="bg-white/5 border-white/10" />
-                    </div>
-                    {selectedRole === "developer" && (
-                      <>
-                        <div className="space-y-2">
-                          <Label htmlFor="skills">Skills</Label>
-                          <Input id="skills" placeholder="React, Node.js, Python..." className="bg-white/5 border-white/10" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="exp">Experience</Label>
-                          <Input id="exp" placeholder="Years of experience" className="bg-white/5 border-white/10" />
-                        </div>
-                      </>
-                    )}
-                    {selectedRole === "idea-holder" && (
+                  
+                  <div className="space-y-6">
+                    {/* Common Fields */}
+                    <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="interest">Interest Area</Label>
-                        <Input id="interest" placeholder="Fintech, AI, E-commerce..." className="bg-white/5 border-white/10" />
+                        <Label htmlFor="name" className="text-sm font-semibold">Full Name</Label>
+                        <Input id="name" placeholder="John Doe" className="bg-white/5 border-white/10 focus:border-primary/50 transition-all h-12 rounded-xl" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="email" className="text-sm font-semibold">Email Address</Label>
+                        <Input id="email" type="email" placeholder="john@example.com" className="bg-white/5 border-white/10 focus:border-primary/50 transition-all h-12 rounded-xl" />
+                      </div>
+                    </div>
+
+                    {/* Role Specific Fields */}
+                    {selectedRole === "idea-holder" && (
+                      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-sm font-semibold">Country / Location</Label>
+                            <Select>
+                              <SelectTrigger className="bg-white/5 border-white/10 h-12 rounded-xl focus:ring-primary/20">
+                                <SelectValue placeholder="Select location" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-zinc-900 border-white/10 text-white rounded-xl">
+                                {["United States", "United Kingdom", "India", "Germany", "Canada", "Other"].map(opt => (
+                                  <SelectItem key={opt} value={opt.toLowerCase()} className="hover:bg-primary/20 focus:bg-primary/20 cursor-pointer">
+                                    {opt}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-sm font-semibold">Area of Interest</Label>
+                            <Select>
+                              <SelectTrigger className="bg-white/5 border-white/10 h-12 rounded-xl focus:ring-primary/20">
+                                <SelectValue placeholder="Select area" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-zinc-900 border-white/10 text-white rounded-xl">
+                                {["Fintech", "Healthtech", "AI & ML", "E-commerce", "SaaS", "Clean Energy"].map(opt => (
+                                  <SelectItem key={opt} value={opt.toLowerCase()} className="hover:bg-primary/20 focus:bg-primary/20 cursor-pointer">
+                                    {opt}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="desc" className="text-sm font-semibold">Short Description of your Vision</Label>
+                          <Textarea id="desc" placeholder="Tell us what you want to build..." className="bg-white/5 border-white/10 focus:border-primary/50 transition-all rounded-xl min-h-[120px]" />
+                        </div>
                       </div>
                     )}
+
+                    {selectedRole === "developer" && (
+                      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-sm font-semibold">Primary Domain</Label>
+                            <Select>
+                              <SelectTrigger className="bg-white/5 border-white/10 h-12 rounded-xl focus:ring-primary/20">
+                                <SelectValue placeholder="Select domain" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-zinc-900 border-white/10 text-white rounded-xl">
+                                {["Frontend", "Backend", "Fullstack", "Mobile", "DevOps", "Web3"].map(opt => (
+                                  <SelectItem key={opt} value={opt.toLowerCase()} className="hover:bg-primary/20 focus:bg-primary/20 cursor-pointer">
+                                    {opt}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-sm font-semibold">Years of Experience</Label>
+                            <Select>
+                              <SelectTrigger className="bg-white/5 border-white/10 h-12 rounded-xl focus:ring-primary/20">
+                                <SelectValue placeholder="Select years" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-zinc-900 border-white/10 text-white rounded-xl">
+                                {["0-1 years", "1-3 years", "3-5 years", "5-10 years", "10+ years"].map(opt => (
+                                  <SelectItem key={opt} value={opt.replace(/\s/g, "-").toLowerCase()} className="hover:bg-primary/20 focus:bg-primary/20 cursor-pointer">
+                                    {opt}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label className="text-sm font-semibold">Current Status</Label>
+                          <RadioGroup defaultValue="freelance" className="flex flex-wrap gap-4">
+                            {[
+                              { label: "Freelance", value: "freelance" },
+                              { label: "Full-time", value: "fulltime" },
+                              { label: "Student", value: "student" }
+                            ].map((item) => (
+                              <div key={item.value} className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:border-primary/30 transition-all cursor-pointer">
+                                <RadioGroupItem value={item.value} id={item.value} className="border-primary text-primary focus:ring-primary" />
+                                <Label htmlFor={item.value} className="cursor-pointer text-sm">{item.label}</Label>
+                              </div>
+                            ))}
+                          </RadioGroup>
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label className="text-sm font-semibold">Work Preference</Label>
+                          <div className="grid grid-cols-2 gap-3">
+                            {[
+                              { label: "Remote", value: "remote" },
+                              { label: "On-site", value: "onsite" },
+                              { label: "Hybrid", value: "hybrid" },
+                              { label: "Contract", value: "contract" }
+                            ].map((item) => (
+                              <div key={item.value} className="flex items-center space-x-3 bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition-all">
+                                <Checkbox id={item.value} className="border-primary data-[state=checked]:bg-primary rounded" />
+                                <Label htmlFor={item.value} className="cursor-pointer text-sm">{item.label}</Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="skills" className="text-sm font-semibold">Skills & Technologies</Label>
+                          <Input id="skills" placeholder="React, Node.js, Python..." className="bg-white/5 border-white/10 focus:border-primary/50 transition-all h-12 rounded-xl" />
+                        </div>
+                      </div>
+                    )}
+
                     {selectedRole === "investor" && (
-                      <>
-                        <div className="space-y-2">
-                          <Label htmlFor="org">Organization</Label>
-                          <Input id="org" placeholder="Venture Capital Co." className="bg-white/5 border-white/10" />
+                      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="space-y-3">
+                          <Label className="text-sm font-semibold">Investor Type</Label>
+                          <RadioGroup defaultValue="angel" className="flex flex-wrap gap-4">
+                            {[
+                              { label: "Angel Investor", value: "angel" },
+                              { label: "Venture Capital", value: "vc" },
+                              { label: "Institutional", value: "institutional" }
+                            ].map((item) => (
+                              <div key={item.value} className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:border-primary/30 transition-all cursor-pointer">
+                                <RadioGroupItem value={item.value} id={item.value} className="border-primary text-primary focus:ring-primary" />
+                                <Label htmlFor={item.value} className="cursor-pointer text-sm">{item.label}</Label>
+                              </div>
+                            ))}
+                          </RadioGroup>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="invest">Investment Interest</Label>
-                          <Input id="invest" placeholder="SaaS, Web3, Biotech..." className="bg-white/5 border-white/10" />
+
+                        <div className="space-y-3">
+                          <Label className="text-sm font-semibold">Represent an Organization?</Label>
+                          {(() => {
+                            const [isOrg, setIsOrg] = useState("no");
+                            return (
+                              <div className="space-y-4">
+                                <RadioGroup value={isOrg} onValueChange={setIsOrg} className="flex gap-4">
+                                  <div className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:border-primary/30 transition-all cursor-pointer">
+                                    <RadioGroupItem value="yes" id="org-yes" className="border-primary" />
+                                    <Label htmlFor="org-yes" className="cursor-pointer">Yes</Label>
+                                  </div>
+                                  <div className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:border-primary/30 transition-all cursor-pointer">
+                                    <RadioGroupItem value="no" id="org-no" className="border-primary" />
+                                    <Label htmlFor="org-no" className="cursor-pointer">No</Label>
+                                  </div>
+                                </RadioGroup>
+
+                                <AnimatePresence>
+                                  {isOrg === "yes" && (
+                                    <motion.div 
+                                      initial={{ height: 0, opacity: 0 }} 
+                                      animate={{ height: "auto", opacity: 1 }} 
+                                      exit={{ height: 0, opacity: 0 }}
+                                      className="overflow-hidden space-y-4"
+                                    >
+                                      <div className="grid md:grid-cols-2 gap-4 pt-2">
+                                        <div className="space-y-2">
+                                          <Label htmlFor="org-name" className="text-xs font-bold text-white/50">Organization Name</Label>
+                                          <Input id="org-name" placeholder="Venture Co." className="bg-white/5 border-white/10 h-11 rounded-xl" />
+                                        </div>
+                                        <div className="space-y-2">
+                                          <Label htmlFor="org-role" className="text-xs font-bold text-white/50">Your Role</Label>
+                                          <Input id="org-role" placeholder="Partner" className="bg-white/5 border-white/10 h-11 rounded-xl" />
+                                        </div>
+                                      </div>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </div>
+                            );
+                          })()}
                         </div>
-                      </>
+
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-sm font-semibold">Preferred Domains</Label>
+                            <Select>
+                              <SelectTrigger className="bg-white/5 border-white/10 h-12 rounded-xl focus:ring-primary/20">
+                                <SelectValue placeholder="Multi-select domains" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-zinc-900 border-white/10 text-white rounded-xl">
+                                {["Web3", "SaaS", "AI", "Fintech", "Consumer"].map(opt => (
+                                  <SelectItem key={opt} value={opt.toLowerCase()} className="hover:bg-primary/20 focus:bg-primary/20 cursor-pointer">
+                                    {opt}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-sm font-semibold">Investment Range</Label>
+                            <Select>
+                              <SelectTrigger className="bg-white/5 border-white/10 h-12 rounded-xl focus:ring-primary/20">
+                                <SelectValue placeholder="Select range" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-zinc-900 border-white/10 text-white rounded-xl">
+                                {["$10k - $50k", "$50k - $250k", "$250k - $1M", "$1M+"].map(opt => (
+                                  <SelectItem key={opt} value={opt.replace(/\s/g, "-").toLowerCase()} className="hover:bg-primary/20 focus:bg-primary/20 cursor-pointer">
+                                    {opt}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </div>
-                  <Button className="w-full py-6 font-bold text-lg mt-4 shadow-lg shadow-primary/20">Create Account</Button>
-                  <Button variant="ghost" onClick={() => setStep("role-selection")} className="w-full text-muted-foreground">
-                    <ChevronLeft className="w-4 h-4 mr-2" /> Change Role
-                  </Button>
+
+                  <div className="pt-6 border-t border-white/5 space-y-4">
+                    <Button className="w-full py-7 font-bold text-xl rounded-2xl bg-gradient-to-r from-primary to-purple-600 shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all">
+                      Create Account
+                    </Button>
+                    <Button variant="ghost" onClick={() => setStep("role-selection")} className="w-full text-muted-foreground hover:text-white transition-colors">
+                      <ChevronLeft className="w-4 h-4 mr-2" /> Change Role
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>

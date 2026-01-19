@@ -1,0 +1,159 @@
+Do NOT switch to Autonomous mode.
+Do NOT refactor routing or layout.
+Do NOT add backend or validation logic.
+
+This task is ONLY to IMPROVE:
+- Registration form fields
+- Input styling (especially dropdowns)
+based on the selected role.
+
+Everything remains UI-ONLY and MOCK-ONLY.
+
+----------------------------------
+GOAL OF THIS CHANGE
+----------------------------------
+Each role must see a DIFFERENT, WELL-STYLED registration form
+that matches the DevConnect dark theme.
+
+NO default browser dropdowns.
+NO ugly native selects.
+All inputs must look premium and consistent.
+
+----------------------------------
+GLOBAL FORM & INPUT STYLING RULES
+----------------------------------
+
+Theme:
+- Dark background
+- Purple accent
+- Glassmorphism cards
+- Soft borders
+- Rounded corners
+
+All inputs must:
+- Use custom styling
+- Have focus & hover states
+- Match the overall UI theme
+- Be responsive and touch-friendly
+
+----------------------------------
+CUSTOM DROPDOWN (SELECT) REQUIREMENTS
+----------------------------------
+
+DO NOT use plain HTML default <select> styling.
+
+Dropdown behavior:
+- Closed state:
+  - Looks like an input field
+  - Shows selected value
+  - Right-side chevron icon
+
+- Open state:
+  - Dropdown list appears as floating panel
+  - Same dark background
+  - Rounded corners
+  - Subtle shadow
+  - Smooth fade / slide animation
+
+Dropdown items:
+- Highlight on hover
+- Purple accent on active selection
+- Good spacing between items
+
+Examples of fields that MUST use styled dropdowns:
+- Area of Interest
+- Primary Domain
+- Investor Type
+- Investment Range
+- Preferred Investment Domains
+
+----------------------------------
+CUSTOM RADIO & CHECKBOX STYLING
+----------------------------------
+
+DO NOT use default radio/checkbox UI.
+
+Instead:
+- Custom rounded radio buttons
+- Custom checkboxes with:
+  - Purple check icon
+  - Smooth transition
+  - Clear selected state
+
+Examples:
+- Investor Type (radio)
+- Work Preference (checkbox)
+- Organization: Yes / No (radio)
+
+----------------------------------
+FORM FIELD STYLING DETAILS
+----------------------------------
+
+Each input field:
+- Label above input
+- Subtle helper text (optional)
+- Border color changes on focus
+- Placeholder text muted
+
+Spacing:
+- Consistent vertical spacing
+- Group related fields in sections
+- Section headers for clarity
+
+----------------------------------
+ROLE-BASED FORMS (CONTENT REMAINS SAME)
+----------------------------------
+
+🧠 IDEA HOLDER FORM
+Fields:
+- Full Name (text)
+- Email (text)
+- Country / Location (styled dropdown)
+- Area of Interest (styled dropdown)
+- Short description (textarea)
+
+----------------------------------
+
+💻 DEVELOPER FORM
+Fields:
+- Full Name
+- Email
+- Primary Domain (styled dropdown)
+- Years of Experience (styled dropdown or number input)
+- Current Status (custom radio buttons)
+- Work Preference (custom checkboxes)
+- Company (optional)
+- Skills (tag-style input or text)
+
+----------------------------------
+
+💼 INVESTOR FORM
+Fields:
+- Full Name
+- Email
+- Investor Type (custom radio)
+- Represent Organization? (Yes / No radio)
+
+IF YES:
+- Organization Name
+- Role in Organization
+
+Additional:
+- Preferred Investment Domains (styled multi-select)
+- Investment Range (styled dropdown)
+
+----------------------------------
+PROGRESSIVE FIELD VISIBILITY
+----------------------------------
+- Organization fields appear ONLY if “Yes” is selected
+- Use smooth height / fade animation
+- No page jump
+
+----------------------------------
+BUTTON STYLING
+----------------------------------
+Primary button:
+- Purple gradient
+- Rounded
+- Text:
+  “Create Acc
