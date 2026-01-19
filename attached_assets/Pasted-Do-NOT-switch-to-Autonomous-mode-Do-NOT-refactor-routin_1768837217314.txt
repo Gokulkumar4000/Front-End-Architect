@@ -1,0 +1,186 @@
+Do NOT switch to Autonomous mode.
+Do NOT refactor routing or layout.
+Do NOT add backend, validation, or submission logic.
+
+This task is ONLY to IMPROVE the REGISTRATION UX
+by collecting richer data in a calm, step-based flow.
+
+----------------------------------
+KEY UX RULE (VERY IMPORTANT)
+----------------------------------
+- DO NOT show numeric indicators like:
+  “Step 1 of 6”
+- Instead, show:
+  - Clear step TITLES
+  - Short descriptions of what data is being collected
+- Each step should feel like a logical category,
+  not a numbered task.
+
+----------------------------------
+GLOBAL REGISTRATION FLOW RULES
+----------------------------------
+- One step visible at a time
+- No full-page scrolling
+- Smooth animated transitions between steps
+- Clear “Next” and “Back” actions
+- Ability to exit and change role at any time
+
+----------------------------------
+STEP STRUCTURE (CATEGORY-BASED)
+----------------------------------
+
+🟣 STEP: BASIC PROFILE DETAILS
+Description:
+“Tell us who you are”
+
+Fields (ALL ROLES):
+- Full Name
+- Email
+- Country / Location (styled dropdown)
+- Time Zone (dropdown)
+
+----------------------------------
+
+🟣 STEP: PROFESSIONAL IDENTITY
+Description:
+“Help us understand your background”
+
+🧠 IDEA HOLDER:
+- Primary interest area (multi-select)
+- Problem domains you care about
+- Have you previously worked on ideas? (Yes/No)
+
+💻 DEVELOPER:
+- Primary technical domain
+- Secondary domains (optional)
+- Current status:
+  - Student
+  - Working Professional
+  - Freelancer
+- Years of experience
+
+💼 INVESTOR:
+- Investor category:
+  - Individual
+  - Angel
+  - VC
+- Years of investing experience
+
+----------------------------------
+
+🟣 STEP: WORKING PREFERENCES
+Description:
+“How do you want to engage on DevConnect?”
+
+🧠 IDEA HOLDER:
+- What are you looking for?
+  - Funding
+  - Developers
+  - Selling idea
+- Preferred collaboration style
+
+💻 DEVELOPER:
+- Work preference:
+  - Full-time
+  - Part-time
+  - Contract
+- Availability (hours/week)
+- Interested in equity-based work? (Yes/No)
+
+💼 INVESTOR:
+- Preferred involvement:
+  - Passive
+  - Advisory
+  - Active
+- Investment stage preference:
+  - Idea
+  - MVP
+  - Scaling
+
+----------------------------------
+
+🟣 STEP: ORGANIZATION & AFFILIATION
+Description:
+“Optional professional associations”
+
+🧠 IDEA HOLDER:
+- Are you part of any community or startup group?
+
+💻 DEVELOPER:
+- Current / Previous company
+- GitHub / Portfolio link (optional)
+
+💼 INVESTOR:
+- Do you represent an organization? (Yes/No)
+
+If YES:
+- Organization name
+- Your role in the organization
+- Organization type
+
+----------------------------------
+
+🟣 STEP: INTERESTS & GOALS
+Description:
+“What are you aiming to achieve?”
+
+(ALL ROLES)
+- Domains you are interested in
+- Long-term goal on DevConnect
+- What success looks like for you (short text)
+
+----------------------------------
+
+🟣 STEP: ABOUT YOU
+Description:
+“Introduce yourself to the community”
+
+(ALL ROLES)
+- Short bio (textarea)
+- Optional tagline
+
+----------------------------------
+FINAL ACTION
+----------------------------------
+
+After the last step:
+- Show a summary preview (read-only)
+- Button:
+  “Create Account as <Role Name>”
+
+----------------------------------
+INPUT & COMPONENT STYLING (MANDATORY)
+----------------------------------
+- Styled dropdowns (no browser default)
+- Custom radios & checkboxes
+- Smooth appearance of conditional fields
+- Clear section spacing
+- Consistent dark + purple theme
+
+----------------------------------
+RESPONSIVENESS
+----------------------------------
+- Mobile-first
+- No overflow
+- Inputs easy to tap
+- Text scales properly
+
+----------------------------------
+STRICT RULES
+----------------------------------
+- UI-only
+- No backend
+- No real submission
+- No routing changes
+- No step numbers
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+- Registration feels professional, not rushed
+- Data collection is meaningful
+- User never feels overwhelmed
+- Flow feels like a real startup onboarding
+- Excellent final-year impression
+
+Proceed ONLY with this registration flow enhancement.
