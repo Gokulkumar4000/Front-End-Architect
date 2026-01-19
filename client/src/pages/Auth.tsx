@@ -284,6 +284,7 @@ export default function Auth() {
   const [step, setStep] = useState<AuthStep>(initialMode === "login" ? "form" : "role-selection");
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [roadmapStep, setRoadmapStep] = useState(0);
+  const [isOrg, setIsOrg] = useState("no");
 
   const containerVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -693,45 +694,40 @@ export default function Auth() {
 
                         <div className="space-y-3">
                           <Label className="text-sm font-semibold">Represent an Organization?</Label>
-                          {(() => {
-                            const [isOrg, setIsOrg] = useState("no");
-                            return (
-                              <div className="space-y-4">
-                                <RadioGroup value={isOrg} onValueChange={setIsOrg} className="flex gap-4">
-                                  <div className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:border-primary/30 transition-all cursor-pointer">
-                                    <RadioGroupItem value="yes" id="org-yes" className="border-primary" />
-                                    <Label htmlFor="org-yes" className="cursor-pointer">Yes</Label>
-                                  </div>
-                                  <div className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:border-primary/30 transition-all cursor-pointer">
-                                    <RadioGroupItem value="no" id="org-no" className="border-primary" />
-                                    <Label htmlFor="org-no" className="cursor-pointer">No</Label>
-                                  </div>
-                                </RadioGroup>
-
-                                <AnimatePresence>
-                                  {isOrg === "yes" && (
-                                    <motion.div 
-                                      initial={{ height: 0, opacity: 0 }} 
-                                      animate={{ height: "auto", opacity: 1 }} 
-                                      exit={{ height: 0, opacity: 0 }}
-                                      className="overflow-hidden space-y-4"
-                                    >
-                                      <div className="grid md:grid-cols-2 gap-4 pt-2">
-                                        <div className="space-y-2">
-                                          <Label htmlFor="org-name" className="text-xs font-bold text-white/50">Organization Name</Label>
-                                          <Input id="org-name" placeholder="Venture Co." className="bg-white/5 border-white/10 h-11 rounded-xl" />
-                                        </div>
-                                        <div className="space-y-2">
-                                          <Label htmlFor="org-role" className="text-xs font-bold text-white/50">Your Role</Label>
-                                          <Input id="org-role" placeholder="Partner" className="bg-white/5 border-white/10 h-11 rounded-xl" />
-                                        </div>
-                                      </div>
-                                    </motion.div>
-                                  )}
-                                </AnimatePresence>
+                          <div className="space-y-4">
+                            <RadioGroup value={isOrg} onValueChange={setIsOrg} className="flex gap-4">
+                              <div className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:border-primary/30 transition-all cursor-pointer">
+                                <RadioGroupItem value="yes" id="org-yes" className="border-primary" />
+                                <Label htmlFor="org-yes" className="cursor-pointer">Yes</Label>
                               </div>
-                            );
-                          })()}
+                              <div className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:border-primary/30 transition-all cursor-pointer">
+                                <RadioGroupItem value="no" id="org-no" className="border-primary" />
+                                <Label htmlFor="org-no" className="cursor-pointer">No</Label>
+                              </div>
+                            </RadioGroup>
+
+                            <AnimatePresence>
+                              {isOrg === "yes" && (
+                                <motion.div 
+                                  initial={{ height: 0, opacity: 0 }} 
+                                  animate={{ height: "auto", opacity: 1 }} 
+                                  exit={{ height: 0, opacity: 0 }}
+                                  className="overflow-hidden space-y-4"
+                                >
+                                  <div className="grid md:grid-cols-2 gap-4 pt-2">
+                                    <div className="space-y-2">
+                                      <Label htmlFor="org-name" className="text-xs font-bold text-white/50">Organization Name</Label>
+                                      <Input id="org-name" placeholder="Venture Co." className="bg-white/5 border-white/10 h-11 rounded-xl" />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor="org-role" className="text-xs font-bold text-white/50">Your Role</Label>
+                                      <Input id="org-role" placeholder="Partner" className="bg-white/5 border-white/10 h-11 rounded-xl" />
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-4">
