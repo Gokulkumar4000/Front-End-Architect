@@ -1,0 +1,211 @@
+Do NOT switch to Autonomous mode.
+Do NOT redesign layout.
+Do NOT refactor routing or authentication.
+Do NOT add backend logic.
+
+This task is ONLY to:
+- FIX THE ORDER OF ROLE FLOW
+- RESTORE DETAILED ROLE STEPS
+- KEEP ALL PREVIOUS BEHAVIOR FIXES SAME
+
+----------------------------------
+GOAL OF THIS FIX
+----------------------------------
+The onboarding flow must follow this STRICT ORDER:
+
+1️⃣ User selects a ROLE (Role cards)
+2️⃣ User sees DETAILED ROLE OVERVIEW (steps)
+3️⃣ User clicks “Continue”
+4️⃣ Registration steps begin
+
+NO registration form should appear
+before role explanation.
+
+----------------------------------
+PART 1 – ROLE SELECTION (FIRST SCREEN)
+----------------------------------
+
+After clicking “Sign Up”:
+
+- Show THREE ROLE CARDS:
+  - Idea Holder
+  - Developer
+  - Investor
+
+Each role card shows:
+- Role icon
+- Role name
+- 4–5 bullet points explaining the role
+
+🧠 IDEA HOLDER – ROLE CARD
+• Post ideas or problem statements securely  
+• Measure real-world necessity  
+• Attract investors and developers  
+• Collaborate to build solutions  
+• Sell, fundraise, or build ideas  
+
+💻 DEVELOPER – ROLE CARD
+• Explore ideas and startup projects  
+• Collaborate with other developers  
+• Apply for full-time or part-time roles  
+• Build MVPs and real products  
+• Raise funds for your own ideas  
+
+💼 INVESTOR – ROLE CARD
+• Discover innovative ideas  
+• Analyze necessity and demand  
+• Fund promising projects  
+• Recruit skilled developers  
+• Build an investment portfolio  
+
+On clicking a role:
+- Selected role card moves to LEFT
+- Other role cards fade out
+- DO NOT show any form yet
+
+----------------------------------
+PART 2 – ROLE OVERVIEW (SECOND SCREEN)
+----------------------------------
+
+After role selection, show a FULL ROLE OVERVIEW
+on the RIGHT SIDE.
+
+Title:
+“Your Journey as a <Role Name>”
+
+Show ALL STEPS AT ONCE (not paginated).
+
+----------------------------------
+ROLE OVERVIEW CONTENT (MANDATORY)
+----------------------------------
+
+🧠 IDEA HOLDER – STEPS
+
+1. Post Your Idea  
+   Share ideas or problem statements securely without exposing full details.
+
+2. Measure Real-World Necessity  
+   Track interest from users, developers, and investors.
+
+3. Attract Collaboration  
+   Allow developers to approach you to build solutions.
+
+4. Secure Funding  
+   Pitch your idea to investors or raise funds.
+
+5. Build or Transfer Ownership  
+   Build the idea yourself or sell it to others.
+
+----------------------------------
+
+💻 DEVELOPER – STEPS
+
+1. Discover Ideas & Projects  
+   Explore startup ideas and open projects on the platform.
+
+2. Collaborate with Teams  
+   Join teams or work with other developers.
+
+3. Apply for Opportunities  
+   Apply for full-time, part-time, or contract roles.
+
+4. Build MVPs & Products  
+   Work on real-world products and startups.
+
+5. Launch or Fundraise  
+   Raise funds for your own ideas and scale projects.
+
+----------------------------------
+
+💼 INVESTOR – STEPS
+
+1. Explore Ideas  
+   Browse innovative ideas and problem statements.
+
+2. Analyze Market Need  
+   Evaluate necessity, traction, and interest.
+
+3. Fund Projects  
+   Invest in promising ideas and startups.
+
+4. Recruit Developers  
+   Build teams to execute funded ideas.
+
+5. Grow Portfolio  
+   Track and manage your startup investments.
+
+----------------------------------
+ROLE OVERVIEW ACTION
+----------------------------------
+
+At the bottom of role overview:
+- Button:
+  “Continue as <Role Name>”
+
+ONLY after clicking this button
+should registration begin.
+
+----------------------------------
+PART 3 – REGISTRATION FLOW (UNCHANGED)
+----------------------------------
+
+- Step-based registration (category-based)
+- NO step numbers
+- ONLY form content changes with animation
+- Header, tabs, role card stay STATIC
+
+----------------------------------
+PART 4 – ANIMATION & RENDER RULES (UNCHANGED)
+----------------------------------
+
+- DevConnect header MUST NOT re-render
+- Login / SignUp tabs MUST NOT move
+- Left role card MUST NOT animate again
+- ONLY the right content panel animates
+- Use subtle fade / slide ONLY for inner content
+
+----------------------------------
+PART 5 – INFO TOOLTIP RULE (UNCHANGED)
+----------------------------------
+
+- “Your journey as <Role>” info text
+  should NOT be visible by default
+
+- Show ONLY a small “!” icon
+  at top-right corner of form panel
+
+- Tooltip appears ONLY on hover / tap
+- Floating tooltip, dark theme, purple accent
+
+----------------------------------
+PART 6 – RESPONSIVENESS (UNCHANGED)
+----------------------------------
+
+Mobile:
+- Role card collapses into summary
+- Role overview scrolls internally
+- Forms remain focused
+
+Desktop:
+- Role card fixed left
+- Content updates on right
+
+----------------------------------
+STRICT RULES
+----------------------------------
+- UI-only
+- No backend
+- No auth logic
+- No routing changes
+- No full-page re-renders
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+- Correct onboarding order
+- Role clearly explained BEFORE registration
+- No UI jumping or re-rendering
+- Stable, premium onboarding experience
+- Perfect final-year demo flow
+
+Proceed ONLY with this ordered role flow fix.

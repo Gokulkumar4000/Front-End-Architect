@@ -41,14 +41,20 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 type AuthMode = "login" | "signup";
 type UserRole = "idea-holder" | "developer" | "investor";
+type OnboardingStep = "role-selection" | "role-overview" | "registration";
 
 // Categories for the new multi-step flow
 type SignupStep = 
-  | "role-selection" 
   | "basic-profile" 
   | "professional-identity" 
   | "working-preferences" 
@@ -64,10 +70,17 @@ const roles = [
     icon: Lightbulb,
     bullets: [
       "Post ideas or problem statements securely",
-      "Measure real-world necessity and demand",
-      "Attract investors based on interest",
-      "Collaborate with skilled developers",
-      "Build, sell, or fundraise for ideas"
+      "Measure real-world necessity",
+      "Attract investors and developers",
+      "Collaborate to build solutions",
+      "Sell, fundraise, or build ideas"
+    ],
+    overviewSteps: [
+      { title: "Post Your Idea", desc: "Share ideas or problem statements securely without exposing full details." },
+      { title: "Measure Real-World Necessity", desc: "Track interest from users, developers, and investors." },
+      { title: "Attract Collaboration", desc: "Allow developers to approach you to build solutions." },
+      { title: "Secure Funding", desc: "Pitch your idea to investors or raise funds." },
+      { title: "Build or Transfer Ownership", desc: "Build the idea yourself or sell it to others." }
     ],
     journeyContext: {
       "basic-profile": "Idea holders start by introducing themselves so others know who's behind the vision.",
@@ -89,6 +102,13 @@ const roles = [
       "Build MVPs and real products",
       "Raise funds for your own ideas"
     ],
+    overviewSteps: [
+      { title: "Discover Ideas & Projects", desc: "Explore startup ideas and open projects on the platform." },
+      { title: "Collaborate with Teams", desc: "Join teams or work with other developers." },
+      { title: "Apply for Opportunities", desc: "Apply for full-time, part-time, or contract roles." },
+      { title: "Build MVPs & Products", desc: "Work on real-world products and startups." },
+      { title: "Launch or Fundraise", desc: "Raise funds for your own ideas and scale projects." }
+    ],
     journeyContext: {
       "basic-profile": "Developers provide basic details to build a professional identity within the ecosystem.",
       "professional-identity": "Investors and founders look at technical domains to match skills with project needs.",
@@ -103,11 +123,18 @@ const roles = [
     title: "INVESTOR",
     icon: Briefcase,
     bullets: [
-      "Discover high-potential ideas",
-      "Analyze necessity and market demand",
+      "Discover innovative ideas",
+      "Analyze necessity and demand",
       "Fund promising projects",
       "Recruit skilled developers",
-      "Build and manage a startup portfolio"
+      "Build an investment portfolio"
+    ],
+    overviewSteps: [
+      { title: "Explore Ideas", desc: "Browse innovative ideas and problem statements." },
+      { title: "Analyze Market Need", desc: "Evaluate necessity, traction, and interest." },
+      { title: "Fund Projects", desc: "Invest in promising ideas and startups." },
+      { title: "Recruit Developers", desc: "Build teams to execute funded ideas." },
+      { title: "Grow Portfolio", desc: "Track and manage your startup investments." }
     ],
     journeyContext: {
       "basic-profile": "Investors introduce themselves to start building relationships with innovative founders.",
@@ -125,7 +152,8 @@ export default function Auth() {
   const initialMode: AuthMode = location.includes("register") ? "signup" : "login";
   
   const [mode, setMode] = useState<AuthMode>(initialMode);
-  const [signupStep, setSignupStep] = useState<SignupStep>("role-selection");
+  const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>(initialMode === "signup" ? "role-selection" : "registration");
+  const [signupStep, setSignupStep] = useState<SignupStep>("basic-profile");
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [formData, setFormData] = useState<any>({});
   const [isRoleCardExpanded, setIsRoleCardExpanded] = useState(false);
@@ -143,18 +171,25 @@ export default function Auth() {
   const handleModeToggle = (newMode: AuthMode) => {
     setMode(newMode);
     if (newMode === "login") {
-      setSignupStep("role-selection");
+      setOnboardingStep("registration");
+      setSelectedRole(null);
+    } else {
+      setOnboardingStep("role-selection");
       setSelectedRole(null);
     }
   };
 
   const handleRoleSelect = (roleId: UserRole) => {
     setSelectedRole(roleId);
+    setOnboardingStep("role-overview");
+  };
+
+  const handleStartRegistration = () => {
+    setOnboardingStep("registration");
     setSignupStep("basic-profile");
   };
 
   const steps: SignupStep[] = [
-    "role-selection",
     "basic-profile",
     "professional-identity",
     "working-preferences",
@@ -175,15 +210,20 @@ export default function Auth() {
     const currentIndex = steps.indexOf(signupStep);
     if (currentIndex > 0) {
       setSignupStep(steps[currentIndex - 1]);
+    } else {
+      setOnboardingStep("role-overview");
     }
   };
 
-  const renderRoleCard = () => {
+  const renderRoleCard = (isFixed: boolean = false) => {
     if (!selectedRole) return null;
     const role = roles.find(r => r.id === selectedRole)!;
 
     return (
-      <Card className="glass-card border-primary/20 bg-primary/5 sticky top-4">
+      <Card className={cn(
+        "glass-card border-primary/20 bg-primary/5",
+        isFixed && "sticky top-4"
+      )}>
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
@@ -207,7 +247,7 @@ export default function Auth() {
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={() => setSignupStep("role-selection")} 
+            onClick={() => setOnboardingStep("role-selection")} 
             className="w-full text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-primary mt-2"
           >
             Change Role
@@ -217,26 +257,8 @@ export default function Auth() {
     );
   };
 
-  const renderRoleJourneyContext = () => {
-    if (!selectedRole || signupStep === "role-selection" || signupStep === "summary") return null;
-    const role = roles.find(r => r.id === selectedRole)!;
-    const context = (role.journeyContext as any)[signupStep];
-
-    return (
-      <div className="mb-6 p-4 bg-primary/5 border border-primary/10 rounded-xl animate-in fade-in slide-in-from-left-4 duration-500">
-        <div className="flex gap-3">
-          <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <p className="text-xs font-bold text-primary uppercase tracking-wider">Your journey as a {role.title}</p>
-            <p className="text-xs text-muted-foreground leading-relaxed">{context}</p>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const renderStepHeader = (title: string, description: string) => (
-    <div className="text-center space-y-2 mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
+    <div className="text-center space-y-2 mb-8">
       <h2 className="text-3xl font-display font-bold text-gradient-primary">{title}</h2>
       <p className="text-muted-foreground">{description}</p>
     </div>
@@ -297,8 +319,8 @@ export default function Auth() {
               </Card>
             </motion.div>
           ) : (
-            <motion.div key={signupStep} variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
-              {signupStep === "role-selection" ? (
+            <motion.div key={onboardingStep + (selectedRole || "")} variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
+              {onboardingStep === "role-selection" && (
                 <div className="space-y-8 max-w-5xl mx-auto">
                   {renderStepHeader("Choose Your Path", "Select your role to start your journey on DevConnect.")}
                   <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -323,14 +345,53 @@ export default function Auth() {
                     ))}
                   </div>
                 </div>
-              ) : (
+              )}
+
+              {onboardingStep === "role-overview" && selectedRole && (
                 <div className="grid lg:grid-cols-[300px_1fr] gap-8 max-w-5xl mx-auto items-start">
-                  {/* Left Side: Role Card (Desktop) */}
-                  <div className="hidden lg:block sticky top-8">
+                  <div className="hidden lg:block">
                     {renderRoleCard()}
                   </div>
+                  <Card className="glass-card border-white/5 overflow-hidden">
+                    <CardContent className="p-8 space-y-8">
+                      {(() => {
+                        const role = roles.find(r => r.id === selectedRole)!;
+                        return (
+                          <>
+                            <div className="space-y-2">
+                              <h2 className="text-2xl font-display font-bold text-gradient-primary">Your Journey as a {role.title}</h2>
+                              <p className="text-muted-foreground">Here's how DevConnect works for you.</p>
+                            </div>
+                            <div className="space-y-6">
+                              {role.overviewSteps.map((step, idx) => (
+                                <div key={idx} className="flex gap-4">
+                                  <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 font-bold text-primary text-xs">
+                                    {idx + 1}
+                                  </div>
+                                  <div className="space-y-1">
+                                    <h4 className="font-bold text-sm">{step.title}</h4>
+                                    <p className="text-xs text-muted-foreground leading-relaxed">{step.desc}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                            <Button onClick={handleStartRegistration} className="w-full py-6 font-bold shadow-lg shadow-primary/20">
+                              Continue as {role.title}
+                            </Button>
+                          </>
+                        );
+                      })()}
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
 
-                  {/* Mobile Role Summary (Collapsible) */}
+              {onboardingStep === "registration" && selectedRole && (
+                <div className="grid lg:grid-cols-[300px_1fr] gap-8 max-w-5xl mx-auto items-start">
+                  <div className="hidden lg:block sticky top-8">
+                    {renderRoleCard(true)}
+                  </div>
+                  
                   <div className="lg:hidden w-full mb-4">
                     <Button 
                       variant="outline" 
@@ -366,12 +427,29 @@ export default function Auth() {
                     </AnimatePresence>
                   </div>
 
-                  {/* Main Form Area */}
                   <div className="w-full">
                     <Card className="glass-card border-white/5 overflow-hidden">
-                      <CardContent className="p-6 md:p-8">
-                        {renderRoleJourneyContext()}
-                        
+                      <CardContent className="p-6 md:p-8 relative">
+                        <div className="absolute right-4 top-4 z-10">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="w-6 h-6 rounded-full bg-primary/10 hover:bg-primary/20">
+                                  <Info className="w-3.5 h-3.5 text-primary" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent className="glass-card border-primary/20 max-w-xs p-4 bg-background/95 backdrop-blur-md">
+                                <div className="space-y-1">
+                                  <p className="text-xs font-bold text-primary uppercase tracking-wider">Your journey as a {roles.find(r => r.id === selectedRole)?.title}</p>
+                                  <p className="text-xs text-muted-foreground leading-relaxed">
+                                    {(roles.find(r => r.id === selectedRole)?.journeyContext as any)[signupStep]}
+                                  </p>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+
                         {signupStep === "basic-profile" && (
                           <>
                             {renderStepHeader("Basic Profile Details", "Tell us who you are")}
@@ -801,13 +879,13 @@ export default function Auth() {
                             Back
                           </Button>
                           <div className="flex gap-2">
-                            {steps.slice(1).map((s, idx) => (
+                            {steps.map((s, idx) => (
                               <div 
                                 key={s} 
                                 className={cn(
                                   "h-1.5 rounded-full transition-all duration-300",
-                                  steps.indexOf(signupStep) > idx + 1 ? "w-6 bg-primary/40" : 
-                                  steps.indexOf(signupStep) === idx + 1 ? "w-10 bg-primary" : "w-2 bg-white/10"
+                                  steps.indexOf(signupStep) > idx ? "w-6 bg-primary/40" : 
+                                  steps.indexOf(signupStep) === idx ? "w-10 bg-primary" : "w-2 bg-white/10"
                                 )} 
                               />
                             ))}
