@@ -1,0 +1,145 @@
+Do NOT switch to Autonomous mode.
+Do NOT redesign UI.
+Do NOT change layout structure.
+Do NOT change content text.
+Do NOT change colors or theme.
+Do NOT touch routing or auth.
+Do NOT add or remove steps.
+
+This task is ONLY to FIX FLOW ORDER,
+SCROLL BEHAVIOR, and INPUT UX.
+
+----------------------------------
+PART 1 – ROLE STEPS MUST ALWAYS COME FIRST
+----------------------------------
+
+CURRENT BUG:
+- Sometimes registration opens directly
+- Role journey step is skipped
+
+FIX (MANDATORY):
+After role selection:
+
+1️⃣ ALWAYS show:
+   “Your Journey as <ROLE>” page FIRST
+
+2️⃣ Registration MUST NOT appear
+   until user clicks:
+   “Continue as <ROLE>”
+
+3️⃣ Registration must NEVER auto-open
+
+Implementation rule:
+- Use an explicit state like:
+  `view = "role-overview" | "registration"`
+- Default after role select = role-overview
+
+This applies to ALL roles.
+
+----------------------------------
+PART 2 – REGISTRATION SCROLL BEHAVIOR
+----------------------------------
+
+CURRENT ISSUE:
+- Scrollbar appears even when not needed
+- Default browser scrollbar looks bad
+
+FIX:
+- Registration card should have:
+  - Fixed height
+  - Internal scroll ONLY when content exceeds height
+
+Scrollbar styling rules:
+- Thin scrollbar
+- Rounded thumb
+- Dark background
+- Purple accent
+- Minimal visibility
+
+DO NOT show full browser scrollbar.
+DO NOT allow page-level scrolling.
+
+----------------------------------
+PART 3 – SCROLLBAR VISIBILITY RULE
+----------------------------------
+
+If content does NOT overflow:
+- NO scrollbar should appear
+
+If content overflows:
+- Show styled scrollbar ONLY inside form card
+
+----------------------------------
+PART 4 – “+” ICON INPUT BEHAVIOR (CRITICAL)
+----------------------------------
+
+CURRENT ISSUE:
+- “+” looks like another input
+- Always visible
+- Not clean UX
+
+FIX BEHAVIOR:
+- “+” must be an ICON BUTTON (not input)
+- Clicking “+” should:
+  - Reveal ONE small search input BELOW
+  - Auto-focus the input
+  - Allow search & select
+- After selection:
+  - Input collapses
+  - Value is added as a tag / chip
+- “+” remains available for adding more
+
+DO NOT show multiple inputs by default.
+
+----------------------------------
+PART 5 – SEARCHABLE INPUT STYLING
+----------------------------------
+
+For searchable fields (domains, skills, interests):
+
+- Custom dropdown (not native)
+- Styled to match dark theme
+- Smooth open / close animation
+- No default select UI
+- Keyboard typing filters results
+
+----------------------------------
+PART 6 – REGISTRATION FORM SIZE & ALIGNMENT
+----------------------------------
+
+Ensure:
+- Registration card size NEVER changes
+- Inputs align consistently
+- No layout jump on Next / Back
+- Content scrolls INSIDE card if needed
+
+----------------------------------
+PART 7 – NO GLOBAL RE-RENDER (REPEAT)
+----------------------------------
+
+- Header stays fixed
+- Login / SignUp toggle stays fixed
+- Role card stays fixed
+- ONLY inner right content changes
+
+----------------------------------
+STRICT DO-NOT-LIST
+----------------------------------
+❌ Do NOT redesign
+❌ Do NOT remove steps
+❌ Do NOT add steps
+❌ Do NOT change text
+❌ Do NOT change colors
+❌ Do NOT change layout
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+✅ Role journey ALWAYS shown first  
+✅ Registration never skips role steps  
+✅ Clean, styled scrollbar only when needed  
+✅ “+” behaves like add-more, not input  
+✅ No default browser UI visible  
+✅ Stable, professional onboarding flow  
+
+Proceed ONLY with these fixes.
