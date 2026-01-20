@@ -1,0 +1,118 @@
+Do NOT switch to Autonomous mode.
+Do NOT redesign UI.
+Do NOT change layout structure.
+Do NOT change colors or typography.
+Do NOT remove or add steps.
+Do NOT touch routing, auth, or backend.
+Do NOT change animations.
+
+This task is ONLY to FIX VISUAL BEHAVIOR
+and FINAL STEP UX.
+
+----------------------------------
+PART 1 – INPUT FOCUS VISIBILITY FIX
+----------------------------------
+
+CURRENT ISSUE:
+- When interacting with inputs on the LEFT side of the form,
+  the purple focus border/glow is partially hidden or clipped.
+
+FIX:
+- Ensure focused input styles (border + glow)
+  are FULLY visible on all sides.
+
+Implementation rules:
+- Remove clipping caused by parent overflow
+- Adjust padding or z-index ONLY where needed
+- Focus ring must never be cut off
+- Keep existing purple focus style EXACTLY the same
+
+----------------------------------
+PART 2 – FINAL STEP BUTTON BEHAVIOR
+----------------------------------
+
+CURRENT ISSUE:
+- “Next” button still appears on last step
+
+FIX:
+- On the FINAL STEP ONLY:
+  - Replace “Next” button with:
+    “Create Account as <ROLE>”
+  - Button position remains exactly the same
+  - No layout shift
+
+DO NOT show both buttons together.
+
+----------------------------------
+PART 3 – SUMMARY PREVIEW CONTENT (MANDATORY)
+----------------------------------
+
+CURRENT ISSUE:
+- Summary preview shows only partial data
+
+FIX:
+Summary Preview MUST display:
+- Full name
+- Email
+- Role
+- Location
+- Timezone
+- All role-specific fields filled earlier
+  (domains, experience, goals, interests, etc.)
+
+Display rules:
+- Read-only
+- Clean label + value layout
+- No editable fields
+
+----------------------------------
+PART 4 – SUMMARY PREVIEW SIZE & SCROLL
+----------------------------------
+
+CURRENT ISSUE:
+- Summary box resizes based on content
+
+FIX:
+- Summary preview card must have FIXED HEIGHT
+- Content scrolls INSIDE the card
+- Page itself must NOT scroll
+
+Scrollbar styling (MANDATORY):
+- Thin scrollbar
+- Rounded thumb
+- Dark track
+- Purple accent
+- No default browser scrollbar
+
+----------------------------------
+PART 5 – SCROLLBAR VISIBILITY RULE
+----------------------------------
+
+- Scrollbar appears ONLY if content overflows
+- Scrollbar is INTERNAL to summary card
+- Scrollbar styling matches rest of app
+
+----------------------------------
+PART 6 – DO NOT CHANGE ANYTHING ELSE
+----------------------------------
+
+DO NOT:
+- Change role cards
+- Change step order
+- Change animations
+- Change tooltip behavior
+- Change form layout
+- Change spacing
+- Change theme
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+✅ Focus border always visible  
+✅ Final step shows “Create Account” button  
+✅ Summary shows ALL entered data  
+✅ Summary card is fixed-size  
+✅ Scrollable summary with styled scrollbar  
+✅ Zero layout jumps  
+
+Proceed ONLY with these fixes.
