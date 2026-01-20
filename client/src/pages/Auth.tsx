@@ -1165,7 +1165,7 @@ export default function Auth() {
                                   <SummaryField label="Timezone" value={formData.timezone} />
                                 </div>
 
-                                <div className="space-y-6 pt-2 border-t border-white/5">
+                                <div className="space-y-6 pt-2 border-t border-white/5 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
                                   {selectedRole === "idea-holder" && (
                                     <>
                                       <SummaryField label="Interests" value={formData.interests} />
