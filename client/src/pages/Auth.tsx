@@ -156,8 +156,44 @@ const roles = [
   }
 ];
 
-const DOMAINS = ["FinTech", "SaaS", "AI/ML", "HealthTech", "Web3", "E-commerce", "CleanTech", "EdTech"];
-const TECH_STACK = ["React", "Node.js", "Python", "Rust", "Go", "AWS", "Firebase", "PostgreSQL", "TailwindCSS"];
+const DOMAINS = [
+  "AI / ML",
+  "Web Development",
+  "Mobile App Development",
+  "FinTech",
+  "HealthTech",
+  "EdTech",
+  "Blockchain / Web3",
+  "Cloud & DevOps",
+  "Cyber Security",
+  "Data Science"
+];
+
+const TECH_STACK = [
+  "React",
+  "Next.js",
+  "Node.js",
+  "Express",
+  "Firebase",
+  "MongoDB",
+  "PostgreSQL",
+  "Python",
+  "Java",
+  "Spring Boot",
+  "Flutter",
+  "React Native",
+  "AWS",
+  "Docker",
+  "Kubernetes"
+];
+
+const STATUS_OPTIONS = [
+  "Student",
+  "Working Professional",
+  "Freelancer",
+  "Founder",
+  "Looking for Opportunities"
+];
 
 interface SearchableInputProps {
   label: string;
@@ -169,6 +205,8 @@ interface SearchableInputProps {
 
 function SearchableInputOverlay({ placeholder, options, onSelect, onClose }: SearchableInputProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const inputRef = useState<HTMLInputElement | null>(null);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       document.getElementById('search-input-focus')?.focus();
@@ -177,13 +215,14 @@ function SearchableInputOverlay({ placeholder, options, onSelect, onClose }: Sea
   }, []);
 
   const filteredOptions = useMemo(() => {
+    if (!searchTerm.trim()) return options.slice(0, 5);
     return options.filter(opt => opt.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [options, searchTerm]);
 
   return (
-    <div className="absolute inset-0 z-[100] bg-background/95 backdrop-blur-md p-4 rounded-xl border border-primary/20 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200">
+    <div className="absolute left-0 right-0 top-full mt-2 z-[100] bg-background/95 backdrop-blur-md p-4 rounded-xl border border-primary/20 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200 shadow-2xl">
       <div className="flex items-center justify-between">
-        <h4 className="text-xs font-bold text-primary uppercase tracking-widest">Select {placeholder}</h4>
+        <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest">Select {placeholder}</h4>
         <Button variant="ghost" size="icon" onClick={onClose} className="h-6 w-6 rounded-full">
           <X className="w-3 h-3" />
         </Button>
@@ -192,30 +231,31 @@ function SearchableInputOverlay({ placeholder, options, onSelect, onClose }: Sea
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input 
           id="search-input-focus"
-          className="pl-10 bg-white/5 border-white/10 h-11"
-          placeholder="Search..."
+          className="pl-10 bg-white/5 border-white/10 h-11 focus-visible:ring-primary/20"
+          placeholder={`Search ${placeholder}...`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          autoComplete="off"
         />
       </div>
-      <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 flex flex-wrap gap-2 content-start">
+      <div className="max-h-[200px] overflow-y-auto custom-scrollbar pr-2 flex flex-col gap-1">
         {filteredOptions.length > 0 ? (
           filteredOptions.map(opt => (
             <Button 
               key={opt} 
-              variant="outline" 
+              variant="ghost" 
               size="sm"
               onClick={() => {
                 onSelect(opt);
                 onClose();
               }}
-              className="bg-white/5 border-white/10 hover:border-primary/50 text-xs"
+              className="justify-start hover:bg-primary/10 hover:text-primary text-xs h-9 transition-all"
             >
               {opt}
             </Button>
           ))
         ) : (
-          <div className="text-[10px] text-muted-foreground w-full text-center py-4">No results found</div>
+          <div className="text-[10px] text-muted-foreground w-full text-center py-4">No results found for "{searchTerm}"</div>
         )}
       </div>
     </div>
@@ -825,9 +865,9 @@ export default function Auth() {
                                                 <SelectValue placeholder="Select status" />
                                               </SelectTrigger>
                                               <SelectContent className="z-[70]">
-                                                <SelectItem value="student">Student</SelectItem>
-                                                <SelectItem value="professional">Working Professional</SelectItem>
-                                                <SelectItem value="freelancer">Freelancer</SelectItem>
+                                                {STATUS_OPTIONS.map(opt => (
+                                                  <SelectItem key={opt} value={opt.toLowerCase().replace(/ /g, "-")}>{opt}</SelectItem>
+                                                ))}
                                               </SelectContent>
                                             </Select>
                                           </div>
@@ -1165,41 +1205,50 @@ export default function Auth() {
                                   <SummaryField label="Timezone" value={formData.timezone} />
                                 </div>
 
-                                <div className="space-y-6 pt-2 border-t border-white/5 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-                                  {selectedRole === "idea-holder" && (
-                                    <>
-                                      <SummaryField label="Interests" value={formData.interests} />
-                                      <SummaryField label="Problem Domains" value={formData.problemDomains} />
-                                      <SummaryField label="Worked on ideas" value={formData.prevIdeas} />
-                                    </>
-                                  )}
-                                  {selectedRole === "developer" && (
-                                    <>
-                                      <SummaryField label="Tech Domains" value={formData.interests} />
-                                      <SummaryField label="Tech Stack" value={formData.skills} />
-                                      <SummaryField label="Status" value={formData.status} />
-                                      <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
-                                    </>
-                                  )}
-                                  {selectedRole === "investor" && (
-                                    <>
-                                      <SummaryField label="Category" value={formData.investorCat} />
-                                      <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
-                                      <SummaryField label="Focus Sectors" value={formData.interests} />
-                                      <SummaryField label="Investment Stages" value={formData.investmentStage} />
-                                    </>
-                                  )}
-                                  
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <SummaryField label="Work Preference" value={formData.workPref} />
-                                    <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
+                                  <div className="space-y-6 pt-2 border-t border-white/5 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                      <SummaryField label="Full Name" value={formData.fullName} />
+                                      <SummaryField label="Email" value={formData.email} />
+                                      <SummaryField label="Location" value={formData.location} />
+                                      <SummaryField label="Timezone" value={formData.timezone} />
+                                    </div>
+
+                                    <div className="space-y-6 pt-2 border-t border-white/5">
+                                      {selectedRole === "idea-holder" && (
+                                        <>
+                                          <SummaryField label="Interests" value={formData.interests} />
+                                          <SummaryField label="Problem Domains" value={formData.problemDomains} />
+                                          <SummaryField label="Worked on ideas" value={formData.prevIdeas} />
+                                        </>
+                                      )}
+                                      {selectedRole === "developer" && (
+                                        <>
+                                          <SummaryField label="Tech Domains" value={formData.interests} />
+                                          <SummaryField label="Tech Stack" value={formData.skills} />
+                                          <SummaryField label="Status" value={formData.status} />
+                                          <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
+                                        </>
+                                      )}
+                                      {selectedRole === "investor" && (
+                                        <>
+                                          <SummaryField label="Category" value={formData.investorCat} />
+                                          <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
+                                          <SummaryField label="Focus Sectors" value={formData.interests} />
+                                          <SummaryField label="Investment Stages" value={formData.investmentStage} />
+                                        </>
+                                      )}
+                                      
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <SummaryField label="Work Preference" value={formData.workPref} />
+                                        <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
+                                      </div>
+                                      
+                                      <SummaryField label="Bio" value={formData.bio} />
+                                      <SummaryField label="Tagline" value={formData.tagline} />
+                                      <SummaryField label="Objectives" value={formData.objectives} />
+                                      <SummaryField label="Success Definition" value={formData.successDefinition} />
+                                    </div>
                                   </div>
-                                  
-                                  <SummaryField label="Bio" value={formData.bio} />
-                                  <SummaryField label="Tagline" value={formData.tagline} />
-                                  <SummaryField label="Objectives" value={formData.objectives} />
-                                  <SummaryField label="Success Definition" value={formData.successDefinition} />
-                                </div>
                               </div>
                             </div>
                                   </div>

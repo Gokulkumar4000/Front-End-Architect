@@ -1,0 +1,167 @@
+STOP.
+Do not redesign anything.
+Do not refactor structure.
+Do not change layout or colors.
+
+This task is ONLY to MAKE EXISTING INPUTS WORK
+using MOCK DATA and SIMPLE LOGIC.
+
+================================
+GLOBAL RULES
+================================
+- UI only
+- Mock data only
+- No backend
+- No API
+- No libraries
+- Use simple arrays
+
+================================
+PART 1 — DEFINE MOCK DATA (MANDATORY)
+================================
+
+Create STATIC mock arrays in the same file
+(or a simple constants file).
+
+Use EXACTLY this data.
+
+--------------------------------
+TECHNICAL DOMAINS (array)
+--------------------------------
+[
+  "AI / ML",
+  "Web Development",
+  "Mobile App Development",
+  "FinTech",
+  "HealthTech",
+  "EdTech",
+  "Blockchain / Web3",
+  "Cloud & DevOps",
+  "Cyber Security",
+  "Data Science"
+]
+
+--------------------------------
+TECH STACK / SKILLS (array)
+--------------------------------
+[
+  "React",
+  "Next.js",
+  "Node.js",
+  "Express",
+  "Firebase",
+  "MongoDB",
+  "PostgreSQL",
+  "Python",
+  "Java",
+  "Spring Boot",
+  "Flutter",
+  "React Native",
+  "AWS",
+  "Docker",
+  "Kubernetes"
+]
+
+--------------------------------
+CURRENT STATUS (array)
+--------------------------------
+[
+  "Student",
+  "Working Professional",
+  "Freelancer",
+  "Founder",
+  "Looking for Opportunities"
+]
+
+================================
+PART 2 — TECHNICAL DOMAIN INPUT BEHAVIOR
+================================
+
+Current UI must remain SAME.
+
+When user clicks the "+" icon:
+1. Show a SMALL search input below the field
+2. Auto-focus the search input
+3. User types → filter domain array
+4. Show matching results as a dropdown list
+5. Clicking a result:
+   - Adds it as a TAG inside the field
+   - Closes search input
+6. "+" icon remains visible for adding more
+
+Rules:
+- Multiple domains allowed
+- No empty selection
+- No default browser select
+- Fully styled dropdown
+
+================================
+PART 3 — TECH STACK / SKILLS INPUT BEHAVIOR
+================================
+
+Same behavior as Technical Domains:
+- "+" opens search box
+- Typing filters skills array
+- Clicking adds a tag
+- Tags removable with "×"
+
+================================
+PART 4 — DROPDOWN MUST ACTUALLY SHOW OPTIONS
+================================
+
+For dropdown lists:
+- Render options from mock arrays
+- Do NOT leave dropdown empty
+- Do NOT show placeholder-only UI
+- At least 5 options visible
+
+================================
+PART 5 — SEARCH MUST RETURN RESULTS
+================================
+
+If user types:
+- "ai" → show "AI / ML"
+- "web" → show "Web Development"
+- "react" → show "React"
+
+Case-insensitive matching.
+
+================================
+PART 6 — SUMMARY PAGE MUST USE ENTERED DATA
+================================
+
+Summary Preview MUST read values from state:
+
+Show:
+- Selected domains
+- Selected skills
+- Current status
+- Experience years
+
+DO NOT show "N/A" if value exists.
+
+================================
+PART 7 — DO NOT CHANGE ANYTHING ELSE
+================================
+
+Do NOT:
+- Change step flow
+- Change layout
+- Change role summary
+- Change animations
+- Change scrollbar styles
+- Change button positions
+
+================================
+EXPECTED RESULT
+================================
+
+✅ "+" opens a real search input  
+✅ Search shows real options  
+✅ Clicking selects values  
+✅ Tags appear correctly  
+✅ Summary shows selected data  
+✅ No empty dropdowns  
+
+Implement EXACTLY this.
+STOP after completion.
