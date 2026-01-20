@@ -399,6 +399,41 @@ export default function Auth() {
     }
   };
 
+  const renderSummary = () => {
+    const role = roles.find(r => r.id === selectedRole)!;
+    return (
+      <div className="space-y-6">
+        <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
+          <h3 className="text-lg font-bold mb-4">Registration Summary</h3>
+          <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
+            <SummaryField label="Role" value={role.title} />
+            <SummaryField label="Full Name" value={formData.fullName} />
+            <SummaryField label="Email" value={formData.email} />
+            <SummaryField label="Location" value={formData.location} />
+            <SummaryField label="Timezone" value={formData.timezone} />
+            <SummaryField label="Bio" value={formData.bio} />
+            <SummaryField label="Tagline" value={formData.tagline} />
+            <SummaryField label="Experience" value={formData.experience} />
+            <SummaryField label="Skills" value={formData.skills} />
+            <SummaryField label="Interests" value={formData.interests} />
+            <SummaryField label="Problem Domains" value={formData.problemDomains} />
+            <SummaryField label="Work Preference" value={formData.workPref} />
+            <SummaryField label="Availability" value={formData.availability} />
+            {formData.isOrg === "yes" && (
+              <>
+                <SummaryField label="Organization" value={formData.orgName} />
+                <SummaryField label="Org Role" value={formData.orgRole} />
+                <SummaryField label="Org Type" value={formData.orgType} />
+              </>
+            )}
+            <SummaryField label="Objectives" value={formData.objectives} />
+            <SummaryField label="Success Definition" value={formData.successDefinition} />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderRoleCard = (isFixed: boolean = false) => {
     if (!selectedRole) return null;
     const role = roles.find(r => r.id === selectedRole)!;
@@ -568,6 +603,7 @@ export default function Auth() {
                               </Button>
                               <Button onClick={handleStartRegistration} className="font-bold h-11 px-8 shadow-lg shadow-primary/20">
                                 Continue as {role.title}
+                                <ArrowRight className="w-4 h-4 ml-2" />
                               </Button>
                             </div>
                           </>
@@ -1106,97 +1142,66 @@ export default function Auth() {
                                 <>
                                   {renderStepHeader("Summary Preview", "Review your details before joining")}
                                   <div className="space-y-6 max-w-2xl mx-auto flex-1 overflow-hidden flex flex-col h-full">
-                                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-3 space-y-6">
-                                      {/* Identity Card */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
-                                        <div className="flex justify-between items-start pb-4 border-b border-white/10">
-                                          <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20">
-                                              <User className="w-6 h-6 text-primary" />
-                                            </div>
-                                            <div>
-                                              <h4 className="font-bold text-lg">{formData.fullName || "N/A"}</h4>
-                                              <p className="text-xs text-muted-foreground">{formData.email || "N/A"}</p>
-                                            </div>
-                                          </div>
-                                          <Badge className="bg-primary/20 text-primary border-primary/20 uppercase text-[10px] font-bold h-6 px-3">
-                                            {selectedRole?.replace("-", " ")}
-                                          </Badge>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-y-6 gap-x-8 pt-2">
-                                          <SummaryField label="Location" value={formData.location?.toUpperCase()} />
-                                          <SummaryField label="Timezone" value={formData.timezone} />
-                                        </div>
-                                      </div>
-
-                                      {/* Role Specific Details */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 shadow-sm">
-                                        <h4 className="text-xs font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-3 flex items-center gap-2">
-                                          <Briefcase className="w-3 h-3" />
-                                          Role Details
-                                        </h4>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                          {selectedRole === "idea-holder" && (
-                                            <>
-                                              <SummaryField label="Interests" value={formData.interests} />
-                                              <SummaryField label="Problem Domains" value={formData.problemDomains} />
-                                              <SummaryField label="Worked on ideas" value={formData.prevIdeas} />
-                                            </>
-                                          )}
-                                          {selectedRole === "developer" && (
-                                            <>
-                                              <SummaryField label="Tech Domains" value={formData.interests} />
-                                              <SummaryField label="Tech Stack" value={formData.skills} />
-                                              <SummaryField label="Status" value={formData.status} />
-                                              <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
-                                            </>
-                                          )}
-                                          {selectedRole === "investor" && (
-                                            <>
-                                              <SummaryField label="Category" value={formData.investorCat} />
-                                              <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
-                                              <SummaryField label="Focus Sectors" value={formData.interests} />
-                                              <SummaryField label="Investment Stages" value={formData.investmentStage} />
-                                            </>
-                                          )}
-                                        </div>
-                                      </div>
-
-                                      {/* Preferences & Goals */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 shadow-sm">
-                                        <h4 className="text-xs font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-3 flex items-center gap-2">
-                                          <Target className="w-3 h-3" />
-                                          Preferences & Vision
-                                        </h4>
-                                        <div className="space-y-6">
-                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <SummaryField label="Work Preference" value={formData.workPref} />
-                                            <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
-                                            <SummaryField label="Involvement" value={formData.involvement} />
-                                            <SummaryField label="Equity Interest" value={formData.equityInterest} />
-                                          </div>
-                                          <SummaryField label="Objectives" value={formData.objectives} />
-                                          <SummaryField label="Success Definition" value={formData.successDefinition} />
-                                        </div>
-                                      </div>
-
-                                      {/* Professional Context */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 shadow-sm">
-                                        <h4 className="text-xs font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-3 flex items-center gap-2">
-                                          <Building2 className="w-3 h-3" />
-                                          Professional Context
-                                        </h4>
-                                        <div className="space-y-4">
-                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <SummaryField label="Organization" value={formData.orgName} />
-                                            <SummaryField label="Your Role" value={formData.orgRole} />
-                                            <SummaryField label="Org Type" value={formData.orgType} />
-                                          </div>
-                                          <SummaryField label="Bio" value={formData.bio} />
-                                          <SummaryField label="Tagline" value={formData.tagline} />
-                                        </div>
-                                      </div>
+                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-3 space-y-6">
+                              {/* Summary Box */}
+                              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 shadow-sm max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+                                <div className="flex justify-between items-start pb-4 border-b border-white/10">
+                                  <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20">
+                                      <User className="w-6 h-6 text-primary" />
                                     </div>
+                                    <div>
+                                      <h4 className="font-bold text-lg">{formData.fullName || "N/A"}</h4>
+                                      <p className="text-xs text-muted-foreground">{formData.email || "N/A"}</p>
+                                    </div>
+                                  </div>
+                                  <Badge className="bg-primary/20 text-primary border-primary/20 uppercase text-[10px] font-bold h-6 px-3">
+                                    {selectedRole?.replace("-", " ")}
+                                  </Badge>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                  <SummaryField label="Location" value={formData.location} />
+                                  <SummaryField label="Timezone" value={formData.timezone} />
+                                </div>
+
+                                <div className="space-y-6 pt-2 border-t border-white/5">
+                                  {selectedRole === "idea-holder" && (
+                                    <>
+                                      <SummaryField label="Interests" value={formData.interests} />
+                                      <SummaryField label="Problem Domains" value={formData.problemDomains} />
+                                      <SummaryField label="Worked on ideas" value={formData.prevIdeas} />
+                                    </>
+                                  )}
+                                  {selectedRole === "developer" && (
+                                    <>
+                                      <SummaryField label="Tech Domains" value={formData.interests} />
+                                      <SummaryField label="Tech Stack" value={formData.skills} />
+                                      <SummaryField label="Status" value={formData.status} />
+                                      <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
+                                    </>
+                                  )}
+                                  {selectedRole === "investor" && (
+                                    <>
+                                      <SummaryField label="Category" value={formData.investorCat} />
+                                      <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
+                                      <SummaryField label="Focus Sectors" value={formData.interests} />
+                                      <SummaryField label="Investment Stages" value={formData.investmentStage} />
+                                    </>
+                                  )}
+                                  
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <SummaryField label="Work Preference" value={formData.workPref} />
+                                    <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
+                                  </div>
+                                  
+                                  <SummaryField label="Bio" value={formData.bio} />
+                                  <SummaryField label="Tagline" value={formData.tagline} />
+                                  <SummaryField label="Objectives" value={formData.objectives} />
+                                  <SummaryField label="Success Definition" value={formData.successDefinition} />
+                                </div>
+                              </div>
+                            </div>
                                   </div>
                                 </>
                               )}
@@ -1204,7 +1209,7 @@ export default function Auth() {
                           </AnimatePresence>
                         </div>
 
-                        {/* Footer - Always Fixed within Card */}
+                          {/* Footer - Always Fixed within Card */}
                         <div className="mt-auto pt-6 border-t border-white/10 flex items-center justify-between bg-background/50 backdrop-blur-sm -mx-4 md:-mx-8 px-4 md:px-8 pb-4 shrink-0">
                           <Button variant="ghost" onClick={prevStep} className="text-muted-foreground hover:text-white h-11 px-6 transition-all">
                             <ChevronLeft className="w-4 h-4 mr-2" />
@@ -1225,6 +1230,7 @@ export default function Auth() {
                           {signupStep === "summary" ? (
                             <Button className="font-bold h-11 px-8 shadow-lg shadow-primary/20 animate-in fade-in slide-in-from-right-2">
                               Create Account as {roles.find(r => r.id === selectedRole)?.title}
+                              <Check className="w-4 h-4 ml-2" />
                             </Button>
                           ) : (
                             <Button onClick={nextStep} className="font-bold h-11 px-8 group transition-all">

@@ -1,0 +1,194 @@
+READ CAREFULLY.
+FOLLOW STEPS IN ORDER.
+DO NOT SKIP ANY STEP.
+DO NOT CREATE NEW DESIGNS.
+DO NOT CHANGE COLORS, FONTS, OR LAYOUT STYLE.
+
+==============================
+GLOBAL RULES
+==============================
+- Do NOT redesign anything
+- Do NOT invent text
+- Do NOT remove existing components
+- Do NOT move header or role card
+- Only MODIFY existing components
+- UI ONLY (mock data)
+
+==============================
+STEP 1 — ROLE SUMMARY PAGE (FIRST)
+==============================
+
+When user selects a role:
+
+1. SHOW ROLE SUMMARY PAGE FIRST
+2. DO NOT show registration form yet
+3. The RIGHT PANEL must show ONLY role steps
+4. The LEFT ROLE CARD stays exactly as it is
+
+------------------------------
+ROLE SUMMARY PANEL SIZE
+------------------------------
+- Height must be SAME as registration form height
+- Do NOT increase height
+- Do NOT add extra empty space
+- If content is more → scroll INSIDE panel
+
+------------------------------
+ROLE SUMMARY CONTENT (USE EXACT TEXT)
+------------------------------
+
+IF ROLE = DEVELOPER, SHOW ALL 6 STEPS:
+
+1. Discover Ideas & Projects  
+Explore startup ideas and open projects posted on DevConnect.
+
+2. Join or Form Teams  
+Collaborate with other developers to build products.
+
+3. Apply for Opportunities  
+Apply for full-time, part-time, or contract roles.
+
+4. Build MVPs & Products  
+Develop real-world MVPs and production-ready products.
+
+5. Raise Funds for Your Ideas  
+Create fundraising campaigns for your own ideas.
+
+6. Grow Your Developer Profile  
+Build reputation, experience, and career visibility.
+
+IF ROLE = IDEA HOLDER, SHOW ALL 6 STEPS:
+
+1. Post Ideas Securely  
+Share ideas without exposing sensitive details.
+
+2. Validate Necessity  
+Measure real-world demand and interest.
+
+3. Attract Developers  
+Allow developers to collaborate on your idea.
+
+4. Secure Funding  
+Pitch ideas to investors or raise funds.
+
+5. Build or Transfer Ownership  
+Build yourself or sell the idea.
+
+6. Track Growth  
+Monitor interest, funding, and traction.
+
+IF ROLE = INVESTOR, SHOW ALL 6 STEPS:
+
+1. Discover Ideas  
+Browse startup ideas and problem statements.
+
+2. Analyze Market Need  
+Check necessity and traction.
+
+3. Invest in Projects  
+Fund promising ideas.
+
+4. Recruit Developers  
+Hire developers for execution.
+
+5. Manage Portfolio  
+Track investments and progress.
+
+6. Scale Investments  
+Support long-term growth.
+
+------------------------------
+ROLE SUMMARY BUTTONS
+------------------------------
+- Bottom LEFT:  Back
+- Bottom RIGHT: Continue as <ROLE>
+
+Buttons MUST be visible.
+Do NOT remove Back button.
+
+==============================
+STEP 2 — REGISTRATION FORM (AFTER CONTINUE)
+==============================
+
+ONLY after clicking “Continue as <ROLE>”:
+
+1. Show registration form
+2. DO NOT resize container
+3. Container height must be SAME as role summary
+
+------------------------------
+REGISTRATION FORM RULES
+------------------------------
+- Fixed height card
+- Inner content scrolls if needed
+- NO page scroll
+- NO layout jump
+
+------------------------------
+SCROLLBAR STYLE (MANDATORY)
+------------------------------
+- Thin scrollbar
+- Rounded
+- Purple thumb
+- Dark background
+- NOT default browser scrollbar
+
+==============================
+STEP 3 — FINAL SUMMARY STEP
+==============================
+
+At LAST step only:
+
+1. REMOVE “Next” button
+2. SHOW “Create Account as <ROLE>” button
+3. SHOW “Back” button on left
+
+------------------------------
+SUMMARY CONTENT
+------------------------------
+Summary MUST show ALL user-entered data:
+- Name
+- Email
+- Location
+- Timezone
+- Role
+- All role-specific fields
+
+NO “N/A”.
+If value exists, display it.
+
+------------------------------
+SUMMARY BOX RULES
+------------------------------
+- Fixed height
+- Scroll inside box
+- Styled scrollbar
+- NO resizing
+
+==============================
+STEP 4 — DO NOT TOUCH THESE
+==============================
+
+DO NOT:
+- Change role cards
+- Change header
+- Change login/signup toggle
+- Change animations
+- Change tooltips
+- Change colors
+- Change fonts
+
+==============================
+FINAL CHECKLIST
+==============================
+
+✔ Role summary shows FIRST  
+✔ Exactly 6 steps shown  
+✔ Container height same everywhere  
+✔ Back button always visible  
+✔ Final step shows Create Account  
+✔ No empty space  
+✔ No page scroll  
+
+DO ONLY THESE STEPS.
+STOP AFTER COMPLETION.
