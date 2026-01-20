@@ -344,6 +344,7 @@ export default function Auth() {
   const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>("role-selection");
   const [signupStep, setSignupStep] = useState<SignupStep>("basic-profile");
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  const [journeyStepIndex, setJourneyStepIndex] = useState(0);
   const [formData, setFormData] = useState<any>({
     interests: [],
     problemDomains: [],
@@ -405,6 +406,7 @@ export default function Auth() {
 
   const handleRoleSelect = (roleId: UserRole) => {
     setSelectedRole(roleId);
+    setJourneyStepIndex(0);
     setOnboardingStep("role-overview");
   };
 
@@ -617,34 +619,75 @@ export default function Auth() {
                     <CardContent className="p-8 relative flex-1 overflow-hidden flex flex-col">
                       {(() => {
                         const role = roles.find(r => r.id === selectedRole)!;
+                        const currentStep = role.overviewSteps[journeyStepIndex];
                         return (
                           <>
                             <div className="space-y-2 mb-6 shrink-0">
-                              <h2 className="text-2xl font-display font-bold text-gradient-primary">Your Journey as a {role.title}</h2>
+                              <div className="flex justify-between items-center">
+                                <h2 className="text-2xl font-display font-bold text-gradient-primary">Your Journey as a {role.title}</h2>
+                                <Badge variant="outline" className="text-[10px] border-primary/20 text-primary">
+                                  Step {journeyStepIndex + 1} of {role.overviewSteps.length}
+                                </Badge>
+                              </div>
                               <p className="text-muted-foreground text-sm">Here's how DevConnect works for you.</p>
                             </div>
-                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-6">
-                              {role.overviewSteps.map((step, idx) => (
-                                <div key={idx} className="flex gap-4">
-                                  <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 font-bold text-primary text-xs">
-                                    {idx + 1}
-                                  </div>
-                                  <div className="space-y-1">
-                                    <h4 className="font-bold text-sm">{step.title}</h4>
-                                    <p className="text-xs text-muted-foreground leading-relaxed">{step.desc}</p>
-                                  </div>
-                                </div>
-                              ))}
+                            
+                            <div className="flex-1 flex flex-col justify-center items-center text-center space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                              <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 font-bold text-primary text-2xl shadow-lg shadow-primary/5">
+                                {journeyStepIndex + 1}
+                              </div>
+                              <div className="max-w-md space-y-4">
+                                <h4 className="text-2xl font-bold tracking-tight">{currentStep.title}</h4>
+                                <p className="text-base text-muted-foreground leading-relaxed">{currentStep.desc}</p>
+                              </div>
+                              
+                              {/* Visual Progress Dots */}
+                              <div className="flex gap-2 pt-4">
+                                {role.overviewSteps.map((_, idx) => (
+                                  <div 
+                                    key={idx} 
+                                    className={cn(
+                                      "w-2 h-2 rounded-full transition-all duration-300",
+                                      idx === journeyStepIndex ? "w-6 bg-primary" : "bg-white/10"
+                                    )}
+                                  />
+                                ))}
+                              </div>
                             </div>
+
                             <div className="mt-6 pt-6 border-t border-white/10 flex items-center justify-between shrink-0">
-                              <Button variant="ghost" onClick={() => setOnboardingStep("role-selection")} className="text-muted-foreground hover:text-white h-11 px-6">
+                              <Button 
+                                variant="ghost" 
+                                onClick={() => {
+                                  if (journeyStepIndex > 0) {
+                                    setJourneyStepIndex(journeyStepIndex - 1);
+                                  } else {
+                                    setOnboardingStep("role-selection");
+                                  }
+                                }} 
+                                className="text-muted-foreground hover:text-white h-11 px-6"
+                              >
                                 <ChevronLeft className="w-4 h-4 mr-2" />
                                 Back
                               </Button>
-                              <Button onClick={handleStartRegistration} className="font-bold h-11 px-8 shadow-lg shadow-primary/20">
-                                Continue as {role.title}
-                                <ArrowRight className="w-4 h-4 ml-2" />
-                              </Button>
+                              
+                              {journeyStepIndex < role.overviewSteps.length - 1 ? (
+                                <Button 
+                                  onClick={() => setJourneyStepIndex(journeyStepIndex + 1)} 
+                                  className="font-bold h-11 px-8 shadow-lg shadow-primary/20"
+                                >
+                                  Next Step
+                                  <ArrowRight className="w-4 h-4 ml-2" />
+                                </Button>
+                              ) : (
+                                <Button 
+                                  onClick={handleStartRegistration} 
+                                  className="font-bold h-11 px-8 shadow-lg shadow-primary/20"
+                                >
+                                  Continue to Registration
+                                  <Rocket className="w-4 h-4 ml-2" />
+                                </Button>
+                              )}
                             </div>
                           </>
                         );
