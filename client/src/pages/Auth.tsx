@@ -79,11 +79,12 @@ const roles = [
       "Sell, fundraise, or build ideas"
     ],
     overviewSteps: [
-      { title: "Post Your Idea", desc: "Share ideas or problem statements securely without exposing full details." },
-      { title: "Measure Real-World Necessity", desc: "Track interest from users, developers, and investors." },
-      { title: "Attract Collaboration", desc: "Allow developers to approach you to build solutions." },
-      { title: "Secure Funding", desc: "Pitch your idea to investors or raise funds." },
-      { title: "Build or Transfer Ownership", desc: "Build the idea yourself or sell it to others." }
+      { title: "Post Ideas Securely", desc: "Share ideas or problem statements without exposing sensitive details." },
+      { title: "Validate Real-World Necessity", desc: "Measure interest from developers, users, and investors." },
+      { title: "Attract Developers", desc: "Allow developers to approach and collaborate on your idea." },
+      { title: "Secure Funding", desc: "Pitch your idea to investors or raise funds on the platform." },
+      { title: "Build or Sell the Idea", desc: "Choose to build the idea yourself or transfer ownership." },
+      { title: "Track Growth & Interest", desc: "Monitor engagement, funding progress, and traction." }
     ],
     journeyContext: {
       "basic-profile": "Idea holders start by introducing themselves so others know who's behind the vision.",
@@ -107,11 +108,12 @@ const roles = [
       "Raise funds for your own ideas"
     ],
     overviewSteps: [
-      { title: "Discover Ideas & Projects", desc: "Explore startup ideas and open projects on the platform." },
-      { title: "Collaborate with Teams", desc: "Join teams or work with other developers." },
-      { title: "Apply for Opportunities", desc: "Apply for full-time, part-time, or contract roles." },
-      { title: "Build MVPs & Products", desc: "Work on real-world products and startups." },
-      { title: "Launch or Fundraise", desc: "Raise funds for your own ideas and scale projects." }
+      { title: "Discover Ideas & Projects", desc: "Explore startup ideas and open projects shared by idea holders and investors." },
+      { title: "Join or Form Teams", desc: "Collaborate with other developers to build products together." },
+      { title: "Apply for Opportunities", desc: "Apply for full-time, part-time, or contract roles posted on DevConnect." },
+      { title: "Build MVPs & Products", desc: "Work on real-world MVPs and production-ready applications." },
+      { title: "Raise Funds for Your Ideas", desc: "Launch fundraising campaigns to grow your own ideas." },
+      { title: "Scale & Grow Professionally", desc: "Build your developer profile, reputation, and career visibility." }
     ],
     journeyContext: {
       "basic-profile": "Developers provide basic details to build a professional identity within the ecosystem.",
@@ -135,11 +137,12 @@ const roles = [
       "Build an investment portfolio"
     ],
     overviewSteps: [
-      { title: "Explore Ideas", desc: "Browse innovative ideas and problem statements." },
-      { title: "Analyze Market Need", desc: "Evaluate necessity, traction, and interest." },
-      { title: "Fund Projects", desc: "Invest in promising ideas and startups." },
-      { title: "Recruit Developers", desc: "Build teams to execute funded ideas." },
-      { title: "Grow Portfolio", desc: "Track and manage your startup investments." }
+      { title: "Discover Innovative Ideas", desc: "Browse ideas and early-stage startup concepts." },
+      { title: "Analyze Market Demand", desc: "Evaluate necessity scores, traction, and problem relevance." },
+      { title: "Invest in Projects", desc: "Fund promising ideas and startups." },
+      { title: "Recruit Talent", desc: "Hire developers to execute funded projects." },
+      { title: "Manage Portfolio", desc: "Track investments and project progress." },
+      { title: "Scale Investments", desc: "Support long-term growth and expansion." }
     ],
     journeyContext: {
       "basic-profile": "Investors introduce themselves to start building relationships with innovative founders.",
@@ -278,7 +281,7 @@ function TagInput({ label, placeholder, options, values, onChange }: TagInputPro
 }
 
 const SummaryField = ({ label, value }: { label: string, value: any }) => {
-  if (!value || (Array.isArray(value) && value.length === 0)) return null;
+  if (value === undefined || value === null || (typeof value === "string" && value.trim() === "") || (Array.isArray(value) && value.length === 0)) return null;
   return (
     <div className="space-y-1">
       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
@@ -535,17 +538,17 @@ export default function Auth() {
                   <div className="hidden lg:block">
                     {renderRoleCard()}
                   </div>
-                  <Card className="glass-card border-white/5 overflow-hidden">
-                    <CardContent className="p-8 space-y-8 min-h-[550px] flex flex-col">
+                  <Card className="glass-card border-white/5 overflow-hidden h-[600px] flex flex-col">
+                    <CardContent className="p-8 relative flex-1 overflow-hidden flex flex-col">
                       {(() => {
                         const role = roles.find(r => r.id === selectedRole)!;
                         return (
                           <>
-                            <div className="space-y-2">
+                            <div className="space-y-2 mb-6 shrink-0">
                               <h2 className="text-2xl font-display font-bold text-gradient-primary">Your Journey as a {role.title}</h2>
                               <p className="text-muted-foreground text-sm">Here's how DevConnect works for you.</p>
                             </div>
-                            <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-2">
+                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-6">
                               {role.overviewSteps.map((step, idx) => (
                                 <div key={idx} className="flex gap-4">
                                   <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 font-bold text-primary text-xs">
@@ -558,9 +561,15 @@ export default function Auth() {
                                 </div>
                               ))}
                             </div>
-                            <Button onClick={handleStartRegistration} className="w-full py-6 font-bold shadow-lg shadow-primary/20 mt-4">
-                              Continue as {role.title}
-                            </Button>
+                            <div className="mt-6 pt-6 border-t border-white/10 flex items-center justify-between shrink-0">
+                              <Button variant="ghost" onClick={() => setOnboardingStep("role-selection")} className="text-muted-foreground hover:text-white h-11 px-6">
+                                <ChevronLeft className="w-4 h-4 mr-2" />
+                                Back
+                              </Button>
+                              <Button onClick={handleStartRegistration} className="font-bold h-11 px-8 shadow-lg shadow-primary/20">
+                                Continue as {role.title}
+                              </Button>
+                            </div>
                           </>
                         );
                       })()}
@@ -1099,10 +1108,10 @@ export default function Auth() {
                                   <div className="space-y-6 max-w-2xl mx-auto flex-1 overflow-hidden flex flex-col h-full">
                                     <div className="flex-1 overflow-y-auto custom-scrollbar pr-3 space-y-6">
                                       {/* Identity Card */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
                                         <div className="flex justify-between items-start pb-4 border-b border-white/10">
                                           <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20">
                                               <User className="w-6 h-6 text-primary" />
                                             </div>
                                             <div>
@@ -1121,8 +1130,11 @@ export default function Auth() {
                                       </div>
 
                                       {/* Role Specific Details */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
-                                        <h4 className="text-xs font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-3">Role Details</h4>
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 shadow-sm">
+                                        <h4 className="text-xs font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-3 flex items-center gap-2">
+                                          <Briefcase className="w-3 h-3" />
+                                          Role Details
+                                        </h4>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                           {selectedRole === "idea-holder" && (
                                             <>
@@ -1151,13 +1163,17 @@ export default function Auth() {
                                       </div>
 
                                       {/* Preferences & Goals */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
-                                        <h4 className="text-xs font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-3">Preferences & Vision</h4>
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 shadow-sm">
+                                        <h4 className="text-xs font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-3 flex items-center gap-2">
+                                          <Target className="w-3 h-3" />
+                                          Preferences & Vision
+                                        </h4>
                                         <div className="space-y-6">
                                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <SummaryField label="Work Preference" value={formData.workPref} />
                                             <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
                                             <SummaryField label="Involvement" value={formData.involvement} />
+                                            <SummaryField label="Equity Interest" value={formData.equityInterest} />
                                           </div>
                                           <SummaryField label="Objectives" value={formData.objectives} />
                                           <SummaryField label="Success Definition" value={formData.successDefinition} />
@@ -1165,12 +1181,16 @@ export default function Auth() {
                                       </div>
 
                                       {/* Professional Context */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
-                                        <h4 className="text-xs font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-3">Professional Context</h4>
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 shadow-sm">
+                                        <h4 className="text-xs font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-3 flex items-center gap-2">
+                                          <Building2 className="w-3 h-3" />
+                                          Professional Context
+                                        </h4>
                                         <div className="space-y-4">
                                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <SummaryField label="Company" value={formData.orgName} />
-                                            <SummaryField label="Role in Org" value={formData.orgRole} />
+                                            <SummaryField label="Organization" value={formData.orgName} />
+                                            <SummaryField label="Your Role" value={formData.orgRole} />
+                                            <SummaryField label="Org Type" value={formData.orgType} />
                                           </div>
                                           <SummaryField label="Bio" value={formData.bio} />
                                           <SummaryField label="Tagline" value={formData.tagline} />

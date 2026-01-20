@@ -1,0 +1,165 @@
+Do NOT switch to Autonomous mode.
+Do NOT redesign UI.
+Do NOT change colors, theme, fonts, or spacing system.
+Do NOT invent content.
+Do NOT remove existing navigation logic.
+Do NOT change animations globally.
+
+This task is ONLY to FIX:
+- Role summary content completeness
+- Final step buttons (Back + Create Account)
+- Container height & spacing
+- Prevent extra empty space
+
+----------------------------------
+PART 1 — ROLE SUMMARY VIEW (TEXT + STRUCTURE FIX)
+----------------------------------
+
+CURRENT ISSUE:
+- Role summary shows fewer steps
+- Content feels incomplete
+- Extra empty space is added
+
+FIX (MANDATORY):
+
+Role Summary page MUST:
+- Use SAME container height as registration steps
+- NOT grow taller
+- NOT add extra padding or margin
+- NOT change card layout
+
+----------------------------------
+ROLE SUMMARY STEPS — EXACT TEXT (USE THIS ONLY)
+----------------------------------
+
+💻 DEVELOPER — 6 STEPS (SHOW ALL)
+
+1. Discover Ideas & Projects  
+Explore startup ideas and open projects shared by idea holders and investors.
+
+2. Join or Form Teams  
+Collaborate with other developers to build products together.
+
+3. Apply for Opportunities  
+Apply for full-time, part-time, or contract roles posted on DevConnect.
+
+4. Build MVPs & Products  
+Work on real-world MVPs and production-ready applications.
+
+5. Raise Funds for Your Ideas  
+Launch fundraising campaigns to grow your own ideas.
+
+6. Scale & Grow Professionally  
+Build your developer profile, reputation, and career visibility.
+
+----------------------------------
+
+🧠 IDEA HOLDER — 6 STEPS (SHOW ALL)
+
+1. Post Ideas Securely  
+Share ideas or problem statements without exposing sensitive details.
+
+2. Validate Real-World Necessity  
+Measure interest from developers, users, and investors.
+
+3. Attract Developers  
+Allow developers to approach and collaborate on your idea.
+
+4. Secure Funding  
+Pitch your idea to investors or raise funds on the platform.
+
+5. Build or Sell the Idea  
+Choose to build the idea yourself or transfer ownership.
+
+6. Track Growth & Interest  
+Monitor engagement, funding progress, and traction.
+
+----------------------------------
+
+💼 INVESTOR — 6 STEPS (SHOW ALL)
+
+1. Discover Innovative Ideas  
+Browse ideas and early-stage startup concepts.
+
+2. Analyze Market Demand  
+Evaluate necessity scores, traction, and problem relevance.
+
+3. Invest in Projects  
+Fund promising ideas and startups.
+
+4. Recruit Talent  
+Hire developers to execute funded projects.
+
+5. Manage Portfolio  
+Track investments and project progress.
+
+6. Scale Investments  
+Support long-term growth and expansion.
+
+----------------------------------
+PART 2 — BUTTONS (MANDATORY PLACEMENT)
+----------------------------------
+
+Role Summary page MUST show:
+
+- Bottom LEFT:  ← Back  
+- Bottom RIGHT:  Continue as <ROLE>
+
+Registration FINAL step MUST show:
+
+- Bottom LEFT:  ← Back  
+- Bottom RIGHT:  Create Account as <ROLE>
+
+DO NOT hide buttons.
+DO NOT remove Back button.
+DO NOT leave empty space.
+
+----------------------------------
+PART 3 — CONTAINER HEIGHT (CRITICAL)
+----------------------------------
+
+- Role Summary container height = Registration container height
+- NO extra vertical space
+- NO stretching
+- NO full-page scroll
+- Content scrolls internally if needed
+
+----------------------------------
+PART 4 — SUMMARY PREVIEW STEP (UNCHANGED BUT FIXED)
+----------------------------------
+
+Final Summary Preview must:
+
+- Show ALL entered data (no N/A placeholders)
+- Use FIXED HEIGHT card
+- Be internally scrollable
+- Use styled scrollbar (thin, purple, rounded)
+
+Buttons on Summary Preview:
+- Bottom LEFT:  ← Back
+- Bottom RIGHT:  Create Account as <ROLE>
+
+----------------------------------
+PART 5 — DO NOT CHANGE ANYTHING ELSE
+----------------------------------
+
+DO NOT:
+- Change role cards
+- Change role selection logic
+- Change step order
+- Change animations
+- Change tooltips
+- Change input fields
+
+----------------------------------
+EXPECTED RESULT
+----------------------------------
+
+✅ Role summary always shows 6 steps  
+✅ Container size stays consistent  
+✅ No extra blank space  
+✅ Back + Continue buttons visible  
+✅ Final step shows Create Account  
+✅ Summary preview complete & scrollable  
+
+Proceed ONLY with these corrections.
