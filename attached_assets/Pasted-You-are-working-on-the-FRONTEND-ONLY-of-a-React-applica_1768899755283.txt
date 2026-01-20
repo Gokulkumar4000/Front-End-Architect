@@ -1,0 +1,168 @@
+You are working on the FRONTEND ONLY of a React application called **DevConnect**.
+
+THIS IS UI ONLY.
+NO backend.
+NO Firebase.
+NO API calls.
+NO premium / upgrade prompts.
+NO redesign.
+NO new features.
+NO route changes.
+NO removing components.
+NO changing colors, fonts, or theme.
+USE ONLY mock data.
+
+────────────────────────────────────────
+GLOBAL LAYOUT RULES (DO NOT BREAK)
+────────────────────────────────────────
+1. The page has THREE PERMANENT SECTIONS:
+   - Top bar (DevConnect logo + Login / SignUp toggle)
+   - Left panel (Selected Role card)
+   - Right panel (Main content)
+
+2. These MUST NEVER re-render, move, resize, or animate:
+   - DevConnect logo
+   - Login / SignUp toggle
+   - Left role card
+   - Page width and height
+
+3. ONLY the CONTENT INSIDE the RIGHT PANEL may change.
+
+4. Page must NEVER jump, resize, or scroll the whole window.
+
+────────────────────────────────────────
+ROLE SELECTION FLOW (STRICT ORDER)
+────────────────────────────────────────
+
+STEP 1 — ROLE SELECTION (FIRST SCREEN)
+- Show 3 role cards:
+  • Developer
+  • Investor
+  • Idea Holder
+
+- Each role card MUST contain exactly 5 bullet points describing the role.
+- When a role is clicked:
+  • Move that role card to the LEFT PANEL
+  • Hide the other two role cards
+  • DO NOT scroll the page
+  • DO NOT resize anything
+
+────────────────────────────────────────
+STEP 2 — ROLE JOURNEY EXPLANATION
+────────────────────────────────────────
+After role selection, show a ROLE JOURNEY screen in the RIGHT PANEL.
+
+Each role MUST show EXACTLY 6 STEPS.
+
+DEVELOPER STEPS (USE THIS TEXT EXACTLY):
+1. Discover startup ideas and open projects
+2. Collaborate with developers and founders
+3. Apply for full-time or part-time roles
+4. Build MVPs and real products
+5. Raise funds for your own ideas
+6. Grow your developer portfolio
+
+IDEA HOLDER STEPS:
+1. Post ideas or problem statements securely
+2. Measure real-world necessity and interest
+3. Attract developers and collaborators
+4. Pitch ideas to investors
+5. Raise funds or sell ideas
+6. Build or transfer ownership
+
+INVESTOR STEPS:
+1. Explore startup ideas and projects
+2. Evaluate feasibility and demand
+3. Invest in promising ideas
+4. Recruit developers and teams
+5. Track portfolio growth
+6. Scale funded projects
+
+- Show ONE button only:
+  “Continue as <ROLE>”
+
+DO NOT SKIP THIS STEP.
+
+────────────────────────────────────────
+STEP 3 — REGISTRATION FORM
+────────────────────────────────────────
+
+GENERAL FORM RULES:
+- Multi-step form
+- FIXED container size (no resizing)
+- Only INNER content may change
+- NO horizontal scrolling anywhere
+- ONE scrollbar only (inside right panel)
+- Scrollbar must be thin, purple, glass-morphism styled
+- NO browser default scrollbar
+
+────────────────────────────────────────
+INPUT & FIELD RULES
+────────────────────────────────────────
+
+DROPDOWNS:
+- NO default browser dropdowns
+- Must be fully custom styled
+- Purple focus border must ALWAYS be visible
+- Searchable where applicable
+- Must actually return selectable mock options
+
+“+” ADD BUTTON BEHAVIOR:
+- Initially show ONLY a small + icon
+- On click:
+  • Open a small search input
+  • Show predefined mock options
+  • Allow selection
+  • Add as removable chips
+- Chips must wrap properly and never overflow
+
+NUMBER INPUTS:
+- Remove browser up/down arrows
+- Clean numeric input only
+- Purple focus border must not disappear
+
+TEXT AREAS:
+- Bio: max 150 words
+- Tagline: max 20 words
+- Objectives: max 100 words
+- Show subtle character counter
+- NO horizontal scrolling
+
+────────────────────────────────────────
+SUMMARY PREVIEW (FINAL STEP)
+────────────────────────────────────────
+- Summary card must have FIXED height
+- Scroll ONLY inside summary card
+- ONE vertical scrollbar only
+- NO horizontal scroll
+- Proper alignment and spacing
+- Group data into sections
+- Replace “Next” button with:
+  “Create Account as <ROLE>”
+- Back button must remain visible
+
+────────────────────────────────────────
+STRICTLY FORBIDDEN
+────────────────────────────────────────
+- No upgrade prompts
+- No premium banners
+- No redesign
+- No layout changes
+- No new UI ideas
+- No page re-render animations
+- No multiple scrollbars
+- No horizontal scrolling anywhere
+
+────────────────────────────────────────
+FINAL CHECK
+────────────────────────────────────────
+- Layout never jumps
+- Only right panel content changes
+- Inputs are usable and searchable
+- Summary is clean and professional
+- UX feels stable
+
+Do NOT explain.
+Do NOT suggest.
+Do NOT add features.
+Just fix everything exactly as instructed.

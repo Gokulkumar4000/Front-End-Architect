@@ -79,12 +79,12 @@ const roles = [
       "Sell, fundraise, or build ideas"
     ],
     overviewSteps: [
-      { title: "Post Ideas Securely", desc: "Share ideas without exposing sensitive details." },
-      { title: "Validate Necessity", desc: "Measure real-world demand and interest." },
-      { title: "Attract Developers", desc: "Allow developers to collaborate on your idea." },
-      { title: "Secure Funding", desc: "Pitch ideas to investors or raise funds." },
-      { title: "Build or Transfer Ownership", desc: "Build yourself or sell the idea." },
-      { title: "Track Growth", desc: "Monitor interest, funding, and traction." }
+      { title: "Post ideas or problem statements securely", desc: "Share ideas without exposing sensitive details." },
+      { title: "Measure real-world necessity and interest", desc: "Measure real-world demand and interest." },
+      { title: "Attract developers and collaborators", desc: "Allow developers to collaborate on your idea." },
+      { title: "Pitch ideas to investors", desc: "Pitch ideas to investors or raise funds." },
+      { title: "Raise funds or sell ideas", desc: "Build yourself or sell the idea." },
+      { title: "Build or transfer ownership", desc: "Monitor interest, funding, and traction." }
     ],
     journeyContext: {
       "basic-profile": "Idea holders start by introducing themselves so others know who's behind the vision.",
@@ -108,12 +108,12 @@ const roles = [
       "Raise funds for your own ideas"
     ],
     overviewSteps: [
-      { title: "Discover Ideas & Projects", desc: "Explore startup ideas and open projects posted on DevConnect." },
-      { title: "Join or Form Teams", desc: "Collaborate with other developers to build products." },
-      { title: "Apply for Opportunities", desc: "Apply for full-time, part-time, or contract roles." },
-      { title: "Build MVPs & Products", desc: "Develop real-world MVPs and production-ready products." },
-      { title: "Raise Funds for Your Ideas", desc: "Create fundraising campaigns for your own ideas." },
-      { title: "Grow Your Developer Profile", desc: "Build reputation, experience, and career visibility." }
+      { title: "Discover startup ideas and open projects", desc: "Explore startup ideas and open projects posted on DevConnect." },
+      { title: "Collaborate with developers and founders", desc: "Collaborate with other developers to build products." },
+      { title: "Apply for full-time or part-time roles", desc: "Apply for full-time, part-time, or contract roles." },
+      { title: "Build MVPs and real products", desc: "Develop real-world MVPs and production-ready products." },
+      { title: "Raise funds for your own ideas", desc: "Create fundraising campaigns for your own ideas." },
+      { title: "Grow your developer portfolio", desc: "Build reputation, experience, and career visibility." }
     ],
     journeyContext: {
       "basic-profile": "Developers provide basic details to build a professional identity within the ecosystem.",
@@ -137,12 +137,12 @@ const roles = [
       "Build an investment portfolio"
     ],
     overviewSteps: [
-      { title: "Discover Ideas", desc: "Browse startup ideas and problem statements." },
-      { title: "Analyze Market Need", desc: "Check necessity and traction." },
-      { title: "Invest in Projects", desc: "Fund promising ideas." },
-      { title: "Recruit Developers", desc: "Hire developers for execution." },
-      { title: "Manage Portfolio", desc: "Track investments and progress." },
-      { title: "Scale Investments", desc: "Support long-term growth." }
+      { title: "Explore startup ideas and projects", desc: "Browse startup ideas and problem statements." },
+      { title: "Evaluate feasibility and demand", desc: "Check necessity and traction." },
+      { title: "Invest in promising ideas", desc: "Fund promising ideas." },
+      { title: "Recruit developers and teams", desc: "Hire developers for execution." },
+      { title: "Track portfolio growth", desc: "Track investments and progress." },
+      { title: "Scale funded projects", desc: "Support long-term growth." }
     ],
     journeyContext: {
       "basic-profile": "Investors introduce themselves to start building relationships with innovative founders.",
@@ -875,7 +875,7 @@ export default function Auth() {
                                             <Label>Years of experience</Label>
                                             <Input 
                                               type="number" 
-                                              className="bg-white/5 border-white/10 h-11" 
+                                              className="bg-white/5 border-white/10 h-11 focus-visible:ring-primary/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
                                               placeholder="0"
                                               value={formData.experience || ""}
                                               onChange={(e) => updateFormData("experience", e.target.value)}
@@ -1125,15 +1125,23 @@ export default function Auth() {
                                   {renderStepHeader("Interests & Goals", "What are you aiming to achieve?")}
                                   <div className="space-y-6 max-w-2xl mx-auto">
                                     <div className="space-y-2">
-                                      <Label>Primary Objectives</Label>
+                                      <Label>Primary Objectives (Max 100 words)</Label>
                                       <div className="relative group">
                                         <Target className="absolute left-3 top-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                         <Textarea 
                                           className="pl-10 bg-white/5 border-white/10 min-h-[120px] rounded-xl focus:border-primary/50" 
                                           placeholder="What are your main goals here?" 
                                           value={formData.objectives || ""}
-                                          onChange={(e) => updateFormData("objectives", e.target.value)}
+                                          onChange={(e) => {
+                                            const words = e.target.value.trim().split(/\s+/).filter(Boolean).length;
+                                            if (words <= 100 || e.target.value.length < (formData.objectives || "").length) {
+                                              updateFormData("objectives", e.target.value);
+                                            }
+                                          }}
                                         />
+                                        <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground bg-background/80 px-2 py-1 rounded-md backdrop-blur-sm">
+                                          {formData.objectives?.trim().split(/\s+/).filter(Boolean).length || 0} / 100 words
+                                        </div>
                                       </div>
                                     </div>
                                     <div className="space-y-2">
@@ -1157,22 +1165,42 @@ export default function Auth() {
                                   {renderStepHeader("About You", "Introduce yourself to the community")}
                                   <div className="space-y-6 max-w-2xl mx-auto">
                                     <div className="space-y-2">
-                                      <Label>Short Bio</Label>
-                                      <Textarea 
-                                        className="bg-white/5 border-white/10 min-h-[180px] rounded-xl focus:border-primary/50" 
-                                        placeholder="A bit about your background and experience..." 
-                                        value={formData.bio || ""}
-                                        onChange={(e) => updateFormData("bio", e.target.value)}
-                                      />
+                                      <Label>Short Bio (Max 150 words)</Label>
+                                      <div className="relative">
+                                        <Textarea 
+                                          className="bg-white/5 border-white/10 min-h-[180px] rounded-xl focus:border-primary/50" 
+                                          placeholder="A bit about your background and experience..." 
+                                          value={formData.bio || ""}
+                                          onChange={(e) => {
+                                            const words = e.target.value.trim().split(/\s+/).filter(Boolean).length;
+                                            if (words <= 150 || e.target.value.length < (formData.bio || "").length) {
+                                              updateFormData("bio", e.target.value);
+                                            }
+                                          }}
+                                        />
+                                        <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground bg-background/80 px-2 py-1 rounded-md backdrop-blur-sm">
+                                          {formData.bio?.trim().split(/\s+/).filter(Boolean).length || 0} / 150 words
+                                        </div>
+                                      </div>
                                     </div>
                                     <div className="space-y-2">
-                                      <Label>Optional Tagline</Label>
-                                      <Input 
-                                        className="bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                        placeholder="One sentence that defines you" 
-                                        value={formData.tagline || ""}
-                                        onChange={(e) => updateFormData("tagline", e.target.value)}
-                                      />
+                                      <Label>Optional Tagline (Max 20 words)</Label>
+                                      <div className="relative">
+                                        <Input 
+                                          className="bg-white/5 border-white/10 h-11 focus:border-primary/50" 
+                                          placeholder="One sentence that defines you" 
+                                          value={formData.tagline || ""}
+                                          onChange={(e) => {
+                                            const words = e.target.value.trim().split(/\s+/).filter(Boolean).length;
+                                            if (words <= 20 || e.target.value.length < (formData.tagline || "").length) {
+                                              updateFormData("tagline", e.target.value);
+                                            }
+                                          }}
+                                        />
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground">
+                                          {formData.tagline?.trim().split(/\s+/).filter(Boolean).length || 0} / 20 words
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                 </>
@@ -1184,7 +1212,7 @@ export default function Auth() {
                                   <div className="space-y-6 max-w-2xl mx-auto flex-1 overflow-hidden flex flex-col h-full">
                             <div className="flex-1 overflow-y-auto custom-scrollbar pr-3 space-y-6">
                               {/* Summary Box */}
-                              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 shadow-sm max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+                              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 shadow-sm h-[400px] overflow-y-auto custom-scrollbar pr-2">
                                 <div className="flex justify-between items-start pb-4 border-b border-white/10">
                                   <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20">
@@ -1206,47 +1234,70 @@ export default function Auth() {
                                 </div>
 
                                   <div className="space-y-6 pt-2 border-t border-white/5 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                      <SummaryField label="Full Name" value={formData.fullName} />
-                                      <SummaryField label="Email" value={formData.email} />
-                                      <SummaryField label="Location" value={formData.location} />
-                                      <SummaryField label="Timezone" value={formData.timezone} />
-                                    </div>
-
-                                    <div className="space-y-6 pt-2 border-t border-white/5">
-                                      {selectedRole === "idea-holder" && (
-                                        <>
-                                          <SummaryField label="Interests" value={formData.interests} />
-                                          <SummaryField label="Problem Domains" value={formData.problemDomains} />
-                                          <SummaryField label="Worked on ideas" value={formData.prevIdeas} />
-                                        </>
-                                      )}
-                                      {selectedRole === "developer" && (
-                                        <>
-                                          <SummaryField label="Tech Domains" value={formData.interests} />
-                                          <SummaryField label="Tech Stack" value={formData.skills} />
-                                          <SummaryField label="Status" value={formData.status} />
-                                          <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
-                                        </>
-                                      )}
-                                      {selectedRole === "investor" && (
-                                        <>
-                                          <SummaryField label="Category" value={formData.investorCat} />
-                                          <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
-                                          <SummaryField label="Focus Sectors" value={formData.interests} />
-                                          <SummaryField label="Investment Stages" value={formData.investmentStage} />
-                                        </>
-                                      )}
-                                      
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <SummaryField label="Work Preference" value={formData.workPref} />
-                                        <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
+                                    <div className="space-y-6">
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
+                                        <div className="flex justify-between items-start pb-4 border-b border-white/10">
+                                          <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20">
+                                              <User className="w-6 h-6 text-primary" />
+                                            </div>
+                                            <div>
+                                              <h4 className="font-bold text-lg">{formData.fullName || "N/A"}</h4>
+                                              <p className="text-xs text-muted-foreground">{formData.email || "N/A"}</p>
+                                            </div>
+                                          </div>
+                                          <Badge className="bg-primary/20 text-primary border-primary/20 uppercase text-[10px] font-bold h-6 px-3">
+                                            {selectedRole?.replace("-", " ")}
+                                          </Badge>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-y-4 pt-2">
+                                          <SummaryField label="Location" value={formData.location} />
+                                          <SummaryField label="Timezone" value={formData.timezone} />
+                                        </div>
                                       </div>
-                                      
-                                      <SummaryField label="Bio" value={formData.bio} />
-                                      <SummaryField label="Tagline" value={formData.tagline} />
-                                      <SummaryField label="Objectives" value={formData.objectives} />
-                                      <SummaryField label="Success Definition" value={formData.successDefinition} />
+
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
+                                        <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-2">Professional Identity</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                          {selectedRole === "idea-holder" && (
+                                            <>
+                                              <SummaryField label="Interests" value={formData.interests} />
+                                              <SummaryField label="Problem Domains" value={formData.problemDomains} />
+                                              <SummaryField label="Worked on ideas" value={formData.prevIdeas} />
+                                            </>
+                                          )}
+                                          {selectedRole === "developer" && (
+                                            <>
+                                              <SummaryField label="Tech Domains" value={formData.interests} />
+                                              <SummaryField label="Tech Stack" value={formData.skills} />
+                                              <SummaryField label="Status" value={formData.status} />
+                                              <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
+                                            </>
+                                          )}
+                                          {selectedRole === "investor" && (
+                                            <>
+                                              <SummaryField label="Category" value={formData.investorCat} />
+                                              <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
+                                              <SummaryField label="Focus Sectors" value={formData.interests} />
+                                              <SummaryField label="Investment Stages" value={formData.investmentStage} />
+                                            </>
+                                          )}
+                                        </div>
+                                      </div>
+
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
+                                        <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-2">Preferences & Goals</h4>
+                                        <div className="space-y-4">
+                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <SummaryField label="Work Preference" value={formData.workPref} />
+                                            <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
+                                          </div>
+                                          <SummaryField label="Tagline" value={formData.tagline} />
+                                          <SummaryField label="Bio" value={formData.bio} />
+                                          <SummaryField label="Objectives" value={formData.objectives} />
+                                          <SummaryField label="Success Definition" value={formData.successDefinition} />
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                               </div>
