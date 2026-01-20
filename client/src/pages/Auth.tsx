@@ -79,12 +79,12 @@ const roles = [
       "Sell, fundraise, or build ideas"
     ],
     overviewSteps: [
-      { title: "Post Ideas Securely", desc: "Share ideas or problem statements without exposing sensitive details." },
-      { title: "Validate Real-World Necessity", desc: "Measure interest from developers, users, and investors." },
-      { title: "Attract Developers", desc: "Allow developers to approach and collaborate on your idea." },
-      { title: "Secure Funding", desc: "Pitch your idea to investors or raise funds on the platform." },
-      { title: "Build or Sell the Idea", desc: "Choose to build the idea yourself or transfer ownership." },
-      { title: "Track Growth & Interest", desc: "Monitor engagement, funding progress, and traction." }
+      { title: "Post Ideas Securely", desc: "Share ideas without exposing sensitive details." },
+      { title: "Validate Necessity", desc: "Measure real-world demand and interest." },
+      { title: "Attract Developers", desc: "Allow developers to collaborate on your idea." },
+      { title: "Secure Funding", desc: "Pitch ideas to investors or raise funds." },
+      { title: "Build or Transfer Ownership", desc: "Build yourself or sell the idea." },
+      { title: "Track Growth", desc: "Monitor interest, funding, and traction." }
     ],
     journeyContext: {
       "basic-profile": "Idea holders start by introducing themselves so others know who's behind the vision.",
@@ -108,12 +108,12 @@ const roles = [
       "Raise funds for your own ideas"
     ],
     overviewSteps: [
-      { title: "Discover Ideas & Projects", desc: "Explore startup ideas and open projects shared by idea holders and investors." },
-      { title: "Join or Form Teams", desc: "Collaborate with other developers to build products together." },
-      { title: "Apply for Opportunities", desc: "Apply for full-time, part-time, or contract roles posted on DevConnect." },
-      { title: "Build MVPs & Products", desc: "Work on real-world MVPs and production-ready applications." },
-      { title: "Raise Funds for Your Ideas", desc: "Launch fundraising campaigns to grow your own ideas." },
-      { title: "Scale & Grow Professionally", desc: "Build your developer profile, reputation, and career visibility." }
+      { title: "Discover Ideas & Projects", desc: "Explore startup ideas and open projects posted on DevConnect." },
+      { title: "Join or Form Teams", desc: "Collaborate with other developers to build products." },
+      { title: "Apply for Opportunities", desc: "Apply for full-time, part-time, or contract roles." },
+      { title: "Build MVPs & Products", desc: "Develop real-world MVPs and production-ready products." },
+      { title: "Raise Funds for Your Ideas", desc: "Create fundraising campaigns for your own ideas." },
+      { title: "Grow Your Developer Profile", desc: "Build reputation, experience, and career visibility." }
     ],
     journeyContext: {
       "basic-profile": "Developers provide basic details to build a professional identity within the ecosystem.",
@@ -137,12 +137,12 @@ const roles = [
       "Build an investment portfolio"
     ],
     overviewSteps: [
-      { title: "Discover Innovative Ideas", desc: "Browse ideas and early-stage startup concepts." },
-      { title: "Analyze Market Demand", desc: "Evaluate necessity scores, traction, and problem relevance." },
-      { title: "Invest in Projects", desc: "Fund promising ideas and startups." },
-      { title: "Recruit Talent", desc: "Hire developers to execute funded projects." },
-      { title: "Manage Portfolio", desc: "Track investments and project progress." },
-      { title: "Scale Investments", desc: "Support long-term growth and expansion." }
+      { title: "Discover Ideas", desc: "Browse startup ideas and problem statements." },
+      { title: "Analyze Market Need", desc: "Check necessity and traction." },
+      { title: "Invest in Projects", desc: "Fund promising ideas." },
+      { title: "Recruit Developers", desc: "Hire developers for execution." },
+      { title: "Manage Portfolio", desc: "Track investments and progress." },
+      { title: "Scale Investments", desc: "Support long-term growth." }
     ],
     journeyContext: {
       "basic-profile": "Investors introduce themselves to start building relationships with innovative founders.",
