@@ -482,6 +482,60 @@ function TagInput({ label, placeholder, options, values, onChange }: TagInputPro
   );
 }
 
+interface GlassInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  icon?: React.ElementType;
+}
+
+function GlassInput({ icon: Icon, className, ...props }: GlassInputProps) {
+  return (
+    <div className="relative group">
+      {Icon && (
+        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+      )}
+      <Input 
+        className={cn(
+          "bg-white/5 border-white/10 h-11 focus-visible:ring-primary/20 focus-visible:border-primary/50 transition-all backdrop-blur-sm",
+          Icon && "pl-10",
+          className
+        )} 
+        {...props}
+      />
+    </div>
+  );
+}
+
+interface GlassSelectProps {
+  label: string;
+  placeholder: string;
+  icon?: React.ElementType;
+  options: { label: string; value: string }[];
+  value: string;
+  onChange: (val: string) => void;
+}
+
+function GlassSelect({ label, placeholder, icon: Icon, options, value, onChange }: GlassSelectProps) {
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <Select onValueChange={onChange} value={value}>
+        <SelectTrigger className="bg-white/5 border-white/10 h-11 focus:ring-primary/20 focus:border-primary/50 backdrop-blur-sm">
+          <div className="flex items-center gap-2">
+            {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
+            <SelectValue placeholder={placeholder} />
+          </div>
+        </SelectTrigger>
+        <SelectContent className="z-[70] bg-background/95 backdrop-blur-md border-white/10">
+          {options.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
 const SummaryField = ({ label, value }: { label: string, value: any }) => {
   if (value === undefined || value === null || (typeof value === "string" && value.trim() === "") || (Array.isArray(value) && value.length === 0)) return null;
   return (
@@ -941,7 +995,7 @@ export default function Auth() {
                         </div>
 
                         {/* Internal Scroll - Styled scrollbar */}
-                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8">
+                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 overflow-x-hidden">
                           <AnimatePresence mode="wait">
                             <motion.div 
                               key={signupStep}
@@ -949,7 +1003,7 @@ export default function Auth() {
                               initial="hidden"
                               animate="visible"
                               exit="exit"
-                              className="h-full"
+                              className="h-full flex flex-col"
                             >
                               {signupStep === "basic-profile" && (
                                 <>
@@ -958,63 +1012,51 @@ export default function Auth() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                       <div className="space-y-2">
                                         <Label>Full Name</Label>
-                                        <div className="relative group">
-                                          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                          <Input 
-                                            className="pl-10 bg-white/5 border-white/10 h-11 focus-visible:ring-primary/20 focus-visible:border-primary/50 transition-all" 
-                                            placeholder="Enter your full name" 
-                                            value={formData.fullName || ""}
-                                            onChange={(e) => updateFormData("fullName", e.target.value)}
-                                          />
-                                        </div>
+                                        <GlassInput 
+                                          icon={User}
+                                          placeholder="Enter your full name" 
+                                          value={formData.fullName || ""}
+                                          onChange={(e) => updateFormData("fullName", e.target.value)}
+                                        />
                                       </div>
                                       <div className="space-y-2">
                                         <Label>Email Address</Label>
-                                        <Input 
-                                          className="bg-white/5 border-white/10 h-11 focus-visible:ring-primary/20 focus-visible:border-primary/50 transition-all" 
-                                          placeholder="john@example.com" 
+                                        <GlassInput 
                                           type="email"
+                                          placeholder="john@example.com" 
                                           value={formData.email || ""}
                                           onChange={(e) => updateFormData("email", e.target.value)}
                                         />
                                       </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                      <div className="space-y-2">
-                                        <Label>Country / Location</Label>
-                                        <Select onValueChange={(v) => updateFormData("location", v)} value={formData.location}>
-                                          <SelectTrigger className="bg-white/5 border-white/10 h-11 focus:ring-primary/20 focus:border-primary/50">
-                                            <div className="flex items-center gap-2">
-                                              <Globe className="w-4 h-4 text-muted-foreground" />
-                                              <SelectValue placeholder="Select location" />
-                                            </div>
-                                          </SelectTrigger>
-                                          <SelectContent className="z-[70]">
-                                            <SelectItem value="us">United States</SelectItem>
-                                            <SelectItem value="uk">United Kingdom</SelectItem>
-                                            <SelectItem value="in">India</SelectItem>
-                                            <SelectItem value="ca">Canada</SelectItem>
-                                            <SelectItem value="de">Germany</SelectItem>
-                                          </SelectContent>
-                                        </Select>
-                                      </div>
-                                      <div className="space-y-2">
-                                        <Label>Time Zone</Label>
-                                        <Select onValueChange={(v) => updateFormData("timezone", v)} value={formData.timezone}>
-                                          <SelectTrigger className="bg-white/5 border-white/10 h-11 focus:ring-primary/20 focus:border-primary/50">
-                                            <div className="flex items-center gap-2">
-                                              <Clock className="w-4 h-4 text-muted-foreground" />
-                                              <SelectValue placeholder="Select timezone" />
-                                            </div>
-                                          </SelectTrigger>
-                                          <SelectContent className="z-[70]">
-                                            <SelectItem value="utc-5">UTC-5 (EST)</SelectItem>
-                                            <SelectItem value="utc-0">UTC+0 (GMT)</SelectItem>
-                                            <SelectItem value="utc+5.5">UTC+5:30 (IST)</SelectItem>
-                                            <SelectItem value="utc+1">UTC+1 (CET)</SelectItem>
-                                          </SelectContent>
-                                        </Select>
-                                      </div>
+                                      <GlassSelect 
+                                        label="Country / Location"
+                                        placeholder="Select location"
+                                        icon={Globe}
+                                        value={formData.location}
+                                        onChange={(v) => updateFormData("location", v)}
+                                        options={[
+                                          { label: "United States", value: "us" },
+                                          { label: "United Kingdom", value: "uk" },
+                                          { label: "India", value: "in" },
+                                          { label: "Canada", value: "ca" },
+                                          { label: "Germany", value: "de" }
+                                        ]}
+                                      />
+                                      <GlassSelect 
+                                        label="Time Zone"
+                                        placeholder="Select timezone"
+                                        icon={Clock}
+                                        value={formData.timezone}
+                                        onChange={(v) => updateFormData("timezone", v)}
+                                        options={[
+                                          { label: "UTC-5 (EST)", value: "utc-5" },
+                                          { label: "UTC+0 (GMT)", value: "utc-0" },
+                                          { label: "UTC+5:30 (IST)", value: "utc+5.5" },
+                                          { label: "UTC+1 (CET)", value: "utc+1" }
+                                        ]}
+                                      />
                                     </div>
                                   </div>
                                 </>
@@ -1072,19 +1114,19 @@ export default function Auth() {
                                           onChange={(vals) => updateFormData("skills", vals)}
                                         />
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          <div className="space-y-2">
-                                            <Label>Current Status</Label>
-                                            <Select onValueChange={(v) => updateFormData("status", v)} value={formData.status}>
-                                              <SelectTrigger className="bg-white/5 border-white/10 h-11">
-                                                <SelectValue placeholder="Select status" />
-                                              </SelectTrigger>
-                                              <SelectContent className="z-[70]">
-                                                {STATUS_OPTIONS.map(opt => (
-                                                  <SelectItem key={opt} value={opt.toLowerCase().replace(/ /g, "-")}>{opt}</SelectItem>
-                                                ))}
-                                              </SelectContent>
-                                            </Select>
-                                          </div>
+                                      <div className="space-y-2">
+                                        <Label>Current Status</Label>
+                                        <GlassSelect 
+                                          label=""
+                                          placeholder="Select status"
+                                          value={formData.status}
+                                          onChange={(v) => updateFormData("status", v)}
+                                          options={STATUS_OPTIONS.map(opt => ({
+                                            label: opt,
+                                            value: opt.toLowerCase().replace(/ /g, "-")
+                                          }))}
+                                        />
+                                      </div>
                                           <div className="space-y-2">
                                             <Label>Years of experience</Label>
                                             <Input 
@@ -1101,19 +1143,20 @@ export default function Auth() {
                                     {selectedRole === "investor" && (
                                       <>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          <div className="space-y-2">
-                                            <Label>Investor Category</Label>
-                                            <Select onValueChange={(v) => updateFormData("investorCat", v)} value={formData.investorCat}>
-                                              <SelectTrigger className="bg-white/5 border-white/10 h-11">
-                                                <SelectValue placeholder="Select category" />
-                                              </SelectTrigger>
-                                              <SelectContent className="z-[70]">
-                                                <SelectItem value="individual">Individual</SelectItem>
-                                                <SelectItem value="angel">Angel</SelectItem>
-                                                <SelectItem value="vc">Venture Capitalist</SelectItem>
-                                              </SelectContent>
-                                            </Select>
-                                          </div>
+                                      <div className="space-y-2">
+                                        <Label>Investor Category</Label>
+                                        <GlassSelect 
+                                          label=""
+                                          placeholder="Select category"
+                                          value={formData.investorCat}
+                                          onChange={(v) => updateFormData("investorCat", v)}
+                                          options={[
+                                            { label: "Individual", value: "individual" },
+                                            { label: "Angel", value: "angel" },
+                                            { label: "Venture Capitalist", value: "vc" }
+                                          ]}
+                                        />
+                                      </div>
                                           <div className="space-y-2">
                                             <Label>Investing experience (years)</Label>
                                             <Input 
@@ -1169,19 +1212,20 @@ export default function Auth() {
                                     {selectedRole === "developer" && (
                                       <>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          <div className="space-y-2">
-                                            <Label>Work preference</Label>
-                                            <Select onValueChange={(v) => updateFormData("workPref", v)} value={formData.workPref}>
-                                              <SelectTrigger className="bg-white/5 border-white/10 h-11">
-                                                <SelectValue placeholder="Select preference" />
-                                              </SelectTrigger>
-                                              <SelectContent className="z-[70]">
-                                                <SelectItem value="fulltime">Full-time</SelectItem>
-                                                <SelectItem value="parttime">Part-time</SelectItem>
-                                                <SelectItem value="contract">Contract</SelectItem>
-                                              </SelectContent>
-                                            </Select>
-                                          </div>
+                                      <div className="space-y-2">
+                                        <Label>Work preference</Label>
+                                        <GlassSelect 
+                                          label=""
+                                          placeholder="Select preference"
+                                          value={formData.workPref}
+                                          onChange={(v) => updateFormData("workPref", v)}
+                                          options={[
+                                            { label: "Full-time", value: "fulltime" },
+                                            { label: "Part-time", value: "parttime" },
+                                            { label: "Contract", value: "contract" }
+                                          ]}
+                                        />
+                                      </div>
                                           <div className="space-y-2">
                                             <Label>Availability (hours/week)</Label>
                                             <Input 
@@ -1210,19 +1254,20 @@ export default function Auth() {
                                     )}
                                     {selectedRole === "investor" && (
                                       <>
-                                        <div className="space-y-2">
-                                          <Label>Preferred involvement</Label>
-                                          <Select onValueChange={(v) => updateFormData("involvement", v)} value={formData.involvement}>
-                                            <SelectTrigger className="bg-white/5 border-white/10 h-11">
-                                              <SelectValue placeholder="Select involvement" />
-                                            </SelectTrigger>
-                                            <SelectContent className="z-[70]">
-                                              <SelectItem value="passive">Passive</SelectItem>
-                                              <SelectItem value="advisory">Advisory</SelectItem>
-                                              <SelectItem value="active">Active</SelectItem>
-                                            </SelectContent>
-                                          </Select>
-                                        </div>
+                                    <div className="space-y-2">
+                                      <Label>Preferred involvement</Label>
+                                      <GlassSelect 
+                                        label=""
+                                        placeholder="Select involvement"
+                                        value={formData.involvement}
+                                        onChange={(v) => updateFormData("involvement", v)}
+                                        options={[
+                                          { label: "Passive", value: "passive" },
+                                          { label: "Advisory", value: "advisory" },
+                                          { label: "Active", value: "active" }
+                                        ]}
+                                      />
+                                    </div>
                                         <div className="space-y-3">
                                           <Label>Investment stage preference</Label>
                                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
