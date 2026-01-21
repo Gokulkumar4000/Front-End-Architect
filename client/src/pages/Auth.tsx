@@ -840,8 +840,12 @@ export default function Auth() {
                   {renderStepHeader("Choose Your Path", "Select your role to start your journey on DevConnect.")}
                   <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {roles.map((role) => (
-                      <Card key={role.id} className="glass-card hover-elevate border-white/5 flex flex-col h-full overflow-hidden transition-all hover:border-primary/30">
-                        <CardContent className="p-6 md:p-8 flex-1 flex flex-col">
+                      <Card key={role.id} className="glass-card hover-elevate border-white/5 flex flex-col h-full overflow-hidden transition-all hover:border-primary/30 group relative">
+                        {/* Glass Reflection Animation Overlay */}
+                        <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                          <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
+                        </div>
+                        <CardContent className="p-6 md:p-8 flex-1 flex flex-col relative z-20">
                           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
                             <role.icon className="w-6 h-6 text-primary" />
                           </div>
