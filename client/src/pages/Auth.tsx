@@ -578,6 +578,13 @@ export default function Auth() {
     prevIdeas: "",
     techDomain: "",
     status: "",
+    collegeName: "",
+    collegePlace: "",
+    currentYear: "",
+    degree: "",
+    resumeLink: "",
+    portfolioLink: "",
+    githubLink: "",
     experience: "",
     investorCat: "",
     workPref: "",
@@ -1323,32 +1330,112 @@ export default function Auth() {
                                 <>
                                   {renderStepHeader("Organization & Affiliation", "Professional associations")}
                                   <div className="space-y-6 w-full max-w-2xl mx-auto">
-                                    <div className="space-y-2">
-                                      <Label>Current / Previous company</Label>
-                                      <div className="relative group">
-                                        <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                        <Input 
-                                          className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                          placeholder="Company name" 
-                                          value={formData.orgName || ""}
-                                          onChange={(e) => updateFormData("orgName", e.target.value)}
-                                        />
+                                    {formData.status === "student" ? (
+                                      <div className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                          <div className="space-y-2">
+                                            <Label>College / University Name</Label>
+                                            <div className="relative group">
+                                              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                              <Input 
+                                                className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
+                                                placeholder="Enter college name" 
+                                                value={formData.collegeName || ""}
+                                                onChange={(e) => updateFormData("collegeName", e.target.value)}
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className="space-y-2">
+                                            <Label>College Location</Label>
+                                            <div className="relative group">
+                                              <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                              <Input 
+                                                className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
+                                                placeholder="City, Country" 
+                                                value={formData.collegePlace || ""}
+                                                onChange={(e) => updateFormData("collegePlace", e.target.value)}
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                          <div className="space-y-2">
+                                            <Label>Current Year</Label>
+                                            <GlassSelect 
+                                              label=""
+                                              placeholder="Select year"
+                                              value={formData.currentYear}
+                                              onChange={(v) => updateFormData("currentYear", v)}
+                                              options={[
+                                                { label: "1st Year", value: "1" },
+                                                { label: "2nd Year", value: "2" },
+                                                { label: "3rd Year", value: "3" },
+                                                { label: "4th Year", value: "4" },
+                                                { label: "Final Year", value: "final" }
+                                              ]}
+                                            />
+                                          </div>
+                                          <div className="space-y-2">
+                                            <Label>Degree / Major</Label>
+                                            <Input 
+                                              className="bg-white/5 border-white/10 h-11 focus:border-primary/50" 
+                                              placeholder="e.g. B.Tech Computer Science" 
+                                              value={formData.degree || ""}
+                                              onChange={(e) => updateFormData("degree", e.target.value)}
+                                            />
+                                          </div>
+                                        </div>
                                       </div>
-                                    </div>
-                                    {selectedRole === "developer" && (
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    ) : (
+                                      <div className="space-y-4">
                                         <div className="space-y-2">
-                                          <Label>Portfolio Link</Label>
+                                          <Label>Current / Previous company</Label>
                                           <div className="relative group">
-                                            <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                            <Input className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" placeholder="https://..." />
+                                            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                            <Input 
+                                              className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
+                                              placeholder="Company name" 
+                                              value={formData.orgName || ""}
+                                              onChange={(e) => updateFormData("orgName", e.target.value)}
+                                            />
+                                          </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                          <div className="space-y-2">
+                                            <Label>Portfolio Link</Label>
+                                            <div className="relative group">
+                                              <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                              <Input 
+                                                className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
+                                                placeholder="https://..." 
+                                                value={formData.portfolioLink || ""}
+                                                onChange={(e) => updateFormData("portfolioLink", e.target.value)}
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className="space-y-2">
+                                            <Label>GitHub Profile</Label>
+                                            <div className="relative group">
+                                              <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                              <Input 
+                                                className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
+                                                placeholder="github.com/username" 
+                                                value={formData.githubLink || ""}
+                                                onChange={(e) => updateFormData("githubLink", e.target.value)}
+                                              />
+                                            </div>
                                           </div>
                                         </div>
                                         <div className="space-y-2">
-                                          <Label>GitHub Profile</Label>
+                                          <Label>Resume / CV Link</Label>
                                           <div className="relative group">
-                                            <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                            <Input className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" placeholder="github.com/username" />
+                                            <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                            <Input 
+                                              className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
+                                              placeholder="Drive or Dropbox link" 
+                                              value={formData.resumeLink || ""}
+                                              onChange={(e) => updateFormData("resumeLink", e.target.value)}
+                                            />
                                           </div>
                                         </div>
                                       </div>
@@ -1518,27 +1605,17 @@ export default function Auth() {
                                           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
                                             <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-2">Professional Identity</h4>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                              {selectedRole === "idea-holder" && (
+                                              {formData.status === "student" ? (
                                                 <>
-                                                  <SummaryField label="Interests" value={formData.interests} />
-                                                  <SummaryField label="Problem Domains" value={formData.problemDomains} />
-                                                  <SummaryField label="Worked on ideas" value={formData.prevIdeas} />
+                                                  <SummaryField label="College" value={formData.collegeName} />
+                                                  <SummaryField label="Year" value={formData.currentYear ? `${formData.currentYear} Year` : null} />
+                                                  <SummaryField label="Degree" value={formData.degree} />
                                                 </>
-                                              )}
-                                              {selectedRole === "developer" && (
+                                              ) : (
                                                 <>
-                                                  <SummaryField label="Tech Domains" value={formData.interests} />
-                                                  <SummaryField label="Tech Stack" value={formData.skills} />
-                                                  <SummaryField label="Status" value={formData.status} />
-                                                  <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
-                                                </>
-                                              )}
-                                              {selectedRole === "investor" && (
-                                                <>
-                                                  <SummaryField label="Category" value={formData.investorCat} />
-                                                  <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
-                                                  <SummaryField label="Focus Sectors" value={formData.interests} />
-                                                  <SummaryField label="Investment Stages" value={formData.investmentStage} />
+                                                  <SummaryField label="Organization" value={formData.orgName} />
+                                                  <SummaryField label="Portfolio" value={formData.portfolioLink} />
+                                                  <SummaryField label="GitHub" value={formData.githubLink} />
                                                 </>
                                               )}
                                             </div>
