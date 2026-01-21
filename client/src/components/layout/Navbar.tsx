@@ -63,31 +63,53 @@ export function Navbar() {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuLabel className="font-normal">
+          <DropdownMenuContent className="w-56 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal px-4 py-3">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">John Doe</p>
-                <p className="text-xs leading-none text-muted-foreground">john@example.com</p>
+                <p className="text-sm font-bold leading-none text-gradient-primary">John Doe</p>
+                <p className="text-xs leading-none text-muted-foreground font-medium">john@example.com</p>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/profile" className="cursor-pointer">
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/settings" className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-white/5" />
+            <div className="p-1">
+              <DropdownMenuItem asChild className="group relative overflow-hidden focus:bg-primary/10 transition-colors cursor-pointer rounded-md">
+                <Link href="/profile">
+                  <div className="flex items-center w-full">
+                    {/* Glass Reflection Animation Overlay */}
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                      <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                    </div>
+                    <User className="mr-2 h-4 w-4 relative z-20 group-hover:text-primary transition-colors" />
+                    <span className="relative z-20 font-medium">Profile</span>
+                  </div>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild className="group relative overflow-hidden focus:bg-primary/10 transition-colors cursor-pointer rounded-md">
+                <Link href="/settings">
+                  <div className="flex items-center w-full">
+                    {/* Glass Reflection Animation Overlay */}
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                      <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                    </div>
+                    <Settings className="mr-2 h-4 w-4 relative z-20 group-hover:text-primary transition-colors" />
+                    <span className="relative z-20 font-medium">Settings</span>
+                  </div>
+                </Link>
+              </DropdownMenuItem>
+            </div>
+            <DropdownMenuSeparator className="bg-white/5" />
+            <div className="p-1">
+              <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10 group relative overflow-hidden transition-colors cursor-pointer rounded-md">
+                <div className="flex items-center w-full">
+                  {/* Glass Reflection Animation Overlay */}
+                  <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                    <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                  </div>
+                  <LogOut className="mr-2 h-4 w-4 relative z-20" />
+                  <span className="relative z-20 font-medium">Log out</span>
+                </div>
+              </DropdownMenuItem>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
