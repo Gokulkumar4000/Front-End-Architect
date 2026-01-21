@@ -1411,7 +1411,7 @@ export default function Auth() {
                                             }
                                           }}
                                         />
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground">
+                                        <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground bg-background/80 px-2 py-1 rounded-md backdrop-blur-sm pointer-events-none">
                                           {formData.tagline?.trim().split(/\s+/).filter(Boolean).length || 0} / 20 words
                                         </div>
                                       </div>
