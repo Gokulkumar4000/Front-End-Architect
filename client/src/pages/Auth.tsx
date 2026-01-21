@@ -734,10 +734,14 @@ export default function Auth() {
 
     return (
       <Card className={cn(
-        "glass-card border-primary/20 bg-primary/5",
+        "glass-card border-primary/20 bg-primary/5 group relative overflow-hidden",
         isFixed && "sticky top-4"
       )}>
-        <CardContent className="p-6 space-y-4">
+        {/* Glass Reflection Animation Overlay */}
+        <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+          <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
+        </div>
+        <CardContent className="p-6 space-y-4 relative z-20">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
               <role.icon className="w-5 h-5 text-primary" />
@@ -939,19 +943,31 @@ export default function Auth() {
                               {journeyStepIndex < role.overviewSteps.length - 1 ? (
                                 <Button 
                                   onClick={() => setJourneyStepIndex(journeyStepIndex + 1)} 
-                                  className="font-bold h-11 px-8 shadow-lg shadow-primary/20"
+                                  className="font-bold h-11 px-8 shadow-lg shadow-primary/20 group relative overflow-hidden"
                                 >
-                                  Next Step
-                                  <ArrowRight className="w-4 h-4 ml-2" />
+                                  {/* Glass Reflection Animation Overlay */}
+                                  <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                                    <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                                  </div>
+                                  <span className="relative z-20 flex items-center">
+                                    Next Step
+                                    <ArrowRight className="w-4 h-4 ml-2" />
+                                  </span>
                                 </Button>
                               ) : (
                                 <Button 
                                   onClick={handleStartRegistration} 
-                                  className="font-bold h-11 px-8 shadow-lg shadow-primary/20"
+                                  className="font-bold h-11 px-8 shadow-lg shadow-primary/20 group relative overflow-hidden"
                                 >
-                                  <span className="hidden md:inline">Continue to Registration</span>
-                                  <span className="md:hidden">Register</span>
-                                  <Rocket className="w-4 h-4 ml-2" />
+                                  {/* Glass Reflection Animation Overlay */}
+                                  <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                                    <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                                  </div>
+                                  <span className="relative z-20 flex items-center">
+                                    <span className="hidden md:inline">Continue to Registration</span>
+                                    <span className="md:hidden">Register</span>
+                                    <Rocket className="w-4 h-4 ml-2" />
+                                  </span>
                                 </Button>
                               )}
                             </div>
@@ -1784,14 +1800,29 @@ export default function Auth() {
                             ))}
                           </div>
                           {signupStep === "summary" ? (
-                            <Button className="font-bold h-11 px-8 shadow-lg shadow-primary/20 animate-in fade-in slide-in-from-right-2">
-                              Create Account
-                              <Check className="w-4 h-4 ml-2" />
+                            <Button className="font-bold h-11 px-8 shadow-lg shadow-primary/20 group relative overflow-hidden">
+                              {/* Glass Reflection Animation Overlay */}
+                              <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                                <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                              </div>
+                              <span className="relative z-20 flex items-center">
+                                Create Account
+                                <Check className="w-4 h-4 ml-2" />
+                              </span>
                             </Button>
                           ) : (
-                            <Button onClick={nextStep} className="font-bold h-11 px-8 group transition-all">
-                              Next
-                              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                            <Button 
+                              onClick={nextStep} 
+                              className="font-bold h-11 px-8 shadow-lg shadow-primary/20 group relative overflow-hidden"
+                            >
+                              {/* Glass Reflection Animation Overlay */}
+                              <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                                <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                              </div>
+                              <span className="relative z-20 flex items-center">
+                                Next
+                                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                              </span>
                             </Button>
                           )}
                         </div>
