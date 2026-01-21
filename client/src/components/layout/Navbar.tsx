@@ -32,12 +32,6 @@ export function Navbar() {
             <span className="text-xl font-display font-bold text-gradient-primary hidden md:block">DevConnect</span>
           </div>
         </Link>
-        
-        <div className="hidden md:flex items-center gap-6">
-          <Link href="/feed">
-            <a className="text-sm font-medium hover:text-primary transition-colors">Feed</a>
-          </Link>
-        </div>
       </div>
 
       <div className="flex-1 max-w-md mx-4 hidden sm:block">
