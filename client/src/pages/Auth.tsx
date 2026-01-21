@@ -1080,7 +1080,7 @@ export default function Auth() {
                               {signupStep === "professional-identity" && (
                                 <>
                                   {renderStepHeader("Professional Identity", "Help us understand your background")}
-                                  <div className="space-y-6 w-full max-w-2xl mx-auto">
+                                  <div className="space-y-6 w-full max-w-2xl mx-auto pb-12">
                                     {selectedRole === "idea-holder" && (
                                       <>
                                         <TagInput 
@@ -1214,7 +1214,7 @@ export default function Auth() {
                               {signupStep === "working-preferences" && (
                                 <>
                                   {renderStepHeader("Working Preferences", "How do you want to engage?")}
-                                  <div className="space-y-6 w-full max-w-2xl mx-auto">
+                                  <div className="space-y-6 w-full max-w-2xl mx-auto pb-12">
                                     {selectedRole === "idea-holder" && (
                                       <>
                                         <div className="space-y-3">
@@ -1330,7 +1330,7 @@ export default function Auth() {
                               {signupStep === "org-affiliation" && (
                                 <>
                                   {renderStepHeader("Organization & Affiliation", "Professional associations")}
-                                  <div className="space-y-6 w-full max-w-2xl mx-auto">
+                                  <div className="space-y-6 w-full max-w-2xl mx-auto pb-12">
                                     {formData.status === "student" ? (
                                       <div className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1492,7 +1492,7 @@ export default function Auth() {
                               {signupStep === "interests-goals" && (
                                 <>
                                   {renderStepHeader("Interests & Goals", "What are you aiming to achieve?")}
-                                  <div className="space-y-6 w-full max-w-2xl mx-auto">
+                                  <div className="space-y-6 w-full max-w-2xl mx-auto pb-12">
                                     <div className="space-y-2">
                                       <Label>Primary Objectives (Max 100 words)</Label>
                                       <div className="relative group">
@@ -1540,7 +1540,7 @@ export default function Auth() {
                               {signupStep === "about-you" && (
                                 <>
                                   {renderStepHeader("About You", "Introduce yourself to the community")}
-                                  <div className="space-y-6 w-full max-w-2xl mx-auto">
+                                  <div className="space-y-6 w-full max-w-2xl mx-auto pb-12">
                                     <div className="space-y-2">
                                       <Label>Short Bio (Max 150 words)</Label>
                                       <div className="relative">
