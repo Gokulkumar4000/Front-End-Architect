@@ -1513,15 +1513,23 @@ export default function Auth() {
                                       </div>
                                     </div>
                                     <div className="space-y-2">
-                                      <Label>Definition of Success</Label>
+                                      <Label>Definition of Success (Max 20 words)</Label>
                                       <div className="relative group">
                                         <Trophy className="absolute left-3 top-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                         <Textarea 
                                           className="w-full pl-10 bg-white/5 border-white/10 min-h-[120px] rounded-xl focus:border-primary/50" 
                                           placeholder="Describe what success looks like..." 
                                           value={formData.successDefinition || ""}
-                                          onChange={(e) => updateFormData("successDefinition", e.target.value)}
+                                          onChange={(e) => {
+                                            const words = e.target.value.trim().split(/\s+/).filter(Boolean).length;
+                                            if (words <= 20 || e.target.value.length < (formData.successDefinition || "").length) {
+                                              updateFormData("successDefinition", e.target.value);
+                                            }
+                                          }}
                                         />
+                                        <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground bg-background/80 px-2 py-1 rounded-md backdrop-blur-sm pointer-events-none">
+                                          {formData.successDefinition?.trim().split(/\s+/).filter(Boolean).length || 0} / 20 words
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
