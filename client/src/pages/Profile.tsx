@@ -97,6 +97,11 @@ export default function Profile() {
     }
   });
 
+  const handleSave = () => {
+    setIsEditing(false);
+    // In a real app, we would call an API here
+  };
+
   if (loading) {
     return (
       <AppLayout>

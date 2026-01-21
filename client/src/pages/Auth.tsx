@@ -608,6 +608,8 @@ export default function Auth() {
     teamSize: ""
   });
   const [loading, setLoading] = useState(true);
+  const [isRoleCardExpanded, setIsRoleCardExpanded] = useState(false);
+  const [activeSearchId, setActiveSearchId] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 300);
