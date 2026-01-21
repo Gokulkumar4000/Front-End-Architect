@@ -26,6 +26,7 @@ import {
   Info,
   Plus,
   Search,
+  DollarSign,
   X
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
@@ -600,7 +601,11 @@ export default function Auth() {
     bio: "",
     tagline: "",
     objectives: "",
-    successDefinition: ""
+    successDefinition: "",
+    currentProject: "",
+    annualSalary: "",
+    focus: "",
+    teamSize: ""
   });
   const [isRoleCardExpanded, setIsRoleCardExpanded] = useState(false);
   const [activeSearchId, setActiveSearchId] = useState<string | null>(null);
@@ -682,6 +687,14 @@ export default function Auth() {
             <SummaryField label="Role" value={role.title} />
             <SummaryField label="Full Name" value={formData.fullName} />
             <SummaryField label="Email" value={formData.email} />
+            {selectedRole === "idea-holder" && (
+              <>
+                <SummaryField label="Current Project" value={formData.currentProject} />
+                <SummaryField label="Annual Salary" value={formData.annualSalary ? `$${formData.annualSalary}` : ""} />
+                <SummaryField label="Focus" value={formData.focus} />
+                <SummaryField label="Team Size" value={formData.teamSize} />
+              </>
+            )}
             <SummaryField label="Location" value={formData.location} />
             <SummaryField label="Timezone" value={formData.timezone} />
             <SummaryField label="Bio" value={formData.bio} />
@@ -1134,6 +1147,46 @@ export default function Auth() {
                                           activeSearchId={activeSearchId}
                                           onToggleSearch={setActiveSearchId}
                                         />
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                          <div className="space-y-2">
+                                            <Label>What are you working on?</Label>
+                                            <GlassInput 
+                                              icon={Briefcase}
+                                              placeholder="e.g. AI-driven education" 
+                                              value={formData.currentProject || ""}
+                                              onChange={(e) => updateFormData("currentProject", e.target.value)}
+                                            />
+                                          </div>
+                                          <div className="space-y-2">
+                                            <Label>Annual Salary (USD)</Label>
+                                            <GlassInput 
+                                              icon={DollarSign}
+                                              type="number"
+                                              placeholder="0" 
+                                              value={formData.annualSalary || ""}
+                                              onChange={(e) => updateFormData("annualSalary", e.target.value)}
+                                            />
+                                          </div>
+                                          <div className="space-y-2">
+                                            <Label>Current Focus</Label>
+                                            <GlassInput 
+                                              icon={Target}
+                                              placeholder="e.g. Finding co-founder" 
+                                              value={formData.focus || ""}
+                                              onChange={(e) => updateFormData("focus", e.target.value)}
+                                            />
+                                          </div>
+                                          <div className="space-y-2">
+                                            <Label>Current Team Size</Label>
+                                            <GlassInput 
+                                              icon={Users}
+                                              type="number"
+                                              placeholder="1" 
+                                              value={formData.teamSize || ""}
+                                              onChange={(e) => updateFormData("teamSize", e.target.value)}
+                                            />
+                                          </div>
+                                        </div>
                                         <div className="space-y-3">
                                           <Label>Have you previously worked on ideas?</Label>
                                           <RadioGroup onValueChange={(v) => updateFormData("prevIdeas", v)} value={formData.prevIdeas} className="flex gap-6">
