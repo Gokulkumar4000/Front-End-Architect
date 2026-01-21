@@ -1468,10 +1468,10 @@ export default function Auth() {
                               {signupStep === "summary" && (
                                 <>
                                   {renderStepHeader("Summary Preview", "Review your details before joining")}
-                                  <div className="space-y-6 max-w-2xl mx-auto flex-1 overflow-hidden flex flex-col h-full">
-                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-3 space-y-6">
-                              {/* Summary Box */}
-                              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 shadow-sm h-[400px] overflow-y-auto custom-scrollbar pr-2">
+                                  <div className="w-full max-w-4xl mx-auto flex-1 overflow-hidden flex flex-col h-full">
+                                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+                                      {/* Summary Box */}
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-8 shadow-sm min-h-[450px]">
                                 <div className="flex justify-between items-start pb-4 border-b border-white/10">
                                   <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20">
