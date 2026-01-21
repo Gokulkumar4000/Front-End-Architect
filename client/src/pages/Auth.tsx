@@ -546,13 +546,13 @@ const SummaryField = ({ label, value }: { label: string, value: any }) => {
   if (value === undefined || value === null || (typeof value === "string" && value.trim() === "") || (Array.isArray(value) && value.length === 0)) return null;
   return (
     <div className="space-y-1">
-      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
+      <p className="text-[9px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
       {Array.isArray(value) ? (
         <div className="flex flex-wrap gap-1">
-          {value.map((v, i) => <Badge key={i} variant="outline" className="text-[10px] border-white/10 h-5">{v}</Badge>)}
+          {value.map((v, i) => <Badge key={i} variant="outline" className="text-[9px] md:text-[10px] border-white/10 h-4 md:h-5 px-1.5">{v}</Badge>)}
         </div>
       ) : (
-        <p className="text-sm font-medium">{value}</p>
+        <p className="text-xs md:text-sm font-medium leading-tight">{value}</p>
       )}
     </div>
   );
@@ -1010,7 +1010,7 @@ export default function Auth() {
                         </div>
 
                         {/* Internal Scroll - Styled scrollbar */}
-                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 pb-12 overflow-x-hidden">
+                        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-10 md:pb-12 overflow-x-hidden">
                           <AnimatePresence mode="wait">
                             <motion.div 
                               key={signupStep}
@@ -1589,7 +1589,7 @@ export default function Auth() {
                                   <div className="w-full max-w-4xl mx-auto flex-1 overflow-hidden flex flex-col h-full">
                                     <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
                                       {/* Summary Box */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-8 shadow-sm min-h-[600px]">
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-8 space-y-6 md:space-y-8 shadow-sm min-h-[500px] md:min-h-[600px]">
                                         <div className="flex justify-between items-start pb-4 border-b border-white/10">
                                           <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20">
