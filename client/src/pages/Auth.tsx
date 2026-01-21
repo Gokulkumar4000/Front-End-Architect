@@ -1471,30 +1471,7 @@ export default function Auth() {
                                   <div className="w-full max-w-4xl mx-auto flex-1 overflow-hidden flex flex-col h-full">
                                     <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
                                       {/* Summary Box */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-8 shadow-sm min-h-[450px]">
-                                <div className="flex justify-between items-start pb-4 border-b border-white/10">
-                                  <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20">
-                                      <User className="w-6 h-6 text-primary" />
-                                    </div>
-                                    <div>
-                                      <h4 className="font-bold text-lg">{formData.fullName || "N/A"}</h4>
-                                      <p className="text-xs text-muted-foreground">{formData.email || "N/A"}</p>
-                                    </div>
-                                  </div>
-                                  <Badge className="bg-primary/20 text-primary border-primary/20 uppercase text-[10px] font-bold h-6 px-3">
-                                    {selectedRole?.replace("-", " ")}
-                                  </Badge>
-                                </div>
-                                
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                  <SummaryField label="Location" value={formData.location} />
-                                  <SummaryField label="Timezone" value={formData.timezone} />
-                                </div>
-
-                                  <div className="space-y-6 pt-2 border-t border-white/5 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-                                    <div className="space-y-6">
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-8 shadow-sm min-h-[500px]">
                                         <div className="flex justify-between items-start pb-4 border-b border-white/10">
                                           <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20">
@@ -1509,58 +1486,58 @@ export default function Auth() {
                                             {selectedRole?.replace("-", " ")}
                                           </Badge>
                                         </div>
-                                        <div className="grid grid-cols-2 gap-y-4 pt-2">
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                           <SummaryField label="Location" value={formData.location} />
                                           <SummaryField label="Timezone" value={formData.timezone} />
                                         </div>
-                                      </div>
 
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
-                                        <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-2">Professional Identity</h4>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          {selectedRole === "idea-holder" && (
-                                            <>
-                                              <SummaryField label="Interests" value={formData.interests} />
-                                              <SummaryField label="Problem Domains" value={formData.problemDomains} />
-                                              <SummaryField label="Worked on ideas" value={formData.prevIdeas} />
-                                            </>
-                                          )}
-                                          {selectedRole === "developer" && (
-                                            <>
-                                              <SummaryField label="Tech Domains" value={formData.interests} />
-                                              <SummaryField label="Tech Stack" value={formData.skills} />
-                                              <SummaryField label="Status" value={formData.status} />
-                                              <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
-                                            </>
-                                          )}
-                                          {selectedRole === "investor" && (
-                                            <>
-                                              <SummaryField label="Category" value={formData.investorCat} />
-                                              <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
-                                              <SummaryField label="Focus Sectors" value={formData.interests} />
-                                              <SummaryField label="Investment Stages" value={formData.investmentStage} />
-                                            </>
-                                          )}
-                                        </div>
-                                      </div>
-
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
-                                        <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-2">Preferences & Goals</h4>
-                                        <div className="space-y-4">
-                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <SummaryField label="Work Preference" value={formData.workPref} />
-                                            <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
+                                        <div className="space-y-8 pt-2 border-t border-white/5">
+                                          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
+                                            <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-2">Professional Identity</h4>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                              {selectedRole === "idea-holder" && (
+                                                <>
+                                                  <SummaryField label="Interests" value={formData.interests} />
+                                                  <SummaryField label="Problem Domains" value={formData.problemDomains} />
+                                                  <SummaryField label="Worked on ideas" value={formData.prevIdeas} />
+                                                </>
+                                              )}
+                                              {selectedRole === "developer" && (
+                                                <>
+                                                  <SummaryField label="Tech Domains" value={formData.interests} />
+                                                  <SummaryField label="Tech Stack" value={formData.skills} />
+                                                  <SummaryField label="Status" value={formData.status} />
+                                                  <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
+                                                </>
+                                              )}
+                                              {selectedRole === "investor" && (
+                                                <>
+                                                  <SummaryField label="Category" value={formData.investorCat} />
+                                                  <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
+                                                  <SummaryField label="Focus Sectors" value={formData.interests} />
+                                                  <SummaryField label="Investment Stages" value={formData.investmentStage} />
+                                                </>
+                                              )}
+                                            </div>
                                           </div>
-                                          <SummaryField label="Tagline" value={formData.tagline} />
-                                          <SummaryField label="Bio" value={formData.bio} />
-                                          <SummaryField label="Objectives" value={formData.objectives} />
-                                          <SummaryField label="Success Definition" value={formData.successDefinition} />
+
+                                          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
+                                            <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-2">Preferences & Goals</h4>
+                                            <div className="space-y-4">
+                                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <SummaryField label="Work Preference" value={formData.workPref} />
+                                                <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
+                                              </div>
+                                              <SummaryField label="Tagline" value={formData.tagline} />
+                                              <SummaryField label="Bio" value={formData.bio} />
+                                              <SummaryField label="Objectives" value={formData.objectives} />
+                                              <SummaryField label="Success Definition" value={formData.successDefinition} />
+                                            </div>
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
-                                  </div>
-                              </div>
-                            </div>
                                   </div>
                                 </>
                               )}
