@@ -647,6 +647,9 @@ export default function Auth() {
   };
 
   const handleStartRegistration = () => {
+    if (selectedRole) {
+      localStorage.setItem("userRole", selectedRole);
+    }
     setOnboardingStep("registration");
     setSignupStep("basic-profile");
   };

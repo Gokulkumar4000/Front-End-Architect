@@ -23,11 +23,12 @@ import { useLocation } from "wouter";
 export default function Profile() {
   const [, setLocation] = useLocation();
   const [isEditing, setIsEditing] = useState(false);
+  const userRole = (localStorage.getItem("userRole") as any) || "Idea Holder";
   
   // Mock User Data
   const [profile, setProfile] = useState({
     name: "John Doe",
-    role: "Idea Holder",
+    role: userRole.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
     email: "john@example.com",
     location: "San Francisco, CA",
     website: "https://johndoe.dev",
@@ -47,7 +48,7 @@ export default function Profile() {
   };
 
   return (
-    <AppLayout role="idea-holder">
+    <AppLayout>
       <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
         {/* Back Button */}
         <Button 

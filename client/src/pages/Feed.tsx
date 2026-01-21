@@ -145,7 +145,7 @@ function FeedCard({ post }: { post: Post }) {
 
 export default function Feed() {
   return (
-    <AppLayout role="idea-holder">
+    <AppLayout>
       <div className="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
         <div className="space-y-6">
           <div className="flex items-center justify-between mb-4">
