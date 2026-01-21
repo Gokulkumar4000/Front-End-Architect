@@ -1565,7 +1565,7 @@ export default function Auth() {
                           </div>
                           {signupStep === "summary" ? (
                             <Button className="font-bold h-11 px-8 shadow-lg shadow-primary/20 animate-in fade-in slide-in-from-right-2">
-                              Create Account as {roles.find(r => r.id === selectedRole)?.title}
+                              Create Account
                               <Check className="w-4 h-4 ml-2" />
                             </Button>
                           ) : (
