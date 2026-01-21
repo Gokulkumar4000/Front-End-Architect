@@ -681,9 +681,9 @@ export default function Auth() {
   };
 
   const renderStepHeader = (title: string, description: string) => (
-    <div className="text-center space-y-2 mb-8 px-4">
-      <h2 className="text-2xl md:text-3xl font-display font-bold text-gradient-primary leading-tight">{title}</h2>
-      <p className="text-sm text-muted-foreground">{description}</p>
+    <div className="text-center space-y-1 mb-6 px-4">
+      <h2 className="text-xl md:text-2xl font-display font-bold text-gradient-primary leading-tight">{title}</h2>
+      <p className="text-xs text-muted-foreground">{description}</p>
     </div>
   );
 
@@ -913,8 +913,8 @@ export default function Auth() {
 
                   {/* Main Registration Card - Stable Height */}
                   <div className="w-full relative z-0 px-2 md:px-0">
-                    <Card className="glass-card border-white/5 overflow-hidden h-fit lg:min-h-[420px] max-h-[600px] flex flex-col shadow-2xl">
-                      <CardContent className="p-4 md:p-8 relative flex-1 overflow-hidden flex flex-col">
+                    <Card className="glass-card border-white/5 overflow-hidden h-[420px] flex flex-col shadow-2xl">
+                      <CardContent className="p-0 relative flex-1 overflow-hidden flex flex-col">
                         {/* Tooltip Fix: High z-index and explicit provider */}
                         <div className="absolute right-4 top-4 z-[50]">
                           <TooltipProvider delayDuration={0}>
@@ -941,7 +941,7 @@ export default function Auth() {
                         </div>
 
                         {/* Internal Scroll - Styled scrollbar */}
-                        <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 -mr-2 px-1">
+                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8">
                           <AnimatePresence mode="wait">
                             <motion.div 
                               key={signupStep}
@@ -949,7 +949,7 @@ export default function Auth() {
                               initial="hidden"
                               animate="visible"
                               exit="exit"
-                              className="h-full pb-4"
+                              className="h-full"
                             >
                               {signupStep === "basic-profile" && (
                                 <>
@@ -1524,7 +1524,7 @@ export default function Auth() {
                         </div>
 
                           {/* Footer - Always Fixed within Card */}
-                        <div className="mt-auto pt-6 border-t border-white/10 flex items-center justify-between bg-background/50 backdrop-blur-sm -mx-4 md:-mx-8 px-4 md:px-8 pb-4 shrink-0">
+                        <div className="mt-auto pt-6 border-t border-white/10 flex items-center justify-between bg-background/50 backdrop-blur-sm px-6 md:px-8 pb-4 shrink-0">
                           <Button variant="ghost" onClick={prevStep} className="text-muted-foreground hover:text-white h-11 px-6 transition-all">
                             <ChevronLeft className="w-4 h-4 mr-2" />
                             Back
