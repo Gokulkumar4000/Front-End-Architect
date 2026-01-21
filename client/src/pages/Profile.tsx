@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,9 +20,64 @@ import {
 } from "lucide-react";
 import { useLocation } from "wouter";
 
+const ProfileSkeleton = () => (
+  <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
+    <div className="h-8 w-32 bg-muted/20 rounded relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+    </div>
+    <Card className="glass-card border-white/5 overflow-hidden">
+      <div className="h-32 bg-muted/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+      </div>
+      <CardContent className="relative px-6 pb-6">
+        <div className="flex flex-col md:flex-row items-end gap-6 -mt-12">
+          <div className="h-32 w-32 rounded-full bg-muted/20 border-4 border-background relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+          </div>
+          <div className="flex-1 space-y-2 pb-2">
+            <div className="h-8 w-48 bg-muted/20 rounded relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+            </div>
+            <div className="h-4 w-32 bg-muted/20 rounded relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div className="md:col-span-2 space-y-4">
+            <div className="h-24 w-full bg-muted/20 rounded relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="h-16 bg-muted/10 rounded relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+              </div>
+              <div className="h-16 bg-muted/10 rounded relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+              </div>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="h-32 w-full bg-muted/20 rounded relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+);
+
 export default function Profile() {
   const [, setLocation] = useLocation();
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   const userRole = (localStorage.getItem("userRole") as any) || "Idea Holder";
   
   // Mock User Data
@@ -42,10 +97,13 @@ export default function Profile() {
     }
   });
 
-  const handleSave = () => {
-    setIsEditing(false);
-    // In a real app, we would call an API here
-  };
+  if (loading) {
+    return (
+      <AppLayout>
+        <ProfileSkeleton />
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
