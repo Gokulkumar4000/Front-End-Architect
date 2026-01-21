@@ -967,7 +967,7 @@ export default function Auth() {
 
                   {/* Main Registration Card - Stable Height */}
                   <div className="w-full relative z-0 px-2 md:px-0">
-                    <Card className="glass-card border-white/5 overflow-hidden h-[600px] flex flex-col shadow-2xl">
+                    <Card className="glass-card border-white/5 overflow-hidden h-[500px] flex flex-col shadow-2xl">
                       <CardContent className="p-0 relative flex-1 overflow-hidden flex flex-col">
                         {/* Tooltip Fix: High z-index and explicit provider */}
                         <div className="absolute right-4 top-4 z-[50]">
@@ -1471,7 +1471,7 @@ export default function Auth() {
                                   <div className="w-full max-w-4xl mx-auto flex-1 overflow-hidden flex flex-col h-full">
                                     <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
                                       {/* Summary Box */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-8 shadow-sm min-h-[500px]">
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-8 shadow-sm min-h-[600px]">
                                         <div className="flex justify-between items-start pb-4 border-b border-white/10">
                                           <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20">
