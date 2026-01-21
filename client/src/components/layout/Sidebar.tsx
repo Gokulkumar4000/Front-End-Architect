@@ -161,10 +161,14 @@ export function AppSidebar({ role = "idea-holder" }: AppSidebarProps) {
             <SidebarMenu>
               {generalItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={location === item.url} tooltip={item.title}>
+                  <SidebarMenuButton asChild isActive={location === item.url} tooltip={item.title} className="group relative overflow-hidden transition-all">
                     <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
+                      {/* Glass Reflection Animation Overlay */}
+                      <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                        <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
+                      </div>
+                      <item.icon className="relative z-20 group-hover:text-primary transition-colors" />
+                      <span className="relative z-20 group-hover:text-primary transition-colors">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -182,10 +186,14 @@ export function AppSidebar({ role = "idea-holder" }: AppSidebarProps) {
             <SidebarMenu>
               {myActivityItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={location === item.url} tooltip={item.title}>
+                  <SidebarMenuButton asChild isActive={location === item.url} tooltip={item.title} className="group relative overflow-hidden transition-all">
                     <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
+                      {/* Glass Reflection Animation Overlay */}
+                      <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                        <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
+                      </div>
+                      <item.icon className="relative z-20 group-hover:text-primary transition-colors" />
+                      <span className="relative z-20 group-hover:text-primary transition-colors">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
