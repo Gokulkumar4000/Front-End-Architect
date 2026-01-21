@@ -79,12 +79,66 @@ const roles = [
       "Sell, fundraise, or build ideas"
     ],
     overviewSteps: [
-      { title: "Post ideas or problem statements securely", desc: "Share ideas without exposing sensitive details." },
-      { title: "Measure real-world necessity and interest", desc: "Measure real-world demand and interest." },
-      { title: "Attract developers and collaborators", desc: "Allow developers to collaborate on your idea." },
-      { title: "Pitch ideas to investors", desc: "Pitch ideas to investors or raise funds." },
-      { title: "Raise funds or sell ideas", desc: "Build yourself or sell the idea." },
-      { title: "Build or transfer ownership", desc: "Monitor interest, funding, and traction." }
+      { 
+        title: "Post ideas or problem statements securely", 
+        desc: "Share ideas without exposing sensitive details.",
+        bullets: [
+          "Encrypted project descriptions",
+          "Selective visibility controls",
+          "IP protection mechanisms",
+          "Secure document attachments"
+        ]
+      },
+      { 
+        title: "Measure real-world necessity and interest", 
+        desc: "Measure real-world demand and interest.",
+        bullets: [
+          "Community validation voting",
+          "Interest level analytics",
+          "Market demand heatmaps",
+          "Target audience feedback"
+        ]
+      },
+      { 
+        title: "Attract developers and collaborators", 
+        desc: "Allow developers to collaborate on your idea.",
+        bullets: [
+          "Role-specific recruitment",
+          "Skills matching engine",
+          "Automated outreach tools",
+          "Collaboration request tracking"
+        ]
+      },
+      { 
+        title: "Pitch ideas to investors", 
+        desc: "Pitch ideas to investors or raise funds.",
+        bullets: [
+          "Investor networking portal",
+          "Pitch deck hosting",
+          "Fundraising campaign tools",
+          "Investor interaction logs"
+        ]
+      },
+      { 
+        title: "Raise funds or sell ideas", 
+        desc: "Build yourself or sell the idea.",
+        bullets: [
+          "Secure transaction escrow",
+          "IP transfer workflows",
+          "Equity distribution tools",
+          "Capital management portal"
+        ]
+      },
+      { 
+        title: "Build or transfer ownership", 
+        desc: "Monitor interest, funding, and traction.",
+        bullets: [
+          "Project handoff workflows",
+          "Ongoing traction monitoring",
+          "Post-transfer support tools",
+          "Ownership history logs"
+        ]
+      }
     ],
     journeyContext: {
       "basic-profile": "Idea holders start by introducing themselves so others know who's behind the vision.",
@@ -108,12 +162,66 @@ const roles = [
       "Raise funds for your own ideas"
     ],
     overviewSteps: [
-      { title: "Discover startup ideas and open projects", desc: "Explore startup ideas and open projects posted on DevConnect." },
-      { title: "Collaborate with developers and founders", desc: "Collaborate with other developers to build products." },
-      { title: "Apply for full-time or part-time roles", desc: "Apply for full-time, part-time, or contract roles." },
-      { title: "Build MVPs and real products", desc: "Develop real-world MVPs and production-ready products." },
-      { title: "Raise funds for your own ideas", desc: "Create fundraising campaigns for your own ideas." },
-      { title: "Grow your developer portfolio", desc: "Build reputation, experience, and career visibility." }
+      { 
+        title: "Discover startup ideas and open projects", 
+        desc: "Explore startup ideas and open projects posted on DevConnect.",
+        bullets: [
+          "Advanced project filtering",
+          "Tech stack compatibility matching",
+          "Trending project discovery",
+          "Saved search notifications"
+        ]
+      },
+      { 
+        title: "Collaborate with developers and founders", 
+        desc: "Collaborate with other developers to build products.",
+        bullets: [
+          "Team formation tools",
+          "In-app collaboration chat",
+          "Skill-based team matching",
+          "Project management sync"
+        ]
+      },
+      { 
+        title: "Apply for full-time or part-time roles", 
+        desc: "Apply for full-time, part-time, or contract roles.",
+        bullets: [
+          "One-click job applications",
+          "Application status tracking",
+          "Direct founder messaging",
+          "Contract management tools"
+        ]
+      },
+      { 
+        title: "Build MVPs and real products", 
+        desc: "Develop real-world MVPs and production-ready products.",
+        bullets: [
+          "MVP roadmap tracking",
+          "Milestone-based delivery",
+          "Technical support network",
+          "Build progress analytics"
+        ]
+      },
+      { 
+        title: "Raise funds for your own ideas", 
+        desc: "Create fundraising campaigns for your own ideas.",
+        bullets: [
+          "Founder funding portal",
+          "Grant discovery engine",
+          "Crowdfunding integration",
+          "Investor matching tools"
+        ]
+      },
+      { 
+        title: "Grow your developer portfolio", 
+        desc: "Build reputation, experience, and career visibility.",
+        bullets: [
+          "Professional skill badges",
+          "Verified project history",
+          "Community endorsements",
+          "Career path analytics"
+        ]
+      }
     ],
     journeyContext: {
       "basic-profile": "Developers provide basic details to build a professional identity within the ecosystem.",
@@ -137,12 +245,66 @@ const roles = [
       "Build an investment portfolio"
     ],
     overviewSteps: [
-      { title: "Explore startup ideas and projects", desc: "Browse startup ideas and problem statements." },
-      { title: "Evaluate feasibility and demand", desc: "Check necessity and traction." },
-      { title: "Invest in promising ideas", desc: "Fund promising ideas." },
-      { title: "Recruit developers and teams", desc: "Hire developers for execution." },
-      { title: "Track portfolio growth", desc: "Track investments and progress." },
-      { title: "Scale funded projects", desc: "Support long-term growth." }
+      { 
+        title: "Explore startup ideas and projects", 
+        desc: "Browse startup ideas and problem statements.",
+        bullets: [
+          "Sector-based deal flow",
+          "Proprietary project sourcing",
+          "Pre-vetted startup ideas",
+          "Trending innovation alerts"
+        ]
+      },
+      { 
+        title: "Evaluate feasibility and demand", 
+        desc: "Check necessity and traction.",
+        bullets: [
+          "Market demand analytics",
+          "Technical feasibility audits",
+          "Community traction metrics",
+          "Risk assessment reports"
+        ]
+      },
+      { 
+        title: "Invest in promising ideas", 
+        desc: "Fund promising ideas.",
+        bullets: [
+          "Direct investment tools",
+          "Portfolio diversification",
+          "Deal syndication options",
+          "Investment tracking portal"
+        ]
+      },
+      { 
+        title: "Recruit developers and teams", 
+        desc: "Hire developers for execution.",
+        bullets: [
+          "Talent acquisition portal",
+          "Verified developer profiles",
+          "Team building services",
+          "Recruitment analytics"
+        ]
+      },
+      { 
+        title: "Track portfolio growth", 
+        desc: "Track investments and progress.",
+        bullets: [
+          "Real-time ROI tracking",
+          "Project milestone alerts",
+          "Performance dashboards",
+          "Exit strategy planning"
+        ]
+      },
+      { 
+        title: "Scale funded projects", 
+        desc: "Support long-term growth.",
+        bullets: [
+          "Scale-up advisory network",
+          "Follow-on funding access",
+          "Strategic partner matching",
+          "Expansion support tools"
+        ]
+      }
     ],
     journeyContext: {
       "basic-profile": "Investors introduce themselves to start building relationships with innovative founders.",
@@ -615,7 +777,7 @@ export default function Auth() {
                   <div className="hidden lg:block">
                     {renderRoleCard()}
                   </div>
-                  <Card className="glass-card border-white/5 overflow-hidden h-[600px] flex flex-col">
+                  <Card className="glass-card border-white/5 overflow-hidden h-fit lg:min-h-[380px] flex flex-col">
                     <CardContent className="p-8 relative flex-1 overflow-hidden flex flex-col">
                       {(() => {
                         const role = roles.find(r => r.id === selectedRole)!;
@@ -624,31 +786,40 @@ export default function Auth() {
                           <>
                             <div className="space-y-2 mb-6 shrink-0">
                               <div className="flex justify-between items-center">
-                                <h2 className="text-2xl font-display font-bold text-gradient-primary">Your Journey as a {role.title}</h2>
+                                <h2 className="text-xl font-display font-bold text-gradient-primary">Journey Step {journeyStepIndex + 1}</h2>
                                 <Badge variant="outline" className="text-[10px] border-primary/20 text-primary">
-                                  Step {journeyStepIndex + 1} of {role.overviewSteps.length}
+                                  {journeyStepIndex + 1} / {role.overviewSteps.length}
                                 </Badge>
                               </div>
-                              <p className="text-muted-foreground text-sm">Here's how DevConnect works for you.</p>
                             </div>
                             
-                            <div className="flex-1 flex flex-col justify-center items-center text-center space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                              <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 font-bold text-primary text-2xl shadow-lg shadow-primary/5">
-                                {journeyStepIndex + 1}
-                              </div>
-                              <div className="max-w-md space-y-4">
-                                <h4 className="text-2xl font-bold tracking-tight">{currentStep.title}</h4>
-                                <p className="text-base text-muted-foreground leading-relaxed">{currentStep.desc}</p>
+                            <div className="flex-1 flex flex-col space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                              <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 font-bold text-primary text-xl shadow-lg shadow-primary/5">
+                                  {journeyStepIndex + 1}
+                                </div>
+                                <h4 className="text-lg font-bold tracking-tight">{currentStep.title}</h4>
                               </div>
                               
+                              <p className="text-sm text-muted-foreground leading-relaxed italic">{currentStep.desc}</p>
+                              
+                              <ul className="space-y-2 pt-2">
+                                {currentStep.bullets?.map((bullet, bIdx) => (
+                                  <li key={bIdx} className="flex items-start gap-2 text-xs text-muted-foreground">
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+                                    <span>{bullet}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                              
                               {/* Visual Progress Dots */}
-                              <div className="flex gap-2 pt-4">
+                              <div className="flex gap-2 pt-4 justify-center">
                                 {role.overviewSteps.map((_, idx) => (
                                   <div 
                                     key={idx} 
                                     className={cn(
-                                      "w-2 h-2 rounded-full transition-all duration-300",
-                                      idx === journeyStepIndex ? "w-6 bg-primary" : "bg-white/10"
+                                      "w-1.5 h-1.5 rounded-full transition-all duration-300",
+                                      idx === journeyStepIndex ? "w-4 bg-primary" : "bg-white/10"
                                     )}
                                   />
                                 ))}
