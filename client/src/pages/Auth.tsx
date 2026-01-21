@@ -923,7 +923,8 @@ export default function Auth() {
                                   onClick={handleStartRegistration} 
                                   className="font-bold h-11 px-8 shadow-lg shadow-primary/20"
                                 >
-                                  Continue to Registration
+                                  <span className="hidden md:inline">Continue to Registration</span>
+                                  <span className="md:hidden">Register</span>
                                   <Rocket className="w-4 h-4 ml-2" />
                                 </Button>
                               )}
