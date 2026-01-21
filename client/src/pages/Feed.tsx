@@ -151,16 +151,33 @@ const FeedSkeleton = () => (
     {[1, 2, 3].map((i) => (
       <Card key={i} className="glass-card border-white/5 overflow-hidden">
         <CardHeader className="p-4 flex flex-row items-center gap-3">
-          <Skeleton className="h-10 w-10 rounded-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-3 w-32" />
+          <div className="h-10 w-10 rounded-full bg-muted/20 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+          </div>
+          <div className="space-y-2 flex-1">
+            <div className="h-4 w-24 rounded bg-muted/20 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+            </div>
+            <div className="h-3 w-32 rounded bg-muted/20 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+            </div>
           </div>
         </CardHeader>
         <CardContent className="px-4 pb-4 pt-0 space-y-3">
-          <Skeleton className="h-5 w-20" />
-          <Skeleton className="h-6 w-3/4" />
-          <Skeleton className="h-4 w-full" />
+          <div className="h-5 w-20 rounded bg-muted/20 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+          </div>
+          <div className="h-6 w-3/4 rounded bg-muted/20 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+          </div>
+          <div className="space-y-2">
+            <div className="h-4 w-full rounded bg-muted/20 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+            </div>
+            <div className="h-4 w-5/6 rounded bg-muted/20 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
+            </div>
+          </div>
         </CardContent>
       </Card>
     ))}
@@ -171,7 +188,7 @@ export default function Feed() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 500);
+    const timer = setTimeout(() => setLoading(false), 300);
     return () => clearTimeout(timer);
   }, []);
 
