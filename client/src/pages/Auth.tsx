@@ -1617,16 +1617,23 @@ export default function Auth() {
                                               {formData.status === "student" ? (
                                                 <>
                                                   <SummaryField label="College" value={formData.collegeName} />
+                                                  <SummaryField label="Location" value={formData.collegePlace} />
                                                   <SummaryField label="Year" value={formData.currentYear ? `${formData.currentYear} Year` : null} />
                                                   <SummaryField label="Degree" value={formData.degree} />
                                                 </>
                                               ) : (
                                                 <>
                                                   <SummaryField label="Organization" value={formData.orgName} />
+                                                  <SummaryField label="Role" value={formData.orgRole} />
+                                                  <SummaryField label="Type" value={formData.orgType} />
                                                   <SummaryField label="Portfolio" value={formData.portfolioLink} />
                                                   <SummaryField label="GitHub" value={formData.githubLink} />
+                                                  <SummaryField label="Resume" value={formData.resumeLink} />
                                                 </>
                                               )}
+                                              <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
+                                              <SummaryField label="Skills" value={formData.skills} />
+                                              <SummaryField label="Interests" value={formData.interests} />
                                             </div>
                                           </div>
 
@@ -1636,6 +1643,9 @@ export default function Auth() {
                                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                 <SummaryField label="Work Preference" value={formData.workPref} />
                                                 <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
+                                                <SummaryField label="Equity Interest" value={formData.equityInterest} />
+                                                <SummaryField label="Involvement" value={formData.involvement} />
+                                                <SummaryField label="Investment Stages" value={formData.investmentStage} />
                                               </div>
                                               <SummaryField label="Tagline" value={formData.tagline} />
                                               <SummaryField label="Bio" value={formData.bio} />
