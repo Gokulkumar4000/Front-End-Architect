@@ -913,8 +913,8 @@ export default function Auth() {
 
                   {/* Main Registration Card - Stable Height */}
                   <div className="w-full relative z-0 px-2 md:px-0">
-                    <Card className="glass-card border-white/5 overflow-hidden h-[600px] flex flex-col shadow-2xl">
-                      <CardContent className="p-4 md:p-8 relative flex-1 overflow-visible flex flex-col">
+                    <Card className="glass-card border-white/5 overflow-hidden h-fit lg:min-h-[420px] max-h-[600px] flex flex-col shadow-2xl">
+                      <CardContent className="p-4 md:p-8 relative flex-1 overflow-hidden flex flex-col">
                         {/* Tooltip Fix: High z-index and explicit provider */}
                         <div className="absolute right-4 top-4 z-[50]">
                           <TooltipProvider delayDuration={0}>
