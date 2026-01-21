@@ -545,14 +545,14 @@ function GlassSelect({ label, placeholder, icon: Icon, options, value, onChange 
 const SummaryField = ({ label, value }: { label: string, value: any }) => {
   if (value === undefined || value === null || (typeof value === "string" && value.trim() === "") || (Array.isArray(value) && value.length === 0)) return null;
   return (
-    <div className="space-y-1">
-      <p className="text-[9px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
+    <div className="space-y-1 overflow-hidden">
+      <p className="text-[9px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest truncate">{label}</p>
       {Array.isArray(value) ? (
         <div className="flex flex-wrap gap-1">
-          {value.map((v, i) => <Badge key={i} variant="outline" className="text-[9px] md:text-[10px] border-white/10 h-4 md:h-5 px-1.5">{v}</Badge>)}
+          {value.map((v, i) => <Badge key={i} variant="outline" className="text-[9px] md:text-[10px] border-white/10 h-4 md:h-5 px-1.5 max-w-full truncate">{v}</Badge>)}
         </div>
       ) : (
-        <p className="text-xs md:text-sm font-medium leading-tight">{value}</p>
+        <p className="text-xs md:text-sm font-medium leading-tight break-words">{value}</p>
       )}
     </div>
   );
@@ -1589,18 +1589,18 @@ export default function Auth() {
                                   <div className="w-full max-w-4xl mx-auto flex-1 overflow-hidden flex flex-col h-full">
                                     <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
                                       {/* Summary Box */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-8 space-y-6 md:space-y-8 shadow-sm min-h-[500px] md:min-h-[600px]">
-                                        <div className="flex justify-between items-start pb-4 border-b border-white/10">
-                                          <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20">
-                                              <User className="w-6 h-6 text-primary" />
+                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-8 space-y-6 md:space-y-8 shadow-sm min-h-fit md:min-h-[600px] w-full max-w-full overflow-hidden">
+                                        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pb-4 border-b border-white/10">
+                                          <div className="flex items-center gap-3 md:gap-4 overflow-hidden w-full sm:w-auto">
+                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20 shrink-0">
+                                              <User className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                                             </div>
-                                            <div>
-                                              <h4 className="font-bold text-lg">{formData.fullName || "N/A"}</h4>
-                                              <p className="text-xs text-muted-foreground">{formData.email || "N/A"}</p>
+                                            <div className="overflow-hidden">
+                                              <h4 className="font-bold text-base md:text-lg truncate">{formData.fullName || "N/A"}</h4>
+                                              <p className="text-[10px] md:text-xs text-muted-foreground truncate">{formData.email || "N/A"}</p>
                                             </div>
                                           </div>
-                                          <Badge className="bg-primary/20 text-primary border-primary/20 uppercase text-[10px] font-bold h-6 px-3">
+                                          <Badge className="bg-primary/20 text-primary border-primary/20 uppercase text-[9px] md:text-[10px] font-bold h-6 px-3 shrink-0">
                                             {selectedRole?.replace("-", " ")}
                                           </Badge>
                                         </div>
@@ -1610,10 +1610,10 @@ export default function Auth() {
                                           <SummaryField label="Timezone" value={formData.timezone} />
                                         </div>
 
-                                        <div className="space-y-8 pt-2 border-t border-white/5">
-                                          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
+                                        <div className="space-y-6 md:space-y-8 pt-2 border-t border-white/5">
+                                          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 space-y-4 shadow-sm">
                                             <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-2">Professional Identity</h4>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                               {formData.status === "student" ? (
                                                 <>
                                                   <SummaryField label="College" value={formData.collegeName} />
@@ -1630,10 +1630,10 @@ export default function Auth() {
                                             </div>
                                           </div>
 
-                                          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-sm">
+                                          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 space-y-4 shadow-sm">
                                             <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-2">Preferences & Goals</h4>
                                             <div className="space-y-4">
-                                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                 <SummaryField label="Work Preference" value={formData.workPref} />
                                                 <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
                                               </div>
