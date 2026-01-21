@@ -1388,7 +1388,7 @@ export default function Auth() {
                                       <div className="relative group">
                                         <Target className="absolute left-3 top-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                         <Textarea 
-                                          className="pl-10 bg-white/5 border-white/10 min-h-[120px] rounded-xl focus:border-primary/50 custom-scrollbar" 
+                                          className="w-full pl-10 bg-white/5 border-white/10 min-h-[120px] rounded-xl focus:border-primary/50 custom-scrollbar" 
                                           placeholder="What are your main goals here?" 
                                           value={formData.objectives || ""}
                                           onChange={(e) => {
@@ -1408,7 +1408,7 @@ export default function Auth() {
                                       <div className="relative group">
                                         <Trophy className="absolute left-3 top-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                         <Textarea 
-                                          className="pl-10 bg-white/5 border-white/10 min-h-[120px] rounded-xl focus:border-primary/50" 
+                                          className="w-full pl-10 bg-white/5 border-white/10 min-h-[120px] rounded-xl focus:border-primary/50" 
                                           placeholder="Describe what success looks like..." 
                                           value={formData.successDefinition || ""}
                                           onChange={(e) => updateFormData("successDefinition", e.target.value)}
@@ -1427,7 +1427,7 @@ export default function Auth() {
                                       <Label>Short Bio (Max 150 words)</Label>
                                       <div className="relative">
                                         <Textarea 
-                                          className="bg-white/5 border-white/10 min-h-[180px] rounded-xl focus:border-primary/50 custom-scrollbar" 
+                                          className="w-full bg-white/5 border-white/10 min-h-[180px] rounded-xl focus:border-primary/50 custom-scrollbar" 
                                           placeholder="A bit about your background and experience..." 
                                           value={formData.bio || ""}
                                           onChange={(e) => {
