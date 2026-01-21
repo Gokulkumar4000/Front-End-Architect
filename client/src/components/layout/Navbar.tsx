@@ -72,26 +72,26 @@ export function Navbar() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-white/5" />
             <div className="p-1">
-              <DropdownMenuItem asChild className="group relative overflow-hidden focus:bg-primary/10 transition-colors cursor-pointer rounded-md">
+              <DropdownMenuItem asChild className="relative overflow-hidden focus:bg-primary/10 transition-colors cursor-pointer rounded-md group/nav-item">
                 <Link href="/profile">
                   <div className="flex items-center w-full">
                     {/* Glass Reflection Animation Overlay */}
-                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover/nav-item:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
                       <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
                     </div>
-                    <User className="mr-2 h-4 w-4 relative z-20 group-hover:text-primary transition-colors" />
+                    <User className="mr-2 h-4 w-4 relative z-20 group-hover/nav-item:text-primary transition-colors" />
                     <span className="relative z-20 font-medium">Profile</span>
                   </div>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild className="group relative overflow-hidden focus:bg-primary/10 transition-colors cursor-pointer rounded-md">
+              <DropdownMenuItem asChild className="relative overflow-hidden focus:bg-primary/10 transition-colors cursor-pointer rounded-md group/nav-item">
                 <Link href="/settings">
                   <div className="flex items-center w-full">
                     {/* Glass Reflection Animation Overlay */}
-                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover/nav-item:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
                       <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
                     </div>
-                    <Settings className="mr-2 h-4 w-4 relative z-20 group-hover:text-primary transition-colors" />
+                    <Settings className="mr-2 h-4 w-4 relative z-20 group-hover/nav-item:text-primary transition-colors" />
                     <span className="relative z-20 font-medium">Settings</span>
                   </div>
                 </Link>
@@ -99,10 +99,10 @@ export function Navbar() {
             </div>
             <DropdownMenuSeparator className="bg-white/5" />
             <div className="p-1">
-              <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10 group relative overflow-hidden transition-colors cursor-pointer rounded-md">
+              <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10 relative overflow-hidden transition-colors cursor-pointer rounded-md group/nav-item">
                 <div className="flex items-center w-full">
                   {/* Glass Reflection Animation Overlay */}
-                  <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                  <div className="absolute inset-0 translate-x-[-100%] group-hover/nav-item:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
                     <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
                   </div>
                   <LogOut className="mr-2 h-4 w-4 relative z-20" />
