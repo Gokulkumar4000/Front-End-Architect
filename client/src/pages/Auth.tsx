@@ -651,15 +651,23 @@ export default function Auth() {
     setSignupStep("basic-profile");
   };
 
-  const steps: SignupStep[] = [
-    "basic-profile",
-    "professional-identity",
-    "working-preferences",
-    "org-affiliation",
-    "interests-goals",
-    "about-you",
-    "summary"
-  ];
+  const steps = useMemo(() => {
+    const baseSteps: SignupStep[] = [
+      "basic-profile",
+      "professional-identity",
+      "working-preferences",
+      "org-affiliation",
+      "interests-goals",
+      "about-you",
+      "summary"
+    ];
+    
+    if (selectedRole === "idea-holder") {
+      return baseSteps.filter(s => s !== "org-affiliation");
+    }
+    
+    return baseSteps;
+  }, [selectedRole]);
 
   const nextStep = () => {
     const currentIndex = steps.indexOf(signupStep);
@@ -1411,7 +1419,7 @@ export default function Auth() {
                                 </>
                               )}
 
-                              {signupStep === "org-affiliation" && (
+                              {signupStep === "org-affiliation" && selectedRole !== "idea-holder" && (
                                 <>
                                   {renderStepHeader("Organization & Affiliation", "Professional associations")}
                                   <div className="space-y-6 w-full max-w-2xl mx-auto pb-12">
