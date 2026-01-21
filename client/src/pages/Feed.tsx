@@ -1,8 +1,10 @@
+import { memo, useMemo, useState, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Heart, 
   MessageSquare, 
@@ -64,8 +66,8 @@ const MOCK_POSTS: Post[] = [
   }
 ];
 
-function FeedCard({ post }: { post: Post }) {
-  const getActionText = () => {
+const FeedCard = memo(({ post }: { post: Post }) => {
+  const actionText = useMemo(() => {
     switch (post.type) {
       case "idea": return "Buy Idea";
       case "fund": return "Invest";
@@ -73,19 +75,19 @@ function FeedCard({ post }: { post: Post }) {
       case "recruitment": return "Connect";
       default: return "Connect";
     }
-  };
+  }, [post.type]);
 
-  const getTypeIcon = () => {
+  const typeIcon = useMemo(() => {
     switch (post.type) {
       case "idea": return <Lightbulb className="w-4 h-4 text-amber-500" />;
       case "fund": return <Coins className="w-4 h-4 text-emerald-500" />;
       case "project": return <Briefcase className="w-4 h-4 text-blue-500" />;
       case "recruitment": return <Users className="w-4 h-4 text-purple-500" />;
     }
-  };
+  }, [post.type]);
 
   return (
-    <Card className="glass-card border-white/5 hover:border-primary/20 transition-all group overflow-hidden">
+    <Card className="glass-card border-white/5 hover:border-primary/20 transition-all group/card overflow-hidden">
       <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 border border-primary/10">
@@ -106,7 +108,7 @@ function FeedCard({ post }: { post: Post }) {
       <CardContent className="px-4 pb-4 pt-0 space-y-3">
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 flex items-center gap-1 text-[10px] h-5 px-2">
-            {getTypeIcon()}
+            {typeIcon}
             <span className="capitalize">{post.type}</span>
           </Badge>
         </div>
@@ -132,18 +134,47 @@ function FeedCard({ post }: { post: Post }) {
         </div>
         
         <Button size="sm" className="font-bold relative group overflow-hidden">
-           {/* Glass Reflection Animation Overlay */}
            <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
             <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
           </div>
-          <span className="relative z-20">{getActionText()}</span>
+          <span className="relative z-20">{actionText}</span>
         </Button>
       </CardFooter>
     </Card>
   );
-}
+});
+
+FeedCard.displayName = "FeedCard";
+
+const FeedSkeleton = () => (
+  <div className="space-y-6">
+    {[1, 2, 3].map((i) => (
+      <Card key={i} className="glass-card border-white/5 overflow-hidden">
+        <CardHeader className="p-4 flex flex-row items-center gap-3">
+          <Skeleton className="h-10 w-10 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-3 w-32" />
+          </div>
+        </CardHeader>
+        <CardContent className="px-4 pb-4 pt-0 space-y-3">
+          <Skeleton className="h-5 w-20" />
+          <Skeleton className="h-6 w-3/4" />
+          <Skeleton className="h-4 w-full" />
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+);
 
 export default function Feed() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
@@ -156,9 +187,13 @@ export default function Feed() {
             </div>
           </div>
           
-          {MOCK_POSTS.map(post => (
-            <FeedCard key={post.id} post={post} />
-          ))}
+          {loading ? (
+            <FeedSkeleton />
+          ) : (
+            MOCK_POSTS.map(post => (
+              <FeedCard key={post.id} post={post} />
+            ))
+          )}
         </div>
 
         {/* Right Panel */}
