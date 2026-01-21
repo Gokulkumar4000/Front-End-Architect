@@ -430,10 +430,13 @@ interface TagInputProps {
   options: string[];
   values: string[];
   onChange: (vals: string[]) => void;
+  id: string;
+  activeSearchId: string | null;
+  onToggleSearch: (id: string | null) => void;
 }
 
-function TagInput({ label, placeholder, options, values, onChange }: TagInputProps) {
-  const [isSearching, setIsSearching] = useState(false);
+function TagInput({ label, placeholder, options, values, onChange, id, activeSearchId, onToggleSearch }: TagInputProps) {
+  const isSearching = activeSearchId === id;
 
   const removeTag = (tag: string) => {
     onChange(values.filter(v => v !== tag));
@@ -463,10 +466,13 @@ function TagInput({ label, placeholder, options, values, onChange }: TagInputPro
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={() => setIsSearching(true)}
-          className="h-7 w-7 rounded-full bg-white/10 hover:bg-primary/20 hover:text-primary transition-colors"
+          onClick={() => onToggleSearch(isSearching ? null : id)}
+          className={cn(
+            "h-7 w-7 rounded-full transition-colors",
+            isSearching ? "bg-primary text-white" : "bg-white/10 hover:bg-primary/20 hover:text-primary"
+          )}
         >
-          <Plus className="w-3 h-3" />
+          <Plus className={cn("w-3 h-3 transition-transform", isSearching && "rotate-45")} />
         </Button>
       </div>
       {isSearching && (
@@ -474,7 +480,7 @@ function TagInput({ label, placeholder, options, values, onChange }: TagInputPro
           placeholder={placeholder}
           options={options}
           onSelect={addTag}
-          onClose={() => setIsSearching(false)}
+          onClose={() => onToggleSearch(null)}
           label={label}
         />
       )}
@@ -589,6 +595,7 @@ export default function Auth() {
     successDefinition: ""
   });
   const [isRoleCardExpanded, setIsRoleCardExpanded] = useState(false);
+  const [activeSearchId, setActiveSearchId] = useState<string | null>(null);
 
   // Initialize correct step based on mode
   useEffect(() => {
@@ -1074,6 +1081,9 @@ export default function Auth() {
                                           options={DOMAINS}
                                           values={formData.interests || []}
                                           onChange={(vals) => updateFormData("interests", vals)}
+                                          id="interest-areas"
+                                          activeSearchId={activeSearchId}
+                                          onToggleSearch={setActiveSearchId}
                                         />
                                         <TagInput 
                                           label="Problem domains you care about"
@@ -1081,6 +1091,9 @@ export default function Auth() {
                                           options={["Sustainable energy", "Education access", "Healthcare", "Financial Inclusion"]}
                                           values={formData.problemDomains || []}
                                           onChange={(vals) => updateFormData("problemDomains", vals)}
+                                          id="problem-domains"
+                                          activeSearchId={activeSearchId}
+                                          onToggleSearch={setActiveSearchId}
                                         />
                                         <div className="space-y-3">
                                           <Label>Have you previously worked on ideas?</Label>
@@ -1105,6 +1118,9 @@ export default function Auth() {
                                           options={DOMAINS}
                                           values={formData.interests || []}
                                           onChange={(vals) => updateFormData("interests", vals)}
+                                          id="tech-domains"
+                                          activeSearchId={activeSearchId}
+                                          onToggleSearch={setActiveSearchId}
                                         />
                                         <TagInput 
                                           label="Tech Stack / Skills"
@@ -1112,6 +1128,9 @@ export default function Auth() {
                                           options={TECH_STACK}
                                           values={formData.skills || []}
                                           onChange={(vals) => updateFormData("skills", vals)}
+                                          id="tech-stack"
+                                          activeSearchId={activeSearchId}
+                                          onToggleSearch={setActiveSearchId}
                                         />
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                       <div className="space-y-2">
@@ -1174,6 +1193,9 @@ export default function Auth() {
                                           options={DOMAINS}
                                           values={formData.interests || []}
                                           onChange={(vals) => updateFormData("interests", vals)}
+                                          id="investment-sectors"
+                                          activeSearchId={activeSearchId}
+                                          onToggleSearch={setActiveSearchId}
                                         />
                                       </>
                                     )}
