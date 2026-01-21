@@ -573,6 +573,7 @@ export default function Auth() {
     skills: [],
     fullName: "",
     email: "",
+    profileImage: "",
     location: "",
     timezone: "",
     prevIdeas: "",
@@ -1024,6 +1025,36 @@ export default function Auth() {
                                 <>
                                   {renderStepHeader("Basic Profile Details", "Tell us who you are")}
                                   <div className="space-y-4 w-full max-w-2xl mx-auto">
+                                    <div className="flex flex-col items-center gap-4 mb-4">
+                                      <div className="relative group">
+                                        <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-dashed border-primary/20 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/40">
+                                          {formData.profileImage ? (
+                                            <img src={formData.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                          ) : (
+                                            <User className="w-10 h-10 text-primary/40" />
+                                          )}
+                                          <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                            <Plus className="w-6 h-6 text-white" />
+                                            <input 
+                                              type="file" 
+                                              className="hidden" 
+                                              accept="image/*"
+                                              onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                  const reader = new FileReader();
+                                                  reader.onloadend = () => {
+                                                    updateFormData("profileImage", reader.result);
+                                                  };
+                                                  reader.readAsDataURL(file);
+                                                }
+                                              }}
+                                            />
+                                          </label>
+                                        </div>
+                                        <p className="text-[10px] font-medium text-muted-foreground mt-2 text-center">Profile Photo</p>
+                                      </div>
+                                    </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                       <div className="space-y-2">
                                         <Label>Full Name</Label>
@@ -1592,8 +1623,12 @@ export default function Auth() {
                                       <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-8 space-y-6 md:space-y-8 shadow-sm min-h-fit md:min-h-[600px] w-full max-w-full overflow-hidden">
                                         <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pb-4 border-b border-white/10">
                                           <div className="flex items-center gap-3 md:gap-4 overflow-hidden w-full sm:w-auto">
-                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20 shrink-0">
-                                              <User className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20 shrink-0 overflow-hidden">
+                                              {formData.profileImage ? (
+                                                <img src={formData.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                              ) : (
+                                                <User className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                                              )}
                                             </div>
                                             <div className="overflow-hidden">
                                               <h4 className="font-bold text-base md:text-lg truncate">{formData.fullName || "N/A"}</h4>
@@ -1646,6 +1681,8 @@ export default function Auth() {
                                                 <SummaryField label="Equity Interest" value={formData.equityInterest} />
                                                 <SummaryField label="Involvement" value={formData.involvement} />
                                                 <SummaryField label="Investment Stages" value={formData.investmentStage} />
+                                                <SummaryField label="Problem Domains" value={formData.problemDomains} />
+                                                <SummaryField label="Previous Ideas" value={formData.prevIdeas} />
                                               </div>
                                               <SummaryField label="Tagline" value={formData.tagline} />
                                               <SummaryField label="Bio" value={formData.bio} />
