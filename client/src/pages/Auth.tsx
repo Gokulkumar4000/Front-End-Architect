@@ -1800,7 +1800,10 @@ export default function Auth() {
                             ))}
                           </div>
                           {signupStep === "summary" ? (
-                            <Button className="font-bold h-11 px-8 shadow-lg shadow-primary/20 group relative overflow-hidden">
+                            <Button 
+                              onClick={() => window.location.href = "/feed"}
+                              className="font-bold h-11 px-8 shadow-lg shadow-primary/20 group relative overflow-hidden"
+                            >
                               {/* Glass Reflection Animation Overlay */}
                               <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
                                 <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />

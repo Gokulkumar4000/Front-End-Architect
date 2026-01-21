@@ -1,0 +1,184 @@
+IMPORTANT CONTEXT
+
+This is an EXISTING frontend-only project.
+Use mock data only.
+Do NOT add backend, payments, premium, upgrades, or auth logic.
+Do NOT redesign the whole app.
+Work only on navigation + feed UI.
+
+================================================
+GLOBAL RULE (VERY IMPORTANT)
+================================================
+
+- Navbar is GLOBAL and SAME for everyone.
+- Sidebar STRUCTURE is SAME, but MENU ITEMS change per user type.
+- Feed page is COMMON for all users.
+- Layout must be reusable for all future pages.
+
+================================================
+NAVBAR (FIXED FOR ALL USERS – NEVER CHANGES)
+================================================
+
+Navbar must ALWAYS contain these items (for every user):
+
+- App Logo (click → Feed)
+- Feed
+- Search
+- Messages
+- Notifications
+- Profile Avatar (dropdown)
+  - Profile
+  - Settings
+  - Logout
+
+Navbar:
+- Fixed position
+- Same on every page
+- No user-type specific items here
+
+================================================
+SIDEBAR (CHANGES BASED ON USER TYPE)
+================================================
+
+Sidebar position, style, width, and layout NEVER change.
+ONLY the menu items inside change.
+
+------------------------------------------------
+COMMON SIDEBAR ITEMS (VISIBLE FOR ALL USERS)
+------------------------------------------------
+
+These items must appear for EVERY user:
+
+- Dashboard
+- Feed (active when on feed page)
+- Connections
+- Saved
+
+------------------------------------------------
+SIDEBAR FOR IDEA HOLDER
+------------------------------------------------
+
+In addition to COMMON items, show:
+
+- My Ideas
+- Fundraising
+- Idea Analytics
+
+Do NOT show:
+- Jobs
+- Projects
+- Portfolio
+- Investments
+
+------------------------------------------------
+SIDEBAR FOR DEVELOPER
+------------------------------------------------
+
+In addition to COMMON items, show:
+
+- Projects
+- Jobs
+- Applications
+- My Contributions
+
+Do NOT show:
+- Fundraising
+- Portfolio
+- Investments
+
+------------------------------------------------
+SIDEBAR FOR INVESTOR
+------------------------------------------------
+
+In addition to COMMON items, show:
+
+- Portfolio
+- Investments
+- Opportunities
+- Funded Projects
+
+Do NOT show:
+- Jobs
+- Applications
+- My Ideas
+
+------------------------------------------------
+CREATE (+) BUTTON (COMMON)
+------------------------------------------------
+
+- Floating “+” button must ALWAYS be visible.
+- Position must NEVER change.
+
+When clicked, it opens a menu (UI only):
+
+Possible options:
+- Post Idea
+- Raise Fund
+- Post Project
+- Post Job
+
+Which options appear depends on user type:
+- Idea Holder → Idea, Fund
+- Developer → Project, Job
+- Investor → Project (optional), Fund (optional)
+
+(No logic enforced now, UI only)
+
+================================================
+FEED PAGE (COMMON FOR ALL USERS)
+================================================
+
+Feed page must be SAME for all users.
+
+Feed contains different POST TYPES:
+- Idea
+- Project
+- Fund
+- Recruitment
+
+Each post uses ONE reusable FeedCard component.
+
+------------------------------------------------
+FEED CARD ACTION BUTTONS (CASE-BASED)
+------------------------------------------------
+
+Show ONE primary action button based on POST TYPE:
+
+- Idea post → Buy Idea
+- Fund post → Invest
+- Project / Recruitment post → Connect
+- User’s own post → Edit
+
+(No permissions, no logic, UI only)
+
+================================================
+RIGHT PANEL (OPTIONAL, SAME FOR ALL USERS)
+================================================
+
+Right panel shows:
+- Platform stats (mock)
+- Trending posts
+- Suggested connections
+
+Hidden on mobile.
+
+================================================
+STRICT DO NOTs
+================================================
+
+- Do NOT assume backend logic
+- Do NOT add payments
+- Do NOT add premium / upgrade UI
+- Do NOT refactor unrelated pages
+- Do NOT invent roles beyond these three
+
+================================================
+DELIVERABLE
+================================================
+
+- Navbar implemented as global reusable component
+- Sidebar implemented as reusable component with switchable menus
+- Feed page UI built with mock data
+- Layout stable for entire app
+
+Work ONLY on navigation + feed UI.

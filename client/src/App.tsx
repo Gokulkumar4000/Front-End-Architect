@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Landing from "@/pages/Landing";
 import Auth from "@/pages/Auth";
+import Feed from "@/pages/Feed";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -13,6 +14,7 @@ function Router() {
       <Route path="/" component={Landing} />
       <Route path="/login" component={Auth} />
       <Route path="/register" component={Auth} />
+      <Route path="/feed" component={Feed} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
