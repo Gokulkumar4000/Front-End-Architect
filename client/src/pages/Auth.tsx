@@ -488,13 +488,13 @@ interface GlassInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 function GlassInput({ icon: Icon, className, ...props }: GlassInputProps) {
   return (
-    <div className="relative group">
+    <div className="relative group w-full">
       {Icon && (
         <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
       )}
       <Input 
         className={cn(
-          "bg-white/5 border-white/10 h-11 focus-visible:ring-primary/20 focus-visible:border-primary/50 transition-all backdrop-blur-sm",
+          "w-full bg-white/5 border-white/10 h-11 focus-visible:ring-primary/20 focus-visible:border-primary/50 transition-all backdrop-blur-sm",
           Icon && "pl-10",
           className
         )} 
@@ -831,7 +831,7 @@ export default function Auth() {
                   <div className="hidden lg:block">
                     {renderRoleCard()}
                   </div>
-                  <Card className="glass-card border-white/5 overflow-hidden h-fit lg:min-h-[380px] flex flex-col">
+                  <Card className="glass-card border-white/5 overflow-hidden h-fit lg:min-h-[480px] flex flex-col">
                     <CardContent className="p-8 relative flex-1 overflow-hidden flex flex-col">
                       {(() => {
                         const role = roles.find(r => r.id === selectedRole)!;
@@ -967,7 +967,7 @@ export default function Auth() {
 
                   {/* Main Registration Card - Stable Height */}
                   <div className="w-full relative z-0 px-2 md:px-0">
-                    <Card className="glass-card border-white/5 overflow-hidden h-[420px] flex flex-col shadow-2xl">
+                    <Card className="glass-card border-white/5 overflow-hidden h-[500px] flex flex-col shadow-2xl">
                       <CardContent className="p-0 relative flex-1 overflow-hidden flex flex-col">
                         {/* Tooltip Fix: High z-index and explicit provider */}
                         <div className="absolute right-4 top-4 z-[50]">
@@ -1003,13 +1003,13 @@ export default function Auth() {
                               initial="hidden"
                               animate="visible"
                               exit="exit"
-                              className="h-full flex flex-col"
+                              className="h-full flex flex-col items-center"
                             >
                               {signupStep === "basic-profile" && (
                                 <>
                                   {renderStepHeader("Basic Profile Details", "Tell us who you are")}
-                                  <div className="space-y-4 max-w-2xl mx-auto">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div className="space-y-4 w-full max-w-2xl mx-auto">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                       <div className="space-y-2">
                                         <Label>Full Name</Label>
                                         <GlassInput 
@@ -1065,7 +1065,7 @@ export default function Auth() {
                               {signupStep === "professional-identity" && (
                                 <>
                                   {renderStepHeader("Professional Identity", "Help us understand your background")}
-                                  <div className="space-y-6 max-w-2xl mx-auto">
+                                  <div className="space-y-6 w-full max-w-2xl mx-auto">
                                     {selectedRole === "idea-holder" && (
                                       <>
                                         <TagInput 
@@ -1184,7 +1184,7 @@ export default function Auth() {
                               {signupStep === "working-preferences" && (
                                 <>
                                   {renderStepHeader("Working Preferences", "How do you want to engage?")}
-                                  <div className="space-y-6 max-w-2xl mx-auto">
+                                  <div className="space-y-6 w-full max-w-2xl mx-auto">
                                     {selectedRole === "idea-holder" && (
                                       <>
                                         <div className="space-y-3">
@@ -1300,7 +1300,7 @@ export default function Auth() {
                               {signupStep === "org-affiliation" && (
                                 <>
                                   {renderStepHeader("Organization & Affiliation", "Professional associations")}
-                                  <div className="space-y-6 max-w-2xl mx-auto">
+                                  <div className="space-y-6 w-full max-w-2xl mx-auto">
                                     <div className="space-y-2">
                                       <Label>Current / Previous company</Label>
                                       <div className="relative group">
@@ -1382,7 +1382,7 @@ export default function Auth() {
                               {signupStep === "interests-goals" && (
                                 <>
                                   {renderStepHeader("Interests & Goals", "What are you aiming to achieve?")}
-                                  <div className="space-y-6 max-w-2xl mx-auto">
+                                  <div className="space-y-6 w-full max-w-2xl mx-auto">
                                     <div className="space-y-2">
                                       <Label>Primary Objectives (Max 100 words)</Label>
                                       <div className="relative group">
@@ -1422,7 +1422,7 @@ export default function Auth() {
                               {signupStep === "about-you" && (
                                 <>
                                   {renderStepHeader("About You", "Introduce yourself to the community")}
-                                  <div className="space-y-6 max-w-2xl mx-auto">
+                                  <div className="space-y-6 w-full max-w-2xl mx-auto">
                                     <div className="space-y-2">
                                       <Label>Short Bio (Max 150 words)</Label>
                                       <div className="relative">
