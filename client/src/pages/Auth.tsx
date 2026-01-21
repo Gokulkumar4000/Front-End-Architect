@@ -981,7 +981,7 @@ export default function Auth() {
 
                   {/* Main Registration Card - Stable Height */}
                   <div className="w-full relative z-0 px-2 md:px-0">
-                    <Card className="glass-card border-white/5 overflow-hidden h-[500px] flex flex-col shadow-2xl">
+                    <Card className="glass-card border-white/5 overflow-hidden h-[600px] flex flex-col shadow-2xl">
                       <CardContent className="p-0 relative flex-1 overflow-hidden flex flex-col">
                         {/* Tooltip Fix: High z-index and explicit provider */}
                         <div className="absolute right-4 top-4 z-[50]">
@@ -1009,7 +1009,7 @@ export default function Auth() {
                         </div>
 
                         {/* Internal Scroll - Styled scrollbar */}
-                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 overflow-x-hidden">
+                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 pb-12 overflow-x-hidden">
                           <AnimatePresence mode="wait">
                             <motion.div 
                               key={signupStep}
