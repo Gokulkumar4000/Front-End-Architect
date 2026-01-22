@@ -171,9 +171,21 @@ const FeedCard = memo(({ post }: { post: Post }) => {
             </Badge>
           </div>
           <h3 className="text-lg font-bold font-display leading-tight">{post.title}</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {post.content}
-          </p>
+          <div className="relative group/content">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-[10]">
+              {post.content}
+            </p>
+            <Button 
+              variant="link" 
+              className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2"
+              onClick={() => {
+                // In a real app, this would navigate to a detailed view
+                console.log("View full details for:", post.id);
+              }}
+            >
+              View full {post.type === "investment" ? "investment" : post.type === "project" ? "project" : "idea"}
+            </Button>
+          </div>
         </CardContent>
 
         <CardFooter className="p-4 pt-0 flex items-center justify-between border-t border-white/5 mt-2 pt-4">
