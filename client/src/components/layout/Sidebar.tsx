@@ -242,58 +242,6 @@ export function AppSidebar({ role = "idea-holder" }: AppSidebarProps) {
           </Link>
         ))}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className={cn(
-              "flex flex-col items-center gap-1 transition-colors",
-              location === "/profile" ? "text-primary" : "text-muted-foreground"
-            )}>
-              <User className="w-6 h-6" />
-              <span className="text-[10px] font-medium">Profile</span>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl">
-            <DropdownMenuLabel className="px-4 py-3 border-b border-white/5">
-              <p className="text-sm font-bold text-gradient-primary">John Doe</p>
-              <p className="text-[10px] text-muted-foreground">My Account</p>
-            </DropdownMenuLabel>
-            <div className="p-1">
-              <DropdownMenuItem asChild>
-                <Link href="/profile" className="flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  <span>View Profile</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/settings" className="flex items-center gap-2">
-                  <Settings className="w-4 h-4" />
-                  <span>Settings</span>
-                </Link>
-              </DropdownMenuItem>
-            </div>
-            <DropdownMenuSeparator className="bg-white/5" />
-            <div className="p-1">
-              <DropdownMenuLabel className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
-                My Activity
-              </DropdownMenuLabel>
-              {getMyActivityItems(role).map((item) => (
-                <DropdownMenuItem key={item.url} asChild>
-                  <Link href={item.url} className="flex items-center gap-2">
-                    <item.icon className="w-4 h-4" />
-                    <span>{item.title}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </div>
-            <DropdownMenuSeparator className="bg-white/5" />
-            <div className="p-1">
-              <DropdownMenuItem className="text-destructive flex items-center gap-2">
-                <LogOut className="w-4 h-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </>
   );
