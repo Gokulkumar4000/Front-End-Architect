@@ -639,23 +639,16 @@ export default function Auth() {
     return (
       <div className="min-h-screen w-full bg-background flex items-center justify-center p-4">
         <div className="max-w-md w-full space-y-8 text-center">
-          <div className="mx-auto h-20 w-20 rounded-2xl bg-primary/10 relative overflow-hidden border border-primary/20 flex items-center justify-center">
-             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer -translate-x-full" />
+          <div className="mx-auto h-20 w-20 rounded-2xl shimmer-bg flex items-center justify-center border border-primary/20">
              <Lightbulb className="w-10 h-10 text-primary animate-pulse" />
           </div>
           <div className="space-y-4">
-            <div className="h-8 w-48 bg-muted/20 rounded mx-auto relative overflow-hidden">
-               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-            </div>
-            <div className="h-4 w-64 bg-muted/10 rounded mx-auto relative overflow-hidden">
-               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-            </div>
+            <div className="h-8 w-48 rounded mx-auto shimmer-bg" />
+            <div className="h-4 w-64 rounded mx-auto shimmer-bg opacity-70" />
           </div>
           <div className="grid grid-cols-3 gap-4 mt-12">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-24 rounded-xl bg-muted/5 border border-white/5 relative overflow-hidden">
-                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-              </div>
+              <div key={i} className="h-24 rounded-xl border border-white/5 shimmer-bg" />
             ))}
           </div>
         </div>

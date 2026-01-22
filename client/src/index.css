@@ -85,6 +85,19 @@
     @apply bg-card/60 backdrop-blur-sm border border-white/5 hover:border-primary/50 transition-colors duration-300;
   }
   
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .shimmer-bg {
+    @apply relative overflow-hidden bg-muted/20 before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer before:bg-gradient-to-r before:from-transparent before:via-white/[0.08] before:to-transparent;
+  }
+  
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60;
   }

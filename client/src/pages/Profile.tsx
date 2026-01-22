@@ -22,45 +22,27 @@ import { useLocation } from "wouter";
 
 const ProfileSkeleton = () => (
   <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
-    <div className="h-8 w-32 bg-muted/20 rounded relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-    </div>
+    <div className="h-8 w-32 rounded shimmer-bg" />
     <Card className="glass-card border-white/5 overflow-hidden">
-      <div className="h-32 bg-muted/10 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-      </div>
+      <div className="h-32 shimmer-bg opacity-50" />
       <CardContent className="relative px-6 pb-6">
         <div className="flex flex-col md:flex-row items-end gap-6 -mt-12">
-          <div className="h-32 w-32 rounded-full bg-muted/20 border-4 border-background relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-          </div>
+          <div className="h-32 w-32 rounded-full border-4 border-background shimmer-bg" />
           <div className="flex-1 space-y-2 pb-2">
-            <div className="h-8 w-48 bg-muted/20 rounded relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-            </div>
-            <div className="h-4 w-32 bg-muted/20 rounded relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-            </div>
+            <div className="h-8 w-48 rounded shimmer-bg" />
+            <div className="h-4 w-32 rounded shimmer-bg" />
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           <div className="md:col-span-2 space-y-4">
-            <div className="h-24 w-full bg-muted/20 rounded relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-            </div>
+            <div className="h-24 w-full rounded shimmer-bg" />
             <div className="grid grid-cols-2 gap-4">
-              <div className="h-16 bg-muted/10 rounded relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-              </div>
-              <div className="h-16 bg-muted/10 rounded relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-              </div>
+              <div className="h-16 rounded shimmer-bg" />
+              <div className="h-16 rounded shimmer-bg" />
             </div>
           </div>
           <div className="space-y-4">
-            <div className="h-32 w-full bg-muted/20 rounded relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer -translate-x-full" />
-            </div>
+            <div className="h-32 w-full rounded shimmer-bg" />
           </div>
         </div>
       </CardContent>
