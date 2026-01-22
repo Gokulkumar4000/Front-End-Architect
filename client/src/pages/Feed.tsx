@@ -82,6 +82,13 @@ const FeedCard = memo(({ post }: { post: Post }) => {
   const userRole = localStorage.getItem("userRole") as string;
   const [isFollowing, setIsFollowing] = useState(false);
   const [showFollowDialog, setShowFollowDialog] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.stats.likes);
+
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+  };
 
   const actionText = useMemo(() => {
     switch (post.type) {
@@ -191,15 +198,21 @@ const FeedCard = memo(({ post }: { post: Post }) => {
 
         <CardFooter className="p-4 pt-0 flex items-center justify-between border-t border-white/5 mt-2 pt-4">
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
-              <Heart className="w-4 h-4" />
-              <span>{post.stats.likes}</span>
+            <button 
+              onClick={handleLike}
+              className={cn(
+                "flex items-center gap-1.5 text-xs transition-all duration-300 active:scale-90",
+                isLiked ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+              )}
+            >
+              <Heart className={cn("w-4 h-4 transition-transform duration-300", isLiked && "fill-current scale-125")} />
+              <span className="tabular-nums">{likesCount}</span>
             </button>
-            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
+            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors active:scale-95">
               <MessageSquare className="w-4 h-4" />
               <span>{post.stats.comments}</span>
             </button>
-            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
+            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors active:scale-95">
               <Share2 className="w-4 h-4" />
             </button>
           </div>
