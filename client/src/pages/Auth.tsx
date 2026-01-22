@@ -616,6 +616,15 @@ export default function Auth() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Initialize correct step based on mode
+  useEffect(() => {
+    if (mode === "login") {
+      setOnboardingStep("registration");
+    } else if (mode === "signup" && !selectedRole) {
+      setOnboardingStep("role-selection");
+    }
+  }, [mode, selectedRole]);
+
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-background flex items-center justify-center p-4">
