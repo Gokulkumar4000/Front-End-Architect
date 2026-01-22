@@ -27,7 +27,8 @@ import {
   Plus,
   Search,
   DollarSign,
-  X
+  X,
+  Mail
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
