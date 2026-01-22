@@ -67,15 +67,18 @@ const MOCK_POSTS: Post[] = [
 ];
 
 const FeedCard = memo(({ post }: { post: Post }) => {
+  const userRole = localStorage.getItem("userRole") as string;
+  const [isFollowing, setIsFollowing] = useState(false);
+
   const actionText = useMemo(() => {
     switch (post.type) {
-      case "idea": return "Buy Idea";
+      case "idea": return userRole === "idea-holder" ? null : "Buy Idea";
       case "fund": return "Invest";
       case "project":
       case "recruitment": return "Connect";
       default: return "Connect";
     }
-  }, [post.type]);
+  }, [post.type, userRole]);
 
   const typeIcon = useMemo(() => {
     switch (post.type) {
@@ -94,7 +97,20 @@ const FeedCard = memo(({ post }: { post: Post }) => {
             <AvatarFallback>{post.author.name[0]}</AvatarFallback>
           </Avatar>
           <div>
-            <h4 className="text-sm font-bold leading-none">{post.author.name}</h4>
+            <div className="flex items-center gap-2">
+              <h4 className="text-sm font-bold leading-none">{post.author.name}</h4>
+              <button 
+                onClick={() => setIsFollowing(!isFollowing)}
+                className={cn(
+                  "text-[10px] font-bold px-2 py-0.5 rounded transition-all",
+                  isFollowing 
+                    ? "text-muted-foreground bg-white/5" 
+                    : "text-primary hover:text-primary/80"
+                )}
+              >
+                {isFollowing ? "Following" : "Follow"}
+              </button>
+            </div>
             <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest font-medium">
               {post.author.role} • {post.timestamp}
             </p>
@@ -133,12 +149,14 @@ const FeedCard = memo(({ post }: { post: Post }) => {
           </button>
         </div>
         
-        <Button size="sm" className="font-bold relative group overflow-hidden">
-           <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
-            <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
-          </div>
-          <span className="relative z-20">{actionText}</span>
-        </Button>
+        {actionText && (
+          <Button size="sm" className="font-bold relative group overflow-hidden">
+             <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+              <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+            </div>
+            <span className="relative z-20">{actionText}</span>
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
