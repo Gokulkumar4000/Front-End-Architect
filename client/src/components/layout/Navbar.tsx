@@ -29,7 +29,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetSeparator
 } from "@/components/ui/sheet";
 
 type UserRole = "idea-holder" | "developer" | "investor";
@@ -145,7 +144,7 @@ export function Navbar() {
                   </div>
                 </div>
 
-                <SheetSeparator className="bg-white/5" />
+                <div className="h-px bg-white/5 mx-3" />
 
                 <div className="space-y-1">
                   <Link href="/settings">
