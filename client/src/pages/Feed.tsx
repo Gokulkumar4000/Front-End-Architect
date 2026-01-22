@@ -171,14 +171,14 @@ const FeedCard = memo(({ post }: { post: Post }) => {
             </Badge>
           </div>
           <h3 className="text-lg font-bold font-display leading-tight">{post.title}</h3>
-          <div className="relative group/content overflow-hidden">
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-[20] relative">
+          <div className="relative group/content overflow-hidden flex flex-col items-center">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-[10] relative w-full">
               {post.content}
-              <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-card to-transparent pointer-events-none" />
+              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card via-card/80 to-transparent pointer-events-none" />
             </p>
             <Button 
               variant="ghost" 
-              className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2 bg-transparent border-0 hover:bg-transparent shadow-none relative z-10"
+              className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2 bg-transparent border-0 hover:bg-transparent shadow-none relative z-10 mx-auto"
               onClick={() => {
                 // In a real app, this would navigate to a detailed view
                 console.log("View full details for:", post.id);
