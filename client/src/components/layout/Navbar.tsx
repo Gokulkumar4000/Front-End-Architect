@@ -30,6 +30,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type UserRole = "idea-holder" | "developer" | "investor";
 
@@ -72,15 +81,66 @@ export function Navbar() {
 
   const myActivityItems = getMyActivityItems(role);
 
+  const ProfileContent = () => (
+    <div className="flex flex-col h-full overflow-y-auto">
+      <div className="p-4 space-y-6">
+        <div>
+          <p className="px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-3">
+            My Activity
+          </p>
+          <div className="space-y-1">
+            {myActivityItems.map((item) => (
+              <Link key={item.url} href={item.url}>
+                <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-primary/10 transition-all text-sm font-medium group relative overflow-hidden">
+                  <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                    <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
+                  </div>
+                  <item.icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <span className="group-hover:text-primary transition-colors">{item.title}</span>
+                </button>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="h-px bg-white/5 mx-3" />
+
+        <div className="space-y-1">
+          <Link href="/settings">
+            <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-primary/10 transition-all text-sm font-medium group relative overflow-hidden">
+              <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
+              </div>
+              <Settings className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              <span className="group-hover:text-primary transition-colors">Settings</span>
+            </button>
+          </Link>
+        </div>
+      </div>
+
+      <div className="mt-auto p-4 border-t border-white/5 pb-10">
+        <button className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-destructive/10 text-destructive transition-all text-sm font-bold group relative overflow-hidden">
+          <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+            <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
+          </div>
+          <LogOut className="w-5 h-5" />
+          <span>Log out</span>
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b bg-background/80 backdrop-blur-md px-4 flex items-center justify-between">
+    <nav className="fixed top-0 left-0 right-0 h-16 glass-card border-b border-white/10 z-[100] px-4 md:px-8 flex items-center justify-between">
       <div className="flex items-center gap-8">
-        <Link href="/feed">
+        <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer group">
-            <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-              <LayoutGrid className="w-5 h-5 text-primary" />
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform">
+              <LayoutGrid className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-display font-bold text-gradient-primary hidden md:block">DevConnect</span>
+            <span className="text-xl font-display font-black tracking-tighter text-gradient-primary">
+              DevConnect
+            </span>
           </div>
         </Link>
       </div>
@@ -96,81 +156,83 @@ export function Navbar() {
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative hover-elevate active-elevate-2">
           <MessageSquare className="w-5 h-5" />
           <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background" />
         </Button>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative hover-elevate active-elevate-2">
           <Bell className="w-5 h-5" />
           <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background" />
         </Button>
         
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" className="relative h-10 w-10 rounded-full hover-elevate active-elevate-2 p-0 overflow-hidden">
-              <Avatar className="h-10 w-10 border-2 border-primary/10">
-                <AvatarImage src="" alt="User" />
-                <AvatarFallback className="bg-primary/5 text-primary">JD</AvatarFallback>
-              </Avatar>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-80 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl p-0">
-            <SheetHeader className="font-normal px-6 py-8 border-b border-white/5 text-left">
-              <SheetTitle>
+        {/* Desktop Profile Dropdown */}
+        <div className="hidden md:block">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full hover-elevate active-elevate-2 p-0 overflow-hidden">
+                <Avatar className="h-10 w-10 border-2 border-primary/10">
+                  <AvatarImage src="" alt="User" />
+                  <AvatarFallback className="bg-primary/5 text-primary font-bold">JD</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-64 glass-card border-white/10 bg-background/90 backdrop-blur-xl shadow-2xl p-2 mt-2" align="end">
+              <DropdownMenuLabel className="font-normal px-4 py-3 border-b border-white/5 mb-2">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-lg font-bold leading-none text-gradient-primary">John Doe</p>
-                  <p className="text-sm leading-none text-muted-foreground font-medium">john@example.com</p>
+                  <p className="text-sm font-bold leading-none text-gradient-primary">John Doe</p>
+                  <p className="text-xs leading-none text-muted-foreground font-medium">john@example.com</p>
                 </div>
-              </SheetTitle>
-            </SheetHeader>
-            <div className="flex flex-col h-full overflow-y-auto">
-              <div className="p-4 space-y-6">
-                <div>
-                  <p className="px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-3">
-                    My Activity
-                  </p>
-                  <div className="space-y-1">
-                    {myActivityItems.map((item) => (
-                      <Link key={item.url} href={item.url}>
-                        <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-primary/10 transition-all text-sm font-medium group relative overflow-hidden">
-                          <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
-                            <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
-                          </div>
-                          <item.icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                          <span className="group-hover:text-primary transition-colors">{item.title}</span>
-                        </button>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="h-px bg-white/5 mx-3" />
-
-                <div className="space-y-1">
-                  <Link href="/settings">
-                    <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-primary/10 transition-all text-sm font-medium group relative overflow-hidden">
-                      <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
-                        <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
-                      </div>
-                      <Settings className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                      <span className="group-hover:text-primary transition-colors">Settings</span>
-                    </button>
+              </DropdownMenuLabel>
+              <DropdownMenuGroup className="space-y-1">
+                {myActivityItems.map((item) => (
+                  <Link key={item.url} href={item.url}>
+                    <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-all cursor-pointer focus:bg-primary/10">
+                      <item.icon className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm">{item.title}</span>
+                    </DropdownMenuItem>
                   </Link>
-                </div>
-              </div>
+                ))}
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator className="bg-white/5 my-2" />
+              <Link href="/settings">
+                <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-all cursor-pointer focus:bg-primary/10">
+                  <Settings className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm">Settings</span>
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuSeparator className="bg-white/5 my-2" />
+              <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-destructive/10 text-destructive transition-all cursor-pointer focus:bg-destructive/10">
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm font-bold">Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-              <div className="mt-auto p-4 border-t border-white/5 pb-10">
-                <button className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-destructive/10 text-destructive transition-all text-sm font-bold group relative overflow-hidden">
-                  <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
-                    <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
+        {/* Mobile Profile Sheet */}
+        <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full hover-elevate active-elevate-2 p-0 overflow-hidden">
+                <Avatar className="h-10 w-10 border-2 border-primary/10">
+                  <AvatarImage src="" alt="User" />
+                  <AvatarFallback className="bg-primary/5 text-primary font-bold">JD</AvatarFallback>
+                </Avatar>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-80 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl p-0">
+              <SheetHeader className="font-normal px-6 py-8 border-b border-white/5 text-left">
+                <SheetTitle>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-lg font-bold leading-none text-gradient-primary">John Doe</p>
+                    <p className="text-sm leading-none text-muted-foreground font-medium">john@example.com</p>
                   </div>
-                  <LogOut className="w-5 h-5" />
-                  <span>Log out</span>
-                </button>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
+                </SheetTitle>
+              </SheetHeader>
+              <ProfileContent />
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </nav>
   );
