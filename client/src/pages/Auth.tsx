@@ -617,6 +617,24 @@ export default function Auth() {
     return () => clearTimeout(timer);
   }, []);
 
+  const steps = useMemo(() => {
+    const baseSteps: SignupStep[] = [
+      "basic-profile",
+      "professional-identity",
+      "working-preferences",
+      "org-affiliation",
+      "interests-goals",
+      "about-you",
+      "summary"
+    ];
+    
+    if (selectedRole === "idea-holder") {
+      return baseSteps.filter(s => s !== "org-affiliation");
+    }
+    
+    return baseSteps;
+  }, [selectedRole]);
+
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-background flex items-center justify-center p-4">
@@ -679,24 +697,6 @@ export default function Auth() {
     setOnboardingStep("registration");
     setSignupStep("basic-profile");
   };
-
-  const steps = useMemo(() => {
-    const baseSteps: SignupStep[] = [
-      "basic-profile",
-      "professional-identity",
-      "working-preferences",
-      "org-affiliation",
-      "interests-goals",
-      "about-you",
-      "summary"
-    ];
-    
-    if (selectedRole === "idea-holder") {
-      return baseSteps.filter(s => s !== "org-affiliation");
-    }
-    
-    return baseSteps;
-  }, [selectedRole]);
 
   const nextStep = () => {
     const currentIndex = steps.indexOf(signupStep);
