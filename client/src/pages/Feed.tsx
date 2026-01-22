@@ -138,12 +138,7 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                   variant={isFollowing ? "ghost" : "default"}
                   size="sm"
                   onClick={handleFollowClick}
-                  className={cn(
-                    "h-5 text-[9px] font-bold px-3 transition-all rounded-full min-w-[50px] relative group overflow-hidden",
-                    isFollowing 
-                      ? "text-muted-foreground bg-white/5 hover:bg-white/10" 
-                      : "bg-primary text-white hover:bg-primary/90 shadow-sm"
-                  )}
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 border border-primary-border min-h-8 h-5 text-[9px] font-bold px-3 transition-all rounded-full min-w-[50px] relative group overflow-hidden bg-primary text-white hover:bg-primary/90 shadow-sm pl-[10px] pr-[10px]"
                 >
                   <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
                     <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
