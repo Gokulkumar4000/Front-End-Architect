@@ -230,7 +230,7 @@ export function Navbar() {
                 </Avatar>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl p-0">
+            <SheetContent side="right" className="w-80 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl p-0 z-[110]">
               <SheetHeader className="font-normal px-6 py-8 border-b border-white/5 text-left">
                 <SheetTitle>
                   <div className="flex flex-col space-y-1">
