@@ -176,14 +176,14 @@ const FeedCard = memo(({ post }: { post: Post }) => {
               {post.content}
             </p>
             <Button 
-              variant="link" 
-              className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2"
+              variant="ghost" 
+              className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2 bg-transparent border-0 hover:bg-transparent shadow-none"
               onClick={() => {
                 // In a real app, this would navigate to a detailed view
                 console.log("View full details for:", post.id);
               }}
             >
-              View full {post.type === "investment" ? "investment" : post.type === "project" ? "project" : "idea"}
+              View full {String(post.type) === "investment" ? "investment" : String(post.type) === "project" ? "project" : "idea"}
             </Button>
           </div>
         </CardContent>
