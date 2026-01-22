@@ -561,7 +561,7 @@ const SummaryField = ({ label, value }: { label: string, value: any }) => {
 };
 
 export default function Auth() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const initialMode: AuthMode = location.includes("register") ? "signup" : "login";
   
   const [mode, setMode] = useState<AuthMode>(initialMode);
@@ -715,7 +715,7 @@ export default function Auth() {
     // Simulate API call for registration
     setTimeout(() => {
       setIsSubmitting(false);
-      window.location.href = "/";
+      setLocation("/feed");
     }, 2000);
   };
 
