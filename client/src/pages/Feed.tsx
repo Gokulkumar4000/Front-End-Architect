@@ -16,7 +16,8 @@ import {
   Lightbulb,
   Briefcase,
   Coins,
-  CheckCircle2
+  CheckCircle2,
+  Send
 } from "lucide-react";
 import {
   AlertDialog,
@@ -30,6 +31,18 @@ import {
 } from "@/components/ui/alert-dialog";
 
 type PostType = "idea" | "project" | "fund" | "recruitment";
+
+interface Comment {
+  id: string;
+  author: {
+    name: string;
+    avatar: string;
+    role: string;
+  };
+  content: string;
+  timestamp: string;
+  likes: number;
+}
 
 interface Post {
   id: string;
@@ -46,6 +59,7 @@ interface Post {
     likes: number;
     comments: number;
   };
+  comments?: Comment[];
 }
 
 const MOCK_POSTS: Post[] = [
@@ -56,7 +70,23 @@ const MOCK_POSTS: Post[] = [
     title: "AI-Powered Sustainable Farming",
     content: "We are developing an revolutionary automated sensor network specifically designed for small-scale urban farmers. Our goal is to democratize precision agriculture by making it affordable and accessible to everyone, from balcony gardeners to community farm managers. By utilizing advanced low-energy IoT sensors and machine learning algorithms, our system optimizes water usage based on real-time soil moisture and weather forecasts, significantly increasing crop yields while reducing environmental impact. We're currently looking for early-stage feedback from the agricultural community and potential technical co-founders who are passionate about food security and sustainable living. Our vision is to create a global network of hyper-local, high-efficiency urban farms that can feed cities from within their own boundaries, reducing the carbon footprint of food transportation and ensuring fresh produce is always available. Join us in building the future of decentralized, data-driven agriculture that respects the planet.",
     timestamp: "2h ago",
-    stats: { likes: 124, comments: 18 }
+    stats: { likes: 124, comments: 2 },
+    comments: [
+      {
+        id: "c1",
+        author: { name: "Bob Builder", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob", role: "Developer" },
+        content: "This sounds amazing! What kind of sensors are you planning to use for soil moisture?",
+        timestamp: "1h ago",
+        likes: 5
+      },
+      {
+        id: "c2",
+        author: { name: "Charlie Capital", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie", role: "Investor" },
+        content: "Interested in the scalability of this. Let's connect.",
+        timestamp: "30m ago",
+        likes: 2
+      }
+    ]
   },
   {
     id: "2",
@@ -65,7 +95,8 @@ const MOCK_POSTS: Post[] = [
     title: "Open Source CRM for Non-Profits",
     content: "Our team has just reached a major milestone in the DevConnect UI library project. We've officially released version 1.0 of our high-performance, accessible component library built on top of Radix UI and Tailwind CSS. This isn't just another component library; it's a meticulously crafted design system specifically tailored for the needs of the DevConnect ecosystem. Every component has been tested for WCAG 2.1 compliance and optimized for lightning-fast rendering even on low-end devices. We've included over 50+ pre-built patterns for common startup needs, from complex data tables to high-conversion landing page sections. The library is fully themeable and supports automatic dark mode switching out of the box. We are inviting the developer community to contribute, report bugs, and suggest new features as we scale this into a comprehensive framework for building professional, visionary-focused applications. Let's build a better web together, one pixel-perfect component at a time.",
     timestamp: "4h ago",
-    stats: { likes: 85, comments: 12 }
+    stats: { likes: 85, comments: 0 },
+    comments: []
   },
   {
     id: "3",
@@ -74,9 +105,45 @@ const MOCK_POSTS: Post[] = [
     title: "Seed Fund for GreenTech",
     content: "Mike Money Capital is officially opening applications for our early-stage CleanTech Seed Fund for the 2026 cohort. We are actively seeking brilliant founders who are tackling the most pressing environmental challenges through software and deep-tech innovations. Our investment focus is broad but deep, covering areas such as decentralized energy grid management, next-generation carbon capture technologies, circular economy platforms, and sustainable supply chain transparency tools. We don't just provide capital; we offer a comprehensive support ecosystem including mentorship from industry veterans, access to a global network of corporate partners for pilot programs, and dedicated technical resources to help you scale your MVP. If you're building a solution that can realistically mitigate climate change or improve global resource efficiency, we want to hear from you. We are looking for mission-driven teams with high technical competency and a clear path to commercial viability. Let's invest in a future that our children will be proud of.",
     timestamp: "6h ago",
-    stats: { likes: 210, comments: 45 }
+    stats: { likes: 210, comments: 45 },
+    comments: []
   }
 ];
+
+const CommentItem = ({ comment, isReply = false }: { comment: Comment; isReply?: boolean }) => {
+  const [liked, setLiked] = useState(false);
+  const [clikes, setClikes] = useState(comment.likes);
+
+  return (
+    <div className={cn("flex gap-3", isReply && "ml-11 mt-3")}>
+      <Avatar className="h-8 w-8 shrink-0 border border-white/5">
+        <AvatarImage src={comment.author.avatar} />
+        <AvatarFallback className="text-[10px]">{comment.author.name[0]}</AvatarFallback>
+      </Avatar>
+      <div className="flex-1 space-y-1">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-white/90">{comment.author.name}</span>
+            <span className="text-[8px] text-muted-foreground uppercase tracking-widest bg-white/5 px-1.5 py-0.5 rounded">{comment.author.role}</span>
+          </div>
+          <span className="text-[10px] text-muted-foreground">{comment.timestamp}</span>
+        </div>
+        <p className="text-xs text-white/70 leading-relaxed bg-white/[0.02] p-2 rounded-lg border border-white/5">{comment.content}</p>
+        <div className="flex items-center gap-4 pt-1 ml-1">
+          <button 
+            onClick={() => { setLiked(!liked); setClikes(prev => liked ? prev - 1 : prev + 1); }}
+            className={cn("text-[10px] transition-all flex items-center gap-1.5 hover:scale-110 active:scale-90", liked ? "text-primary font-bold" : "text-muted-foreground hover:text-primary")}
+          >
+            <Heart className={cn("w-3.5 h-3.5", liked && "fill-current")} />
+            <span className="tabular-nums">{clikes}</span>
+          </button>
+          <button className="text-[10px] text-muted-foreground hover:text-primary transition-all hover:scale-110 active:scale-90 font-medium">Reply</button>
+        </div>
+        {comment.replies?.map(reply => <CommentItem key={reply.id} comment={reply} isReply />)}
+      </div>
+    </div>
+  );
+};
 
 const FeedCard = memo(({ post }: { post: Post }) => {
   const userRole = localStorage.getItem("userRole") as string;
@@ -84,6 +151,7 @@ const FeedCard = memo(({ post }: { post: Post }) => {
   const [showFollowDialog, setShowFollowDialog] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.stats.likes);
+  const [showComments, setShowComments] = useState(false);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -133,13 +201,14 @@ const FeedCard = memo(({ post }: { post: Post }) => {
   return (
     <>
       <Card className="glass-card border-white/5 hover:border-primary/20 transition-all group/card overflow-hidden">
-        <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
+        <CardHeader className="p-4 flex flex-row items-center justify-between gap-1 space-y-0">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 border border-primary/10">
+              <AvatarImage src={post.author.avatar} />
               <AvatarFallback>{post.author.name[0]}</AvatarFallback>
             </Avatar>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h4 className="text-sm font-bold leading-none">{post.author.name}</h4>
                 {isFollowing ? (
                   <div className="flex items-center gap-1.5 text-[10px] text-primary/80 font-medium bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10">
@@ -181,10 +250,12 @@ const FeedCard = memo(({ post }: { post: Post }) => {
           </div>
           <h3 className="text-lg font-bold font-display leading-tight">{post.title}</h3>
           <div className="relative group/content overflow-hidden flex flex-col items-center">
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-[10] relative w-full">
-              {post.content}
+            <div className="relative w-full">
+              <p className="text-sm text-muted-foreground leading-relaxed line-clamp-[10]">
+                {post.content}
+              </p>
               <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card via-card/80 to-transparent pointer-events-none" />
-            </p>
+            </div>
             <Button 
               variant="ghost" 
               className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2 bg-transparent border-0 hover:bg-transparent shadow-none relative z-10 mx-auto"
@@ -198,34 +269,71 @@ const FeedCard = memo(({ post }: { post: Post }) => {
           </div>
         </CardContent>
 
-        <CardFooter className="p-4 pt-0 flex items-center justify-between border-t border-white/5 mt-2 pt-4">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={handleLike}
-              className={cn(
-                "flex items-center gap-1.5 text-xs transition-all duration-300 active:scale-90",
-                isLiked ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
-              )}
-            >
-              <Heart className={cn("w-4 h-4 transition-transform duration-300", isLiked && "fill-current scale-125")} />
-              <span className="tabular-nums">{likesCount}</span>
-            </button>
-            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors active:scale-95">
-              <MessageSquare className="w-4 h-4" />
-              <span>{post.stats.comments}</span>
-            </button>
-            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors active:scale-95">
-              <Share2 className="w-4 h-4" />
-            </button>
+        <CardFooter className="p-4 pt-0 flex flex-col border-t border-white/5 mt-2 pt-4">
+          <div className="flex items-center justify-between w-full gap-2 flex-wrap">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={handleLike}
+                className={cn(
+                  "flex items-center gap-1.5 text-xs transition-all duration-300 active:scale-90",
+                  isLiked ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                )}
+              >
+                <Heart className={cn("w-4 h-4 transition-transform duration-300", isLiked && "fill-current scale-125")} />
+                <span className="tabular-nums">{likesCount}</span>
+              </button>
+              <button 
+                onClick={() => setShowComments(!showComments)}
+                className={cn(
+                  "flex items-center gap-1.5 text-xs transition-colors active:scale-95",
+                  showComments ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                )}
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>{post.stats.comments}</span>
+              </button>
+              <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors active:scale-95">
+                <Share2 className="w-4 h-4" />
+              </button>
+            </div>
+            
+            {actionText && (
+              <Button size="sm" className="font-bold relative group overflow-hidden">
+                 <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                  <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                </div>
+                <span className="relative z-20">{actionText}</span>
+              </Button>
+            )}
           </div>
-          
-          {actionText && (
-            <Button size="sm" className="font-bold relative group overflow-hidden">
-               <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
-                <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+
+          {showComments && (
+            <div className="mt-4 pt-4 border-t border-white/5 w-full animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="max-h-60 overflow-y-auto space-y-6 pr-3 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-primary/20 transition-colors">
+                {post.comments?.map((comment) => (
+                  <CommentItem key={comment.id} comment={comment} />
+                ))}
+                {(!post.comments || post.comments.length === 0) && (
+                  <p className="text-center text-xs text-muted-foreground py-4 italic">No comments yet. Be the first to start the conversation!</p>
+                )}
               </div>
-              <span className="relative z-20">{actionText}</span>
-            </Button>
+              <div className="mt-4 pt-4 border-t border-white/5">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-8 w-8 border border-white/10">
+                    <AvatarFallback className="text-[10px]">ME</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 relative group/input">
+                    <input 
+                      placeholder="Share your thoughts..." 
+                      className="w-full bg-white/5 border border-white/10 rounded-full py-2 px-4 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40 transition-all placeholder:text-muted-foreground/50"
+                    />
+                    <Button variant="ghost" size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 text-primary/60 hover:text-primary hover:bg-primary/10 rounded-full transition-colors">
+                      <Send className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </CardFooter>
       </Card>
