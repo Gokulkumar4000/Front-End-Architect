@@ -625,6 +625,24 @@ export default function Auth() {
     }
   }, [mode, selectedRole]);
 
+  const steps = useMemo(() => {
+    const baseSteps: SignupStep[] = [
+      "basic-profile",
+      "professional-identity",
+      "working-preferences",
+      "org-affiliation",
+      "interests-goals",
+      "about-you",
+      "summary"
+    ];
+    
+    if (selectedRole === "idea-holder") {
+      return baseSteps.filter(s => s !== "org-affiliation");
+    }
+    
+    return baseSteps;
+  }, [selectedRole]);
+
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-background flex items-center justify-center p-4">
