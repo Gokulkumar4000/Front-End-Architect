@@ -184,27 +184,17 @@ export function Navbar() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuGroup className="space-y-1">
-                {myActivityItems.map((item) => (
-                  <Link key={item.url} href={item.url}>
-                    <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-all cursor-pointer focus:bg-primary/10">
-                      <item.icon className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">{item.title}</span>
-                    </DropdownMenuItem>
-                  </Link>
-                ))}
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator className="bg-white/5 my-2" />
-              <Link href="/settings">
-                <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-all cursor-pointer focus:bg-primary/10">
-                  <Settings className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm">Settings</span>
+                <Link href="/settings">
+                  <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-all cursor-pointer focus:bg-primary/10">
+                    <Settings className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm">Settings</span>
+                  </DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-destructive/10 text-destructive transition-all cursor-pointer focus:bg-destructive/10">
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-sm font-bold">Log out</span>
                 </DropdownMenuItem>
-              </Link>
-              <DropdownMenuSeparator className="bg-white/5 my-2" />
-              <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-destructive/10 text-destructive transition-all cursor-pointer focus:bg-destructive/10">
-                <LogOut className="w-4 h-4" />
-                <span className="text-sm font-bold">Log out</span>
-              </DropdownMenuItem>
+              </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
