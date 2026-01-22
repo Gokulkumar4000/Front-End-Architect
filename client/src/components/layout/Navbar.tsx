@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { 
   Bell, 
   MessageSquare, 
@@ -6,7 +6,18 @@ import {
   User, 
   LogOut, 
   Settings,
-  LayoutGrid
+  LayoutGrid,
+  LayoutDashboard,
+  Bookmark,
+  Lightbulb,
+  Coins,
+  BarChart3,
+  Hammer,
+  FileText,
+  Briefcase,
+  Target,
+  PieChart,
+  Rocket
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -20,7 +31,47 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+type UserRole = "idea-holder" | "developer" | "investor";
+
 export function Navbar() {
+  const [location] = useLocation();
+  const role = (localStorage.getItem("userRole") as UserRole) || "idea-holder";
+
+  const getMyActivityItems = (role: UserRole) => {
+    const base = [
+      { title: "Dashboard", icon: LayoutDashboard, url: "/dashboard" },
+      { title: "Saved", icon: Bookmark, url: "/saved" },
+    ];
+
+    switch (role) {
+      case "idea-holder":
+        return [
+          ...base,
+          { title: "My Ideas", icon: Lightbulb, url: "/my-ideas" },
+          { title: "My Fundraising", icon: Coins, url: "/my-fundraising" },
+          { title: "Idea Analytics", icon: BarChart3, url: "/analytics" },
+        ];
+      case "developer":
+        return [
+          ...base,
+          { title: "My Projects", icon: Hammer, url: "/my-projects" },
+          { title: "Applied Jobs", icon: Briefcase, url: "/applied-jobs" },
+          { title: "Applications Received", icon: FileText, url: "/applications-received" },
+        ];
+      case "investor":
+        return [
+          ...base,
+          { title: "My Investments", icon: Target, url: "/my-investments" },
+          { title: "Portfolio", icon: PieChart, url: "/portfolio" },
+          { title: "Funded Projects", icon: Rocket, url: "/funded" },
+        ];
+      default:
+        return base;
+    }
+  };
+
+  const myActivityItems = getMyActivityItems(role);
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b bg-background/80 backdrop-blur-md px-4 flex items-center justify-between">
       <div className="flex items-center gap-8">
@@ -72,18 +123,25 @@ export function Navbar() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-white/5" />
             <div className="p-1">
-              <DropdownMenuItem asChild className="relative overflow-hidden focus:bg-primary/10 transition-colors cursor-pointer rounded-md group/nav-item">
-                <Link href="/profile">
-                  <div className="flex items-center w-full">
-                    {/* Glass Reflection Animation Overlay */}
-                    <div className="absolute inset-0 translate-x-[-100%] group-hover/nav-item:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
-                      <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+              <DropdownMenuLabel className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                My Activity
+              </DropdownMenuLabel>
+              {myActivityItems.map((item) => (
+                <DropdownMenuItem key={item.url} asChild className="relative overflow-hidden focus:bg-primary/10 transition-colors cursor-pointer rounded-md group/nav-item">
+                  <Link href={item.url}>
+                    <div className="flex items-center w-full">
+                      <div className="absolute inset-0 translate-x-[-100%] group-hover/nav-item:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                        <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                      </div>
+                      <item.icon className="mr-2 h-4 w-4 relative z-20 group-hover/nav-item:text-primary transition-colors" />
+                      <span className="relative z-20 font-medium">{item.title}</span>
                     </div>
-                    <User className="mr-2 h-4 w-4 relative z-20 group-hover/nav-item:text-primary transition-colors" />
-                    <span className="relative z-20 font-medium">Profile</span>
-                  </div>
-                </Link>
-              </DropdownMenuItem>
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </div>
+            <DropdownMenuSeparator className="bg-white/5" />
+            <div className="p-1">
               <DropdownMenuItem asChild className="relative overflow-hidden focus:bg-primary/10 transition-colors cursor-pointer rounded-md group/nav-item">
                 <Link href="/settings">
                   <div className="flex items-center w-full">
