@@ -1753,7 +1753,7 @@ export default function Auth() {
                               {signupStep === "summary" && (
                                 <>
                                   {renderStepHeader("Summary Preview", "Review your details before joining")}
-                                  <div className="w-full max-w-4xl mx-auto flex-1 overflow-hidden flex flex-col h-full">
+                                  <div className="w-full max-w-4xl mx-auto flex-1 overflow-hidden flex flex-col h-[450px]">
                                     <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
                                       {/* Summary Box */}
                                       <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-8 space-y-6 md:space-y-8 shadow-sm min-h-fit md:min-h-[600px] w-full max-w-full overflow-hidden">
