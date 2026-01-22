@@ -368,7 +368,6 @@ interface SearchableInputProps {
 
 function SearchableInputOverlay({ placeholder, options, onSelect, onClose }: SearchableInputProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const inputRef = useState<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -625,7 +624,7 @@ export default function Auth() {
     }
   }, [mode, selectedRole]);
 
-  const steps = useMemo(() => {
+  const stepsList = useMemo(() => {
     const baseSteps: SignupStep[] = [
       "basic-profile",
       "professional-identity",
@@ -706,35 +705,17 @@ export default function Auth() {
     setSignupStep("basic-profile");
   };
 
-  const steps = useMemo(() => {
-    const baseSteps: SignupStep[] = [
-      "basic-profile",
-      "professional-identity",
-      "working-preferences",
-      "org-affiliation",
-      "interests-goals",
-      "about-you",
-      "summary"
-    ];
-    
-    if (selectedRole === "idea-holder") {
-      return baseSteps.filter(s => s !== "org-affiliation");
-    }
-    
-    return baseSteps;
-  }, [selectedRole]);
-
   const nextStep = () => {
-    const currentIndex = steps.indexOf(signupStep);
-    if (currentIndex < steps.length - 1) {
-      setSignupStep(steps[currentIndex + 1]);
+    const currentIndex = stepsList.indexOf(signupStep);
+    if (currentIndex < stepsList.length - 1) {
+      setSignupStep(stepsList[currentIndex + 1]);
     }
   };
 
   const prevStep = () => {
-    const currentIndex = steps.indexOf(signupStep);
+    const currentIndex = stepsList.indexOf(signupStep);
     if (currentIndex > 0) {
-      setSignupStep(steps[currentIndex - 1]);
+      setSignupStep(stepsList[currentIndex - 1]);
     } else {
       setOnboardingStep("role-overview");
     }
@@ -1002,7 +983,7 @@ export default function Auth() {
                                 >
                                   {/* Glass Reflection Animation Overlay */}
                                   <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
-                                    <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                                    <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
                                   </div>
                                   <span className="relative z-20 flex items-center">
                                     Next Step
@@ -1012,15 +993,14 @@ export default function Auth() {
                               ) : (
                                 <Button 
                                   onClick={handleStartRegistration} 
-                                  className="font-bold h-11 px-8 shadow-lg shadow-primary/20 group relative overflow-hidden"
+                                  className="font-bold h-11 px-8 shadow-lg shadow-primary/20 bg-primary group relative overflow-hidden"
                                 >
                                   {/* Glass Reflection Animation Overlay */}
                                   <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
                                     <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
                                   </div>
                                   <span className="relative z-20 flex items-center">
-                                    <span className="hidden md:inline">Continue to Registration</span>
-                                    <span className="md:hidden">Register</span>
+                                    Start Registration
                                     <Rocket className="w-4 h-4 ml-2" />
                                   </span>
                                 </Button>
@@ -1035,855 +1015,333 @@ export default function Auth() {
               )}
 
               {onboardingStep === "registration" && selectedRole && (
-                <div className="grid lg:grid-cols-[300px_1fr] gap-8 max-w-5xl mx-auto items-start">
-                  {/* Left Role Card - Always Fixed */}
-                  <div className="hidden lg:block sticky top-8">
+                <div className="grid lg:grid-cols-[300px_1fr] gap-8 max-w-6xl mx-auto items-start">
+                  {/* Progress Sidebar - Desktop only */}
+                  <div className="hidden lg:block space-y-4 sticky top-4">
                     {renderRoleCard(true)}
-                  </div>
-                  
-                  {/* Mobile Role Summary */}
-                  <div className="lg:hidden w-full mb-4 px-2">
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-between bg-primary/5 border-primary/20 h-auto py-3"
-                      onClick={() => setIsRoleCardExpanded(!isRoleCardExpanded)}
-                    >
-                      <div className="flex items-center gap-2">
-                        {(() => {
-                          const role = roles.find(r => r.id === selectedRole)!;
+                    <Card className="glass-card border-white/5 p-6">
+                      <h3 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-6">Your Journey</h3>
+                      <div className="space-y-6 relative">
+                        {/* Connection Line */}
+                        <div className="absolute left-[11px] top-2 bottom-2 w-[1px] bg-white/5" />
+                        
+                        {stepsList.map((step, idx) => {
+                          const isCompleted = stepsList.indexOf(signupStep) > idx;
+                          const isActive = signupStep === step;
                           return (
-                            <>
-                              <role.icon className="w-4 h-4 text-primary" />
-                              <span className="text-sm font-bold">Registering as {role.title}</span>
-                            </>
+                            <div key={step} className="flex gap-4 relative">
+                              <div className={cn(
+                                "w-6 h-6 rounded-full flex items-center justify-center shrink-0 z-10 transition-all duration-300",
+                                isCompleted ? "bg-primary text-white" : isActive ? "bg-primary/20 text-primary border border-primary/40 ring-4 ring-primary/5" : "bg-white/5 text-muted-foreground border border-white/10"
+                              )}>
+                                {isCompleted ? <Check className="w-3.5 h-3.5" /> : <span className="text-[10px] font-bold">{idx + 1}</span>}
+                              </div>
+                              <div className="overflow-hidden">
+                                <p className={cn(
+                                  "text-[10px] font-bold uppercase tracking-widest transition-colors duration-300",
+                                  isActive ? "text-primary" : isCompleted ? "text-foreground" : "text-muted-foreground"
+                                )}>
+                                  {step.replace("-", " ")}
+                                </p>
+                                {isActive && (
+                                  <p className="text-[9px] text-muted-foreground leading-tight animate-in fade-in slide-in-from-left-2 duration-300 mt-0.5">
+                                    {roles.find(r => r.id === selectedRole)?.journeyContext?.[step as keyof (typeof roles[0]['journeyContext'])]}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
                           );
-                        })()}
+                        })}
                       </div>
-                      <ChevronDown className={cn("w-4 h-4 transition-transform", isRoleCardExpanded && "rotate-180")} />
-                    </Button>
-                    <AnimatePresence>
-                      {isRoleCardExpanded && (
-                        <motion.div 
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="mt-2">
-                            {renderRoleCard()}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    </Card>
                   </div>
 
-                  {/* Main Registration Card - Stable Height */}
-                  <div className="w-full relative z-0 px-2 md:px-0">
-                    <Card className="glass-card border-white/5 overflow-hidden h-[600px] flex flex-col shadow-2xl">
-                      <CardContent className="p-0 relative flex-1 overflow-hidden flex flex-col">
-                        {/* Tooltip Fix: High z-index and explicit provider */}
-                        <div className="absolute right-4 top-4 z-[50]">
-                          <TooltipProvider delayDuration={0}>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="w-6 h-6 rounded-full bg-primary/10 hover:bg-primary/20 cursor-pointer transition-colors">
-                                  <Info className="w-3.5 h-3.5 text-primary" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent 
-                                side="left"
-                                align="start"
-                                className="glass-card border-primary/20 max-w-xs p-4 bg-background/95 backdrop-blur-md z-[200] shadow-2xl"
-                              >
-                                <div className="space-y-1">
-                                  <p className="text-xs font-bold text-primary uppercase tracking-wider">Your journey as a {roles.find(r => r.id === selectedRole)?.title}</p>
-                                  <p className="text-xs text-muted-foreground leading-relaxed">
-                                    {(roles.find(r => r.id === selectedRole)?.journeyContext as any)[signupStep]}
-                                  </p>
-                                </div>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
+                  {/* Main Form Area */}
+                  <div className="flex-1 space-y-6">
+                    <Card className="glass-card border-white/5 overflow-hidden">
+                      <CardContent className="p-8">
+                        <AnimatePresence mode="wait">
+                          <motion.div 
+                            key={signupStep} 
+                            initial={{ opacity: 0, x: 20 }} 
+                            animate={{ opacity: 1, x: 0 }} 
+                            exit={{ opacity: 0, x: -20 }}
+                            className="space-y-8"
+                          >
+                            <div className="flex items-center justify-between border-b border-white/5 pb-6">
+                              <div>
+                                <h2 className="text-2xl font-display font-bold text-gradient-primary capitalize">
+                                  {signupStep.replace("-", " ")}
+                                </h2>
+                                <p className="text-sm text-muted-foreground">Step {stepsList.indexOf(signupStep) + 1} of {stepsList.length}</p>
+                              </div>
+                              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                                {(() => {
+                                  const icons: any = {
+                                    "basic-profile": User,
+                                    "professional-identity": Target,
+                                    "working-preferences": Clock,
+                                    "org-affiliation": Building2,
+                                    "interests-goals": Trophy,
+                                    "about-you": Info,
+                                    "summary": Rocket
+                                  };
+                                  const IconComp = icons[signupStep];
+                                  return <IconComp className="w-6 h-6 text-primary" />;
+                                })()}
+                              </div>
+                            </div>
 
-                        {/* Internal Scroll - Styled scrollbar */}
-                        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-10 md:pb-12 overflow-x-hidden">
-                          <AnimatePresence mode="wait">
-                            <motion.div 
-                              key={signupStep}
-                              variants={containerVariants}
-                              initial="hidden"
-                              animate="visible"
-                              exit="exit"
-                              className="h-full flex flex-col items-center"
-                            >
+                            <div className="grid md:grid-cols-2 gap-6 items-start">
                               {signupStep === "basic-profile" && (
                                 <>
-                                  {renderStepHeader("Basic Profile Details", "Tell us who you are")}
-                                  <div className="space-y-4 w-full max-w-2xl mx-auto">
-                                    <div className="flex flex-col items-center gap-4 mb-4">
-                                      <div className="relative group">
-                                        <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-dashed border-primary/20 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/40">
-                                          {formData.profileImage ? (
-                                            <img src={formData.profileImage} alt="Profile" className="w-full h-full object-cover" />
-                                          ) : (
-                                            <User className="w-10 h-10 text-primary/40" />
-                                          )}
-                                          <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                                            <Plus className="w-6 h-6 text-white" />
-                                            <input 
-                                              type="file" 
-                                              className="hidden" 
-                                              accept="image/*"
-                                              onChange={(e) => {
-                                                const file = e.target.files?.[0];
-                                                if (file) {
-                                                  const reader = new FileReader();
-                                                  reader.onloadend = () => {
-                                                    updateFormData("profileImage", reader.result);
-                                                  };
-                                                  reader.readAsDataURL(file);
-                                                }
-                                              }}
-                                            />
-                                          </label>
-                                        </div>
-                                        <p className="text-[10px] font-medium text-muted-foreground mt-2 text-center">Profile Photo</p>
-                                      </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                                      <div className="space-y-2">
-                                        <Label>Full Name</Label>
-                                        <GlassInput 
-                                          icon={User}
-                                          placeholder="Enter your full name" 
-                                          value={formData.fullName || ""}
-                                          onChange={(e) => updateFormData("fullName", e.target.value)}
-                                        />
-                                      </div>
-                                      <div className="space-y-2">
-                                        <Label>Email Address</Label>
-                                        <GlassInput 
-                                          type="email"
-                                          placeholder="john@example.com" 
-                                          value={formData.email || ""}
-                                          onChange={(e) => updateFormData("email", e.target.value)}
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                      <GlassSelect 
-                                        label="Country / Location"
-                                        placeholder="Select location"
-                                        icon={Globe}
-                                        value={formData.location}
-                                        onChange={(v) => updateFormData("location", v)}
-                                        options={[
-                                          { label: "United States", value: "us" },
-                                          { label: "United Kingdom", value: "uk" },
-                                          { label: "India", value: "in" },
-                                          { label: "Canada", value: "ca" },
-                                          { label: "Germany", value: "de" }
-                                        ]}
-                                      />
-                                      <GlassSelect 
-                                        label="Time Zone"
-                                        placeholder="Select timezone"
-                                        icon={Clock}
-                                        value={formData.timezone}
-                                        onChange={(v) => updateFormData("timezone", v)}
-                                        options={[
-                                          { label: "UTC-5 (EST)", value: "utc-5" },
-                                          { label: "UTC+0 (GMT)", value: "utc-0" },
-                                          { label: "UTC+5:30 (IST)", value: "utc+5.5" },
-                                          { label: "UTC+1 (CET)", value: "utc+1" }
-                                        ]}
-                                      />
-                                    </div>
+                                  <div className="space-y-2">
+                                    <Label>Full Name</Label>
+                                    <GlassInput 
+                                      icon={User} 
+                                      placeholder="John Doe" 
+                                      value={formData.fullName}
+                                      onChange={(e) => updateFormData("fullName", e.target.value)}
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Email Address</Label>
+                                    <GlassInput 
+                                      icon={Mail} 
+                                      placeholder="john@example.com" 
+                                      value={formData.email}
+                                      onChange={(e) => updateFormData("email", e.target.value)}
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Location</Label>
+                                    <GlassInput 
+                                      icon={MapPin} 
+                                      placeholder="San Francisco, CA" 
+                                      value={formData.location}
+                                      onChange={(e) => updateFormData("location", e.target.value)}
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Timezone</Label>
+                                    <GlassInput 
+                                      icon={Clock} 
+                                      placeholder="UTC-8" 
+                                      value={formData.timezone}
+                                      onChange={(e) => updateFormData("timezone", e.target.value)}
+                                    />
                                   </div>
                                 </>
                               )}
 
                               {signupStep === "professional-identity" && (
                                 <>
-                                  {renderStepHeader("Professional Identity", "Help us understand your background")}
-                                  <div className="space-y-6 w-full max-w-2xl mx-auto pb-12">
-                                    {selectedRole === "idea-holder" && (
-                                      <>
-                                        <TagInput 
-                                          label="Primary interest areas"
-                                          placeholder="interest"
-                                          options={DOMAINS}
-                                          values={formData.interests || []}
-                                          onChange={(vals) => updateFormData("interests", vals)}
-                                          id="interest-areas"
-                                          activeSearchId={activeSearchId}
-                                          onToggleSearch={setActiveSearchId}
-                                        />
-                                        <TagInput 
-                                          label="Problem domains you care about"
-                                          placeholder="domain"
-                                          options={["Sustainable energy", "Education access", "Healthcare", "Financial Inclusion"]}
-                                          values={formData.problemDomains || []}
-                                          onChange={(vals) => updateFormData("problemDomains", vals)}
-                                          id="problem-domains"
-                                          activeSearchId={activeSearchId}
-                                          onToggleSearch={setActiveSearchId}
-                                        />
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          <div className="space-y-2">
-                                            <Label>What are you working on?</Label>
-                                            <GlassInput 
-                                              icon={Briefcase}
-                                              placeholder="e.g. AI-driven education" 
-                                              value={formData.currentProject || ""}
-                                              onChange={(e) => updateFormData("currentProject", e.target.value)}
-                                            />
-                                          </div>
-                                          <div className="space-y-2">
-                                            <Label>Annual Salary (USD)</Label>
-                                            <GlassInput 
-                                              icon={DollarSign}
-                                              type="number"
-                                              placeholder="0" 
-                                              value={formData.annualSalary || ""}
-                                              onChange={(e) => updateFormData("annualSalary", e.target.value)}
-                                            />
-                                          </div>
-                                          <div className="space-y-2">
-                                            <Label>Current Focus</Label>
-                                            <GlassInput 
-                                              icon={Target}
-                                              placeholder="e.g. Finding co-founder" 
-                                              value={formData.focus || ""}
-                                              onChange={(e) => updateFormData("focus", e.target.value)}
-                                            />
-                                          </div>
-                                          <div className="space-y-2">
-                                            <Label>Current Team Size</Label>
-                                            <GlassInput 
-                                              icon={Users}
-                                              type="number"
-                                              placeholder="1" 
-                                              value={formData.teamSize || ""}
-                                              onChange={(e) => updateFormData("teamSize", e.target.value)}
-                                            />
-                                          </div>
-                                        </div>
-                                        <div className="space-y-3">
-                                          <Label>Have you previously worked on ideas?</Label>
-                                          <RadioGroup onValueChange={(v) => updateFormData("prevIdeas", v)} value={formData.prevIdeas} className="flex gap-6">
-                                            <div className="flex items-center space-x-2">
-                                              <RadioGroupItem value="yes" id="yes" />
-                                              <Label htmlFor="yes" className="cursor-pointer">Yes</Label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                              <RadioGroupItem value="no" id="no" />
-                                              <Label htmlFor="no" className="cursor-pointer">No</Label>
-                                            </div>
-                                          </RadioGroup>
-                                        </div>
-                                      </>
-                                    )}
-                                    {selectedRole === "developer" && (
-                                      <>
-                                        <TagInput 
-                                          label="Technical domains"
-                                          placeholder="domain"
-                                          options={DOMAINS}
-                                          values={formData.interests || []}
-                                          onChange={(vals) => updateFormData("interests", vals)}
-                                          id="tech-domains"
-                                          activeSearchId={activeSearchId}
-                                          onToggleSearch={setActiveSearchId}
-                                        />
-                                        <TagInput 
-                                          label="Tech Stack / Skills"
-                                          placeholder="skill"
-                                          options={TECH_STACK}
-                                          values={formData.skills || []}
-                                          onChange={(vals) => updateFormData("skills", vals)}
-                                          id="tech-stack"
-                                          activeSearchId={activeSearchId}
-                                          onToggleSearch={setActiveSearchId}
-                                        />
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                      <div className="space-y-2">
-                                        <Label>Current Status</Label>
+                                  {selectedRole === "developer" ? (
+                                    <>
+                                      <div className="md:col-span-2">
                                         <GlassSelect 
-                                          label=""
-                                          placeholder="Select status"
+                                          label="Current Status"
+                                          placeholder="Select status..."
+                                          icon={Users}
+                                          options={STATUS_OPTIONS.map(s => ({ label: s, value: s }))}
                                           value={formData.status}
                                           onChange={(v) => updateFormData("status", v)}
-                                          options={STATUS_OPTIONS.map(opt => ({
-                                            label: opt,
-                                            value: opt.toLowerCase().replace(/ /g, "-")
-                                          }))}
                                         />
                                       </div>
-                                          <div className="space-y-2">
-                                            <Label>Years of experience</Label>
-                                            <Input 
-                                              type="number" 
-                                              className="bg-white/5 border-white/10 h-11 focus-visible:ring-primary/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
-                                              placeholder="0"
-                                              value={formData.experience || ""}
-                                              onChange={(e) => updateFormData("experience", e.target.value)}
-                                            />
-                                          </div>
-                                        </div>
-                                      </>
-                                    )}
-                                    {selectedRole === "investor" && (
-                                      <>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                      <div className="space-y-2">
-                                        <Label>Investor Category</Label>
-                                        <GlassSelect 
-                                          label=""
-                                          placeholder="Select category"
-                                          value={formData.investorCat}
-                                          onChange={(v) => updateFormData("investorCat", v)}
-                                          options={[
-                                            { label: "Individual", value: "individual" },
-                                            { label: "Angel", value: "angel" },
-                                            { label: "Venture Capitalist", value: "vc" }
-                                          ]}
-                                        />
-                                      </div>
-                                          <div className="space-y-2">
-                                            <Label>Investing experience (years)</Label>
-                                            <Input 
-                                              type="number" 
-                                              className="bg-white/5 border-white/10 h-11" 
-                                              placeholder="0"
-                                              value={formData.experience || ""}
-                                              onChange={(e) => updateFormData("experience", e.target.value)}
-                                            />
-                                          </div>
-                                        </div>
+                                      <div className="md:col-span-2">
                                         <TagInput 
-                                          label="Investment focus sectors"
-                                          placeholder="sector"
-                                          options={DOMAINS}
-                                          values={formData.interests || []}
-                                          onChange={(vals) => updateFormData("interests", vals)}
-                                          id="investment-sectors"
+                                          id="skills"
+                                          label="Technical Skills"
+                                          placeholder="Skill"
+                                          options={TECH_STACK}
+                                          values={formData.skills}
+                                          onChange={(v) => updateFormData("skills", v)}
                                           activeSearchId={activeSearchId}
                                           onToggleSearch={setActiveSearchId}
                                         />
-                                      </>
-                                    )}
-                                  </div>
+                                      </div>
+                                    </>
+                                  ) : selectedRole === "investor" ? (
+                                    <div className="md:col-span-2">
+                                      <GlassSelect 
+                                        label="Investor Category"
+                                        placeholder="Select category..."
+                                        icon={DollarSign}
+                                        options={[
+                                          { label: "Angel Investor", value: "angel" },
+                                          { label: "Venture Capital", value: "vc" },
+                                          { label: "Family Office", value: "family" },
+                                          { label: "Private Equity", value: "pe" }
+                                        ]}
+                                        value={formData.investorCat}
+                                        onChange={(v) => updateFormData("investorCat", v)}
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="md:col-span-2">
+                                      <Label>Tell us about your background</Label>
+                                      <Textarea 
+                                        className="bg-white/5 border-white/10 min-h-[120px]" 
+                                        placeholder="Share your professional journey..."
+                                        value={formData.experience}
+                                        onChange={(e) => updateFormData("experience", e.target.value)}
+                                      />
+                                    </div>
+                                  )}
                                 </>
                               )}
 
                               {signupStep === "working-preferences" && (
                                 <>
-                                  {renderStepHeader("Working Preferences", "How do you want to engage?")}
-                                  <div className="space-y-6 w-full max-w-2xl mx-auto pb-12">
-                                    {selectedRole === "idea-holder" && (
-                                      <>
-                                        <div className="space-y-3">
-                                          <Label>What are you looking for?</Label>
-                                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                            {["Funding", "Developers", "Advisors", "Selling idea"].map(item => (
-                                              <div key={item} className="flex items-center space-x-3 bg-white/5 p-4 rounded-xl border border-white/10 hover:border-primary/20 transition-all cursor-pointer">
-                                                <Checkbox id={item} className="data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
-                                                <label htmlFor={item} className="text-sm font-medium leading-none cursor-pointer">{item}</label>
-                                              </div>
-                                            ))}
-                                          </div>
+                                  <div className="md:col-span-2">
+                                    <GlassSelect 
+                                      label="Work Preference"
+                                      placeholder="Select preference..."
+                                      icon={Globe}
+                                      options={[
+                                        { label: "Remote", value: "remote" },
+                                        { label: "On-site", value: "onsite" },
+                                        { label: "Hybrid", value: "hybrid" }
+                                      ]}
+                                      value={formData.workPref}
+                                      onChange={(v) => updateFormData("workPref", v)}
+                                    />
+                                  </div>
+                                  <div className="md:col-span-2">
+                                    <Label>Weekly Availability</Label>
+                                    <RadioGroup 
+                                      onValueChange={(v) => updateFormData("availability", v)} 
+                                      value={formData.availability}
+                                      className="grid grid-cols-2 gap-4 mt-2"
+                                    >
+                                      {["< 10 hrs", "10-20 hrs", "20-40 hrs", "Full-time"].map(v => (
+                                        <div key={v} className="relative group">
+                                          <RadioGroupItem value={v} id={v} className="peer sr-only" />
+                                          <Label 
+                                            htmlFor={v} 
+                                            className="flex items-center justify-center p-4 border border-white/10 rounded-xl bg-white/5 cursor-pointer peer-data-[state=checked]:bg-primary/20 peer-data-[state=checked]:border-primary transition-all hover:bg-white/10"
+                                          >
+                                            <span className="text-sm font-medium">{v}</span>
+                                          </Label>
                                         </div>
-                                        <div className="space-y-2">
-                                          <Label>Collaboration Style</Label>
-                                          <Textarea 
-                                            className="bg-white/5 border-white/10 min-h-[120px] rounded-xl focus:border-primary/50 custom-scrollbar" 
-                                            placeholder="How do you like to work?"
-                                            value={formData.workPref || ""}
-                                            onChange={(e) => updateFormData("workPref", e.target.value)}
-                                          />
-                                        </div>
-                                      </>
-                                    )}
-                                    {selectedRole === "developer" && (
-                                      <>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                      <div className="space-y-2">
-                                        <Label>Work preference</Label>
-                                        <GlassSelect 
-                                          label=""
-                                          placeholder="Select preference"
-                                          value={formData.workPref}
-                                          onChange={(v) => updateFormData("workPref", v)}
-                                          options={[
-                                            { label: "Full-time", value: "fulltime" },
-                                            { label: "Part-time", value: "parttime" },
-                                            { label: "Contract", value: "contract" }
-                                          ]}
-                                        />
-                                      </div>
-                                          <div className="space-y-2">
-                                            <Label>Availability (hours/week)</Label>
-                                            <Input 
-                                              type="number" 
-                                              className="bg-white/5 border-white/10 h-11" 
-                                              placeholder="0"
-                                              value={formData.availability || ""}
-                                              onChange={(e) => updateFormData("availability", e.target.value)}
-                                            />
-                                          </div>
-                                        </div>
-                                        <div className="space-y-3 pt-2">
-                                          <Label>Interested in equity-based work?</Label>
-                                          <RadioGroup onValueChange={(v) => updateFormData("equityInterest", v)} value={formData.equityInterest} className="flex gap-6">
-                                            <div className="flex items-center space-x-2">
-                                              <RadioGroupItem value="yes" id="e-yes" />
-                                              <Label htmlFor="e-yes" className="cursor-pointer">Yes</Label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                              <RadioGroupItem value="no" id="e-no" />
-                                              <Label htmlFor="e-no" className="cursor-pointer">No</Label>
-                                            </div>
-                                          </RadioGroup>
-                                        </div>
-                                      </>
-                                    )}
-                                    {selectedRole === "investor" && (
-                                      <>
-                                    <div className="space-y-2">
-                                      <Label>Preferred involvement</Label>
-                                      <GlassSelect 
-                                        label=""
-                                        placeholder="Select involvement"
-                                        value={formData.involvement}
-                                        onChange={(v) => updateFormData("involvement", v)}
-                                        options={[
-                                          { label: "Passive", value: "passive" },
-                                          { label: "Advisory", value: "advisory" },
-                                          { label: "Active", value: "active" }
-                                        ]}
-                                      />
-                                    </div>
-                                        <div className="space-y-3">
-                                          <Label>Investment stage preference</Label>
-                                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                            {["Idea", "MVP", "Scaling"].map(stage => (
-                                              <div 
-                                                key={stage} 
-                                                onClick={() => {
-                                                  const current = [...(formData.investmentStage || [])];
-                                                  const newVal = current.includes(stage) ? current.filter(s => s !== stage) : [...current, stage];
-                                                  updateFormData("investmentStage", newVal);
-                                                }}
-                                                className={cn(
-                                                  "flex items-center justify-center h-11 rounded-xl border transition-all cursor-pointer font-medium text-xs",
-                                                  formData.investmentStage?.includes(stage) 
-                                                    ? "bg-primary/20 border-primary/50 text-primary" 
-                                                    : "bg-white/5 border-white/10 text-muted-foreground hover:border-white/20"
-                                                )}
-                                              >
-                                                {stage}
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      </>
-                                    )}
+                                      ))}
+                                    </RadioGroup>
                                   </div>
                                 </>
                               )}
 
-                              {signupStep === "org-affiliation" && selectedRole !== "idea-holder" && (
+                              {signupStep === "org-affiliation" && (
                                 <>
-                                  {renderStepHeader("Organization & Affiliation", "Professional associations")}
-                                  <div className="space-y-6 w-full max-w-2xl mx-auto pb-12">
-                                    {formData.status === "student" ? (
-                                      <div className="space-y-4">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          <div className="space-y-2">
-                                            <Label>College / University Name</Label>
-                                            <div className="relative group">
-                                              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                              <Input 
-                                                className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                                placeholder="Enter college name" 
-                                                value={formData.collegeName || ""}
-                                                onChange={(e) => updateFormData("collegeName", e.target.value)}
-                                              />
-                                            </div>
-                                          </div>
-                                          <div className="space-y-2">
-                                            <Label>College Location</Label>
-                                            <div className="relative group">
-                                              <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                              <Input 
-                                                className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                                placeholder="City, Country" 
-                                                value={formData.collegePlace || ""}
-                                                onChange={(e) => updateFormData("collegePlace", e.target.value)}
-                                              />
-                                            </div>
-                                          </div>
+                                  <div className="md:col-span-2 space-y-4">
+                                    <Label>Are you affiliated with an organization?</Label>
+                                    <RadioGroup 
+                                      onValueChange={(v) => updateFormData("isOrg", v)} 
+                                      value={formData.isOrg}
+                                      className="flex gap-4"
+                                    >
+                                      {["yes", "no"].map(v => (
+                                        <div key={v} className="flex items-center gap-2">
+                                          <RadioGroupItem value={v} id={`org-${v}`} />
+                                          <Label htmlFor={`org-${v}`} className="capitalize">{v}</Label>
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          <div className="space-y-2">
-                                            <Label>Current Year</Label>
-                                            <GlassSelect 
-                                              label=""
-                                              placeholder="Select year"
-                                              value={formData.currentYear}
-                                              onChange={(v) => updateFormData("currentYear", v)}
-                                              options={[
-                                                { label: "1st Year", value: "1" },
-                                                { label: "2nd Year", value: "2" },
-                                                { label: "3rd Year", value: "3" },
-                                                { label: "4th Year", value: "4" },
-                                                { label: "Final Year", value: "final" }
-                                              ]}
-                                            />
-                                          </div>
-                                          <div className="space-y-2">
-                                            <Label>Degree / Major</Label>
-                                            <Input 
-                                              className="bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                              placeholder="e.g. B.Tech Computer Science" 
-                                              value={formData.degree || ""}
-                                              onChange={(e) => updateFormData("degree", e.target.value)}
-                                            />
-                                          </div>
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      <div className="space-y-4">
-                                        <div className="space-y-2">
-                                          <Label>Current / Previous company</Label>
-                                          <div className="relative group">
-                                            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                            <Input 
-                                              className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                              placeholder="Company name" 
-                                              value={formData.orgName || ""}
-                                              onChange={(e) => updateFormData("orgName", e.target.value)}
-                                            />
-                                          </div>
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          <div className="space-y-2">
-                                            <Label>Portfolio Link</Label>
-                                            <div className="relative group">
-                                              <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                              <Input 
-                                                className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                                placeholder="https://..." 
-                                                value={formData.portfolioLink || ""}
-                                                onChange={(e) => updateFormData("portfolioLink", e.target.value)}
-                                              />
-                                            </div>
-                                          </div>
-                                          <div className="space-y-2">
-                                            <Label>GitHub Profile</Label>
-                                            <div className="relative group">
-                                              <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                              <Input 
-                                                className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                                placeholder="github.com/username" 
-                                                value={formData.githubLink || ""}
-                                                onChange={(e) => updateFormData("githubLink", e.target.value)}
-                                              />
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                          <Label>Resume / CV Link</Label>
-                                          <div className="relative group">
-                                            <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                            <Input 
-                                              className="pl-10 bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                              placeholder="Drive or Dropbox link" 
-                                              value={formData.resumeLink || ""}
-                                              onChange={(e) => updateFormData("resumeLink", e.target.value)}
-                                            />
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )}
-                                    <div className="space-y-3">
-                                      <Label>Do you represent an organization?</Label>
-                                      <RadioGroup onValueChange={(v) => updateFormData("isOrg", v)} value={formData.isOrg || "no"} className="flex gap-6">
-                                        <div className="flex items-center space-x-2">
-                                          <RadioGroupItem value="yes" id="org-yes" />
-                                          <Label htmlFor="org-yes" className="cursor-pointer">Yes</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                          <RadioGroupItem value="no" id="org-no" />
-                                          <Label htmlFor="org-no" className="cursor-pointer">No</Label>
-                                        </div>
-                                      </RadioGroup>
-                                    </div>
-                                    <AnimatePresence>
-                                      {formData.isOrg === "yes" && (
-                                        <motion.div 
-                                          initial={{ opacity: 0, height: 0 }} 
-                                          animate={{ opacity: 1, height: "auto" }} 
-                                          exit={{ opacity: 0, height: 0 }}
-                                          className="space-y-4 pt-2 overflow-hidden"
-                                        >
-                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="space-y-2">
-                                              <Label>Your Role</Label>
-                                              <Input 
-                                                className="bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                                placeholder="Partner, Associate, etc." 
-                                                value={formData.orgRole || ""}
-                                                onChange={(e) => updateFormData("orgRole", e.target.value)}
-                                              />
-                                            </div>
-                                            <div className="space-y-2">
-                                              <Label>Organization Type</Label>
-                                              <Input 
-                                                className="bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                                placeholder="e.g. VC Firm, Angel Group" 
-                                                value={formData.orgType || ""}
-                                                onChange={(e) => updateFormData("orgType", e.target.value)}
-                                              />
-                                            </div>
-                                          </div>
-                                        </motion.div>
-                                      )}
-                                    </AnimatePresence>
+                                      ))}
+                                    </RadioGroup>
                                   </div>
+                                  {formData.isOrg === "yes" && (
+                                    <>
+                                      <div className="space-y-2">
+                                        <Label>Organization Name</Label>
+                                        <GlassInput icon={Building2} placeholder="Acme Corp" value={formData.orgName} onChange={(e) => updateFormData("orgName", e.target.value)} />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Your Role</Label>
+                                        <GlassInput icon={User} placeholder="Partner" value={formData.orgRole} onChange={(e) => updateFormData("orgRole", e.target.value)} />
+                                      </div>
+                                    </>
+                                  )}
                                 </>
                               )}
 
                               {signupStep === "interests-goals" && (
-                                <>
-                                  {renderStepHeader("Interests & Goals", "What are you aiming to achieve?")}
-                                  <div className="space-y-6 w-full max-w-2xl mx-auto pb-12">
-                                    <div className="space-y-2">
-                                      <Label>Primary Objectives (Max 100 words)</Label>
-                                      <div className="relative group">
-                                        <Target className="absolute left-3 top-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                        <Textarea 
-                                          className="w-full pl-10 bg-white/5 border-white/10 min-h-[120px] rounded-xl focus:border-primary/50 custom-scrollbar" 
-                                          placeholder="What are your main goals here?" 
-                                          value={formData.objectives || ""}
-                                          onChange={(e) => {
-                                            const words = e.target.value.trim().split(/\s+/).filter(Boolean).length;
-                                            if (words <= 100 || e.target.value.length < (formData.objectives || "").length) {
-                                              updateFormData("objectives", e.target.value);
-                                            }
-                                          }}
-                                        />
-                                        <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground bg-background/80 px-2 py-1 rounded-md backdrop-blur-sm">
-                                          {formData.objectives?.trim().split(/\s+/).filter(Boolean).length || 0} / 100 words
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                      <Label>Definition of Success (Max 20 words)</Label>
-                                      <div className="relative group">
-                                        <Trophy className="absolute left-3 top-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                        <Textarea 
-                                          className="w-full pl-10 bg-white/5 border-white/10 min-h-[120px] rounded-xl focus:border-primary/50" 
-                                          placeholder="Describe what success looks like..." 
-                                          value={formData.successDefinition || ""}
-                                          onChange={(e) => {
-                                            const words = e.target.value.trim().split(/\s+/).filter(Boolean).length;
-                                            if (words <= 20 || e.target.value.length < (formData.successDefinition || "").length) {
-                                              updateFormData("successDefinition", e.target.value);
-                                            }
-                                          }}
-                                        />
-                                        <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground bg-background/80 px-2 py-1 rounded-md backdrop-blur-sm pointer-events-none">
-                                          {formData.successDefinition?.trim().split(/\s+/).filter(Boolean).length || 0} / 20 words
-                                        </div>
-                                      </div>
-                                    </div>
+                                <div className="md:col-span-2 space-y-6">
+                                  <TagInput 
+                                    id="interests"
+                                    label="Sectors of Interest"
+                                    placeholder="Sector"
+                                    options={DOMAINS}
+                                    values={formData.interests}
+                                    onChange={(v) => updateFormData("interests", v)}
+                                    activeSearchId={activeSearchId}
+                                    onToggleSearch={setActiveSearchId}
+                                  />
+                                  <div className="space-y-2">
+                                    <Label>Key Objectives</Label>
+                                    <Textarea 
+                                      placeholder="What do you want to achieve on DevConnect?" 
+                                      className="bg-white/5 border-white/10 min-h-[100px]"
+                                      value={formData.objectives}
+                                      onChange={(e) => updateFormData("objectives", e.target.value)}
+                                    />
                                   </div>
-                                </>
+                                </div>
                               )}
 
                               {signupStep === "about-you" && (
-                                <>
-                                  {renderStepHeader("About You", "Introduce yourself to the community")}
-                                  <div className="space-y-6 w-full max-w-2xl mx-auto pb-12">
-                                    <div className="space-y-2">
-                                      <Label>Short Bio (Max 150 words)</Label>
-                                      <div className="relative">
-                                        <Textarea 
-                                          className="w-full bg-white/5 border-white/10 min-h-[180px] rounded-xl focus:border-primary/50 custom-scrollbar" 
-                                          placeholder="A bit about your background and experience..." 
-                                          value={formData.bio || ""}
-                                          onChange={(e) => {
-                                            const words = e.target.value.trim().split(/\s+/).filter(Boolean).length;
-                                            if (words <= 150 || e.target.value.length < (formData.bio || "").length) {
-                                              updateFormData("bio", e.target.value);
-                                            }
-                                          }}
-                                        />
-                                        <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground bg-background/80 px-2 py-1 rounded-md backdrop-blur-sm">
-                                          {formData.bio?.trim().split(/\s+/).filter(Boolean).length || 0} / 150 words
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                      <Label>Optional Tagline (Max 20 words)</Label>
-                                      <div className="relative">
-                                        <Input 
-                                          className="bg-white/5 border-white/10 h-11 focus:border-primary/50" 
-                                          placeholder="One sentence that defines you" 
-                                          value={formData.tagline || ""}
-                                          onChange={(e) => {
-                                            const words = e.target.value.trim().split(/\s+/).filter(Boolean).length;
-                                            if (words <= 20 || e.target.value.length < (formData.tagline || "").length) {
-                                              updateFormData("tagline", e.target.value);
-                                            }
-                                          }}
-                                        />
-                                        <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground bg-background/80 px-2 py-1 rounded-md backdrop-blur-sm pointer-events-none">
-                                          {formData.tagline?.trim().split(/\s+/).filter(Boolean).length || 0} / 20 words
-                                        </div>
-                                      </div>
-                                    </div>
+                                <div className="md:col-span-2 space-y-6">
+                                  <div className="space-y-2">
+                                    <Label>Professional Tagline</Label>
+                                    <GlassInput icon={Target} placeholder="Building the future of..." value={formData.tagline} onChange={(e) => updateFormData("tagline", e.target.value)} />
                                   </div>
-                                </>
+                                  <div className="space-y-2">
+                                    <Label>Full Bio</Label>
+                                    <Textarea 
+                                      placeholder="Tell the community who you are..." 
+                                      className="bg-white/5 border-white/10 min-h-[150px]"
+                                      value={formData.bio}
+                                      onChange={(e) => updateFormData("bio", e.target.value)}
+                                    />
+                                  </div>
+                                </div>
                               )}
 
                               {signupStep === "summary" && (
-                                <>
-                                  {renderStepHeader("Summary Preview", "Review your details before joining")}
-                                  <div className="w-full max-w-4xl mx-auto flex-1 overflow-hidden flex flex-col h-full">
-                                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
-                                      {/* Summary Box */}
-                                      <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-8 space-y-6 md:space-y-8 shadow-sm min-h-fit md:min-h-[600px] w-full max-w-full overflow-hidden">
-                                        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pb-4 border-b border-white/10">
-                                          <div className="flex items-center gap-3 md:gap-4 overflow-hidden w-full sm:w-auto">
-                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/20 shrink-0 overflow-hidden">
-                                              {formData.profileImage ? (
-                                                <img src={formData.profileImage} alt="Profile" className="w-full h-full object-cover" />
-                                              ) : (
-                                                <User className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-                                              )}
-                                            </div>
-                                            <div className="overflow-hidden">
-                                              <h4 className="font-bold text-base md:text-lg truncate">{formData.fullName || "N/A"}</h4>
-                                              <p className="text-[10px] md:text-xs text-muted-foreground truncate">{formData.email || "N/A"}</p>
-                                            </div>
-                                          </div>
-                                          <Badge className="bg-primary/20 text-primary border-primary/20 uppercase text-[9px] md:text-[10px] font-bold h-6 px-3 shrink-0">
-                                            {selectedRole?.replace("-", " ")}
-                                          </Badge>
-                                        </div>
-                                        
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                          <SummaryField label="Location" value={formData.location} />
-                                          <SummaryField label="Timezone" value={formData.timezone} />
-                                        </div>
-
-                                        <div className="space-y-6 md:space-y-8 pt-2 border-t border-white/5">
-                                          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 space-y-4 shadow-sm">
-                                            <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-2">Professional Identity</h4>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                              {formData.status === "student" ? (
-                                                <>
-                                                  <SummaryField label="College" value={formData.collegeName} />
-                                                  <SummaryField label="Location" value={formData.collegePlace} />
-                                                  <SummaryField label="Year" value={formData.currentYear ? `${formData.currentYear} Year` : null} />
-                                                  <SummaryField label="Degree" value={formData.degree} />
-                                                </>
-                                              ) : (
-                                                <>
-                                                  <SummaryField label="Organization" value={formData.orgName} />
-                                                  <SummaryField label="Role" value={formData.orgRole} />
-                                                  <SummaryField label="Type" value={formData.orgType} />
-                                                  <SummaryField label="Portfolio" value={formData.portfolioLink} />
-                                                  <SummaryField label="GitHub" value={formData.githubLink} />
-                                                  <SummaryField label="Resume" value={formData.resumeLink} />
-                                                </>
-                                              )}
-                                              <SummaryField label="Experience" value={formData.experience ? `${formData.experience} years` : null} />
-                                              <SummaryField label="Skills" value={formData.skills} />
-                                              <SummaryField label="Interests" value={formData.interests} />
-                                            </div>
-                                          </div>
-
-                                          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 space-y-4 shadow-sm">
-                                            <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-white/5 pb-2">Preferences & Goals</h4>
-                                            <div className="space-y-4">
-                                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <SummaryField label="Work Preference" value={formData.workPref} />
-                                                <SummaryField label="Availability" value={formData.availability ? `${formData.availability}h/week` : null} />
-                                                <SummaryField label="Equity Interest" value={formData.equityInterest} />
-                                                <SummaryField label="Involvement" value={formData.involvement} />
-                                                <SummaryField label="Investment Stages" value={formData.investmentStage} />
-                                                <SummaryField label="Problem Domains" value={formData.problemDomains} />
-                                                <SummaryField label="Previous Ideas" value={formData.prevIdeas} />
-                                              </div>
-                                              <SummaryField label="Tagline" value={formData.tagline} />
-                                              <SummaryField label="Bio" value={formData.bio} />
-                                              <SummaryField label="Objectives" value={formData.objectives} />
-                                              <SummaryField label="Success Definition" value={formData.successDefinition} />
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </>
+                                <div className="md:col-span-2">
+                                  {renderSummary()}
+                                </div>
                               )}
-                            </motion.div>
-                          </AnimatePresence>
-                        </div>
+                            </div>
 
-                          {/* Footer - Always Fixed within Card */}
-                        <div className="mt-auto pt-6 border-t border-white/10 flex items-center justify-between bg-background/50 backdrop-blur-sm px-6 md:px-8 pb-4 shrink-0">
-                          <Button variant="ghost" onClick={prevStep} className="text-muted-foreground hover:text-white h-11 px-6 transition-all">
-                            <ChevronLeft className="w-4 h-4 mr-2" />
-                            Back
-                          </Button>
-                          <div className="hidden md:flex gap-2">
-                            {steps.map((s, idx) => (
-                              <div 
-                                key={s} 
-                                className={cn(
-                                  "h-1.5 rounded-full transition-all duration-300",
-                                  steps.indexOf(signupStep) > idx ? "w-6 bg-primary/40" : 
-                                  steps.indexOf(signupStep) === idx ? "w-10 bg-primary shadow-[0_0_10px_rgba(139,92,246,0.5)]" : "w-2 bg-white/10"
-                                )} 
-                              />
-                            ))}
-                          </div>
-                          {signupStep === "summary" ? (
-                            <Button 
-                              onClick={() => window.location.href = "/feed"}
-                              className="font-bold h-11 px-8 shadow-lg shadow-primary/20 group relative overflow-hidden"
-                            >
-                              {/* Glass Reflection Animation Overlay */}
-                              <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
-                                <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
-                              </div>
-                              <span className="relative z-20 flex items-center">
-                                Create Account
-                                <Check className="w-4 h-4 ml-2" />
-                              </span>
-                            </Button>
-                          ) : (
-                            <Button 
-                              onClick={nextStep} 
-                              className="font-bold h-11 px-8 shadow-lg shadow-primary/20 group relative overflow-hidden"
-                            >
-                              {/* Glass Reflection Animation Overlay */}
-                              <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
-                                <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
-                              </div>
-                              <span className="relative z-20 flex items-center">
-                                Next
-                                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                              </span>
-                            </Button>
-                          )}
-                        </div>
+                            <div className="flex items-center justify-between pt-8 border-t border-white/5">
+                              <Button 
+                                variant="ghost" 
+                                onClick={prevStep} 
+                                className="h-11 px-6 text-muted-foreground hover:text-white transition-colors"
+                              >
+                                <ChevronLeft className="w-4 h-4 mr-2" />
+                                Back
+                              </Button>
+                              <Button 
+                                onClick={() => {
+                                  if (signupStep === "summary") {
+                                    window.location.href = "/feed";
+                                  } else {
+                                    nextStep();
+                                  }
+                                }}
+                                className="h-11 px-8 font-bold shadow-lg shadow-primary/20 group relative overflow-hidden"
+                              >
+                                 {/* Glass Reflection Animation Overlay */}
+                                 <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                                  <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                                </div>
+                                <span className="relative z-20 flex items-center">
+                                  {signupStep === "summary" ? "Launch Profile" : "Continue"}
+                                  <ArrowRight className="w-4 h-4 ml-2" />
+                                </span>
+                              </Button>
+                            </div>
+                          </motion.div>
+                        </AnimatePresence>
                       </CardContent>
                     </Card>
                   </div>
