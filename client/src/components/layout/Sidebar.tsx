@@ -18,7 +18,8 @@ import {
   Zap,
   User,
   Settings,
-  LogOut
+  LogOut,
+  Menu
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -41,6 +42,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 type UserRole = "idea-holder" | "developer" | "investor";
 
@@ -242,6 +250,73 @@ export function AppSidebar({ role = "idea-holder" }: AppSidebarProps) {
           </Link>
         ))}
 
+        <Sheet>
+          <SheetTrigger asChild>
+            <button className={cn(
+              "flex flex-col items-center gap-1 transition-colors",
+              location === "/profile" ? "text-primary" : "text-muted-foreground"
+            )}>
+              <Menu className="w-6 h-6" />
+              <span className="text-[10px] font-medium">Menu</span>
+            </button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[300px] glass-card border-white/10 bg-background/80 backdrop-blur-xl p-0">
+            <SheetHeader className="px-4 py-6 border-b border-white/5 text-left">
+              <SheetTitle>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <User className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-gradient-primary">John Doe</p>
+                    <p className="text-[10px] text-muted-foreground">My Account</p>
+                  </div>
+                </div>
+              </SheetTitle>
+            </SheetHeader>
+            <div className="flex flex-col h-full overflow-y-auto">
+              <div className="p-4 space-y-4">
+                <div className="space-y-1">
+                  <Link href="/profile">
+                    <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-sm font-medium">
+                      <User className="w-4 h-4" />
+                      View Profile
+                    </button>
+                  </Link>
+                  <Link href="/settings">
+                    <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-sm font-medium">
+                      <Settings className="w-4 h-4" />
+                      Settings
+                    </button>
+                  </Link>
+                </div>
+
+                <div className="pt-4">
+                  <p className="px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-2">
+                    My Activity
+                  </p>
+                  <div className="space-y-1">
+                    {getMyActivityItems(role).map((item) => (
+                      <Link key={item.url} href={item.url}>
+                        <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-sm font-medium">
+                          <item.icon className="w-4 h-4" />
+                          {item.title}
+                        </button>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-auto p-4 border-t border-white/5">
+                <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors text-sm font-medium">
+                  <LogOut className="w-4 h-4" />
+                  Log out
+                </button>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </>
   );
