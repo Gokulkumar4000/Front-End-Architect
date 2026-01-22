@@ -609,6 +609,7 @@ export default function Auth() {
     teamSize: ""
   });
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRoleCardExpanded, setIsRoleCardExpanded] = useState(false);
   const [activeSearchId, setActiveSearchId] = useState<string | null>(null);
 
@@ -706,6 +707,38 @@ export default function Auth() {
       setOnboardingStep("role-overview");
     }
   };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate API call for registration
+    setTimeout(() => {
+      setIsSubmitting(false);
+      window.location.href = "/";
+    }, 2000);
+  };
+
+  if (isSubmitting) {
+    return (
+      <div className="min-h-screen w-full bg-background flex flex-col items-center justify-center p-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative"
+        >
+          <div className="h-32 w-32 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Rocket className="w-10 h-10 text-primary animate-bounce" />
+          </div>
+        </motion.div>
+        <div className="mt-8 text-center space-y-4">
+          <h2 className="text-2xl font-bold text-gradient-primary">Creating Your Account</h2>
+          <p className="text-muted-foreground animate-pulse">Launching your journey on DevConnect...</p>
+        </div>
+      </div>
+    );
+  }
 
   const renderSummary = () => {
     const role = roles.find(r => r.id === selectedRole)!;
@@ -1823,7 +1856,8 @@ export default function Auth() {
                           </div>
                           {signupStep === "summary" ? (
                             <Button 
-                              onClick={() => window.location.href = "/feed"}
+                              onClick={handleRegister}
+                              disabled={isSubmitting}
                               className="font-bold h-11 px-8 shadow-lg shadow-primary/20 group relative overflow-hidden"
                             >
                               {/* Glass Reflection Animation Overlay */}
@@ -1831,8 +1865,12 @@ export default function Auth() {
                                 <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
                               </div>
                               <span className="relative z-20 flex items-center">
-                                Create Account
-                                <Check className="w-4 h-4 ml-2" />
+                                {isSubmitting ? "Launching..." : "Create Account"}
+                                {isSubmitting ? (
+                                  <Rocket className="w-4 h-4 ml-2 animate-bounce" />
+                                ) : (
+                                  <Check className="w-4 h-4 ml-2" />
+                                )}
                               </span>
                             </Button>
                           ) : (
