@@ -139,18 +139,23 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                   size="sm"
                   onClick={handleFollowClick}
                   className={cn(
-                    "h-3.5 text-[7px] font-bold px-1.5 transition-all rounded-full min-w-[40px] leading-none py-0",
+                    "h-5 text-[9px] font-bold px-3 transition-all rounded-full min-w-[50px] relative group overflow-hidden",
                     isFollowing 
                       ? "text-muted-foreground bg-white/5 hover:bg-white/10" 
                       : "bg-primary text-white hover:bg-primary/90 shadow-sm"
                   )}
                 >
-                  {isFollowing ? (
-                    <span className="flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" />
-                      Following
-                    </span>
-                  ) : "Follow"}
+                  <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                    <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                  </div>
+                  <span className="relative z-20 flex items-center gap-1">
+                    {isFollowing ? (
+                      <>
+                        <CheckCircle2 className="w-3 h-3" />
+                        Following
+                      </>
+                    ) : "Follow"}
+                  </span>
                 </Button>
               </div>
               <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest font-medium">
