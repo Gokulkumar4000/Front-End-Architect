@@ -85,6 +85,20 @@ export function Navbar() {
     <div className="flex flex-col h-full overflow-y-auto">
       <div className="p-4 space-y-6">
         <div>
+          <div className="space-y-1">
+            <Link href="/profile">
+              <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-primary/10 transition-all text-sm font-medium group relative overflow-hidden">
+                <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                  <div className="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]" />
+                </div>
+                <User className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                <span className="group-hover:text-primary transition-colors">Profile</span>
+              </button>
+            </Link>
+          </div>
+        </div>
+
+        <div>
           <p className="px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-3">
             My Activity
           </p>
@@ -184,6 +198,12 @@ export function Navbar() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuGroup className="space-y-1">
+                <Link href="/profile">
+                  <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-all cursor-pointer focus:bg-primary/10">
+                    <User className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm">Profile</span>
+                  </DropdownMenuItem>
+                </Link>
                 <Link href="/settings">
                   <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-all cursor-pointer focus:bg-primary/10">
                     <Settings className="w-4 h-4 text-muted-foreground" />
