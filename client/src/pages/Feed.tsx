@@ -148,7 +148,7 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                   <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
                     <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
                   </div>
-                  <span className="relative z-20 flex items-center gap-1">
+                  <span className="relative z-20 flex items-center gap-1 text-[12px]">
                     {isFollowing ? (
                       <>
                         <CheckCircle2 className="w-3 h-3" />
@@ -206,7 +206,6 @@ const FeedCard = memo(({ post }: { post: Post }) => {
           )}
         </CardFooter>
       </Card>
-
       <AlertDialog open={showFollowDialog} onOpenChange={setShowFollowDialog}>
         <AlertDialogContent className="glass-card border-white/10 bg-background/90 backdrop-blur-xl max-w-[400px]">
           <AlertDialogHeader>
