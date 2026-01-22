@@ -15,8 +15,19 @@ import {
   Users,
   Lightbulb,
   Briefcase,
-  Coins
+  Coins,
+  CheckCircle2
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type PostType = "idea" | "project" | "fund" | "recruitment";
 
@@ -70,6 +81,7 @@ const MOCK_POSTS: Post[] = [
 const FeedCard = memo(({ post }: { post: Post }) => {
   const userRole = localStorage.getItem("userRole") as string;
   const [isFollowing, setIsFollowing] = useState(false);
+  const [showFollowDialog, setShowFollowDialog] = useState(false);
 
   const actionText = useMemo(() => {
     switch (post.type) {
@@ -90,76 +102,144 @@ const FeedCard = memo(({ post }: { post: Post }) => {
     }
   }, [post.type]);
 
+  const getFollowBenefits = (role: string) => {
+    return [
+      "Receive real-time notifications for new insights and posts",
+      "Get priority response in collaboration requests",
+      "Access exclusive community networking events"
+    ];
+  };
+
+  const handleFollowClick = () => {
+    if (isFollowing) {
+      setIsFollowing(false);
+    } else {
+      setShowFollowDialog(true);
+    }
+  };
+
+  const confirmFollow = () => {
+    setIsFollowing(true);
+    setShowFollowDialog(false);
+  };
+
   return (
-    <Card className="glass-card border-white/5 hover:border-primary/20 transition-all group/card overflow-hidden">
-      <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10 border border-primary/10">
-            <AvatarFallback>{post.author.name[0]}</AvatarFallback>
-          </Avatar>
-          <div>
-            <div className="flex items-center gap-2">
-              <h4 className="text-sm font-bold leading-none">{post.author.name}</h4>
-              <button 
-                onClick={() => setIsFollowing(!isFollowing)}
-                className={cn(
-                  "text-[10px] font-bold px-2 py-0.5 rounded transition-all",
-                  isFollowing 
-                    ? "text-muted-foreground bg-white/5" 
-                    : "text-primary hover:text-primary/80"
-                )}
-              >
-                {isFollowing ? "Following" : "Follow"}
-              </button>
+    <>
+      <Card className="glass-card border-white/5 hover:border-primary/20 transition-all group/card overflow-hidden">
+        <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10 border border-primary/10">
+              <AvatarFallback>{post.author.name[0]}</AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="text-sm font-bold leading-none">{post.author.name}</h4>
+                <Button 
+                  variant={isFollowing ? "ghost" : "default"}
+                  size="sm"
+                  onClick={handleFollowClick}
+                  className={cn(
+                    "h-6 text-[10px] font-bold px-3 transition-all rounded-full",
+                    isFollowing 
+                      ? "text-muted-foreground bg-white/5 hover:bg-white/10" 
+                      : "bg-primary text-white hover:bg-primary/90 shadow-sm"
+                  )}
+                >
+                  {isFollowing ? (
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                      Following
+                    </span>
+                  ) : "Follow"}
+                </Button>
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest font-medium">
+                {post.author.role} • {post.timestamp}
+              </p>
             </div>
-            <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest font-medium">
-              {post.author.role} • {post.timestamp}
-            </p>
           </div>
-        </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <MoreHorizontal className="w-4 h-4" />
-        </Button>
-      </CardHeader>
-
-      <CardContent className="px-4 pb-4 pt-0 space-y-3">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 flex items-center gap-1 text-[10px] h-5 px-2">
-            {typeIcon}
-            <span className="capitalize">{post.type}</span>
-          </Badge>
-        </div>
-        <h3 className="text-lg font-bold font-display leading-tight">{post.title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {post.content}
-        </p>
-      </CardContent>
-
-      <CardFooter className="p-4 pt-0 flex items-center justify-between border-t border-white/5 mt-2 pt-4">
-        <div className="flex items-center gap-4">
-          <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
-            <Heart className="w-4 h-4" />
-            <span>{post.stats.likes}</span>
-          </button>
-          <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
-            <MessageSquare className="w-4 h-4" />
-            <span>{post.stats.comments}</span>
-          </button>
-          <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
-            <Share2 className="w-4 h-4" />
-          </button>
-        </div>
-        
-        {actionText && (
-          <Button size="sm" className="font-bold relative group overflow-hidden">
-             <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
-              <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
-            </div>
-            <span className="relative z-20">{actionText}</span>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <MoreHorizontal className="w-4 h-4" />
           </Button>
-        )}
-      </CardFooter>
-    </Card>
+        </CardHeader>
+
+        <CardContent className="px-4 pb-4 pt-0 space-y-3">
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 flex items-center gap-1 text-[10px] h-5 px-2">
+              {typeIcon}
+              <span className="capitalize">{post.type}</span>
+            </Badge>
+          </div>
+          <h3 className="text-lg font-bold font-display leading-tight">{post.title}</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {post.content}
+          </p>
+        </CardContent>
+
+        <CardFooter className="p-4 pt-0 flex items-center justify-between border-t border-white/5 mt-2 pt-4">
+          <div className="flex items-center gap-4">
+            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
+              <Heart className="w-4 h-4" />
+              <span>{post.stats.likes}</span>
+            </button>
+            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
+              <MessageSquare className="w-4 h-4" />
+              <span>{post.stats.comments}</span>
+            </button>
+            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
+              <Share2 className="w-4 h-4" />
+            </button>
+          </div>
+          
+          {actionText && (
+            <Button size="sm" className="font-bold relative group overflow-hidden">
+               <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+                <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+              </div>
+              <span className="relative z-20">{actionText}</span>
+            </Button>
+          )}
+        </CardFooter>
+      </Card>
+
+      <AlertDialog open={showFollowDialog} onOpenChange={setShowFollowDialog}>
+        <AlertDialogContent className="glass-card border-white/10 bg-background/90 backdrop-blur-xl max-w-[400px]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-3">
+              <Avatar className="h-10 w-10 border border-primary/20">
+                <AvatarFallback>{post.author.name[0]}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                <span className="text-lg font-bold text-gradient-primary">Follow {post.author.name}?</span>
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{post.author.role}</span>
+              </div>
+            </AlertDialogTitle>
+            <AlertDialogDescription className="pt-4 space-y-4">
+              <p className="text-sm text-white/70">
+                By following this <span className="text-primary font-bold">{post.author.role}</span>, you will:
+              </p>
+              <ul className="space-y-3">
+                {getFollowBenefits(post.author.role).map((benefit, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm text-white/80">
+                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                    <span>{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-0 mt-6">
+            <AlertDialogCancel className="bg-white/5 border-white/10 hover:bg-white/10 hover:text-white transition-all h-10">Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmFollow}
+              className="bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 h-10 font-bold"
+            >
+              Follow Now
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 });
 
@@ -218,7 +298,6 @@ export default function Feed() {
           )}
         </div>
 
-        {/* Right Panel */}
         <div className="hidden lg:block space-y-6">
           <Card className="glass-card border-white/5 p-6">
             <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Platform Stats</h4>
