@@ -139,7 +139,7 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                   size="sm"
                   onClick={handleFollowClick}
                   className={cn(
-                    "h-6 text-[10px] font-bold px-3 transition-all rounded-full",
+                    "h-5 text-[9px] font-bold px-2 transition-all rounded-full min-w-[50px]",
                     isFollowing 
                       ? "text-muted-foreground bg-white/5 hover:bg-white/10" 
                       : "bg-primary text-white hover:bg-primary/90 shadow-sm"
