@@ -187,17 +187,16 @@ const FeedCard = memo(({ post }: { post: Post }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [showFollowDialog, setShowFollowDialog] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(post.stats.likes);
-  const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<Comment[]>(post.comments || []);
-  const [commentInput, setCommentInput] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
     setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+  };
+
+  const handleSave = () => {
+    setIsSaved(!isSaved);
   };
 
   const handleReply = (username: string, commentId: string) => {
@@ -454,8 +453,14 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                 <MessageSquare className="w-4 h-4" />
                 <span className="tabular-nums">{totalComments}</span>
               </button>
-              <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors active:scale-95">
-                <Share2 className="w-4 h-4" />
+              <button 
+                onClick={handleSave}
+                className={cn(
+                  "flex items-center gap-1.5 text-xs transition-colors active:scale-95",
+                  isSaved ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                )}
+              >
+                <Bookmark className={cn("w-4 h-4", isSaved && "fill-current")} />
               </button>
             </div>
             
