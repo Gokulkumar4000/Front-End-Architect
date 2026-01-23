@@ -148,7 +148,6 @@ const CommentItem = ({ comment, isReply = false, onReply }: { comment: Comment; 
         
         <div className="flex items-center gap-3 ml-0.5">
           <span className="text-[10px] text-muted-foreground/60">{comment.timestamp}</span>
-          {clikes > 0 && <span className="text-[10px] font-bold text-muted-foreground/60">{clikes} like{clikes !== 1 ? 's' : ''}</span>}
           <button 
             onClick={() => {
               onReply(comment.author.name);
@@ -159,6 +158,7 @@ const CommentItem = ({ comment, isReply = false, onReply }: { comment: Comment; 
             Reply
           </button>
         </div>
+        {clikes > 0 && <span className="text-[10px] font-bold text-muted-foreground/60 mt-1 block">{clikes} like{clikes !== 1 ? 's' : ''}</span>}
 
         {comment.replies && comment.replies.length > 0 && !showReplies && (
           <button 
