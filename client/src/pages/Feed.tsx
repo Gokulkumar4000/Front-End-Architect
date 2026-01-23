@@ -4,12 +4,10 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { 
   Heart, 
   MessageSquare, 
-  Share2, 
   MoreHorizontal,
   TrendingUp,
   Users,
@@ -18,7 +16,8 @@ import {
   Coins,
   CheckCircle2,
   Send,
-  X
+  X,
+  Bookmark
 } from "lucide-react";
 import {
   AlertDialog,
@@ -189,6 +188,12 @@ const FeedCard = memo(({ post }: { post: Post }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(post.stats.likes);
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<Comment[]>(post.comments || []);
+  const [commentInput, setCommentInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
