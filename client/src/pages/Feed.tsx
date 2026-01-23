@@ -200,8 +200,17 @@ const FeedCard = memo(({ post }: { post: Post }) => {
 
   const handleReply = (username: string, commentId: string) => {
     setReplyTo({ id: commentId, name: username });
-    setCommentInput(`@${username.replace(/\s+/g, '').toLowerCase()} `);
-    setTimeout(() => inputRef.current?.focus(), 0);
+    const mention = `@${username.replace(/\s+/g, '').toLowerCase()} `;
+    setCommentInput(mention);
+    
+    // Use requestAnimationFrame to ensure the cursor is placed after the state update
+    requestAnimationFrame(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        const length = mention.length;
+        inputRef.current.setSelectionRange(length, length);
+      }
+    });
   };
 
   const handleAddComment = () => {
