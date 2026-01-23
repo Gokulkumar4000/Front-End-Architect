@@ -148,17 +148,19 @@ const CommentItem = ({ comment, isReply = false, onReply }: { comment: Comment; 
         
         <div className="flex items-center gap-3 ml-0.5">
           <span className="text-[10px] text-muted-foreground/60">{comment.timestamp}</span>
-          <button 
-            onClick={() => {
-              onReply(comment.author.name);
-              setShowReplies(true);
-            }}
-            className="text-[10px] font-bold text-muted-foreground/60 hover:text-white transition-colors"
-          >
-            Reply
-          </button>
+          <div className="flex flex-col">
+            <button 
+              onClick={() => {
+                onReply(comment.author.name);
+                setShowReplies(true);
+              }}
+              className="text-[10px] font-bold text-muted-foreground/60 hover:text-white transition-colors"
+            >
+              Reply
+            </button>
+            {clikes > 0 && <span className="text-[10px] font-bold text-muted-foreground/60 mt-0.5">{clikes} like{clikes !== 1 ? 's' : ''}</span>}
+          </div>
         </div>
-        {clikes > 0 && <span className="text-[10px] font-bold text-muted-foreground/60 mt-1 block">{clikes} like{clikes !== 1 ? 's' : ''}</span>}
 
         {comment.replies && comment.replies.length > 0 && !showReplies && (
           <button 
