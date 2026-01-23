@@ -138,27 +138,27 @@ const CommentItem = ({ comment, isReply = false, onReply }: { comment: Comment; 
             <span className="text-[11px] font-bold text-white/90 mr-2">{comment.author.name}</span>
             <span className="text-[11px] text-white/80 leading-relaxed">{comment.content}</span>
           </div>
-          <button 
-            onClick={() => { setLiked(!liked); setClikes(prev => liked ? prev - 1 : prev + 1); }}
-            className={cn("shrink-0 transition-all hover:scale-110 active:scale-90 pt-1", liked ? "text-primary" : "text-muted-foreground/40 hover:text-muted-foreground")}
-          >
-            <Heart className={cn("w-3 h-3", liked && "fill-current")} />
-          </button>
         </div>
         
         <div className="flex items-center gap-3 ml-0.5">
           <span className="text-[10px] text-muted-foreground/60">{comment.timestamp}</span>
-          <div className="flex flex-col">
+          <button 
+            onClick={() => {
+              onReply(comment.author.name);
+              setShowReplies(true);
+            }}
+            className="text-[10px] font-bold text-muted-foreground/60 hover:text-white transition-colors"
+          >
+            Reply
+          </button>
+          <div className="flex flex-col items-center ml-auto">
             <button 
-              onClick={() => {
-                onReply(comment.author.name);
-                setShowReplies(true);
-              }}
-              className="text-[10px] font-bold text-muted-foreground/60 hover:text-white transition-colors"
+              onClick={() => { setLiked(!liked); setClikes(prev => liked ? prev - 1 : prev + 1); }}
+              className={cn("shrink-0 transition-all hover:scale-110 active:scale-90", liked ? "text-primary" : "text-muted-foreground/40 hover:text-muted-foreground")}
             >
-              Reply
+              <Heart className={cn("w-3 h-3", liked && "fill-current")} />
             </button>
-            {clikes > 0 && <span className="text-[10px] font-bold text-muted-foreground/60 mt-0.5">{clikes} like{clikes !== 1 ? 's' : ''}</span>}
+            {clikes > 0 && <span className="text-[10px] font-bold text-muted-foreground/60 mt-0.5">{clikes}</span>}
           </div>
         </div>
 
