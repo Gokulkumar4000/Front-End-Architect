@@ -121,7 +121,7 @@ const MOCK_POSTS: Post[] = [
   }
 ];
 
-const CommentItem = ({ comment, isReply = false, onReply }: { comment: Comment; isReply?: boolean; onReply: (username: string) => void }) => {
+const CommentItem = ({ comment, isReply = false, onReply, parentId }: { comment: Comment; isReply?: boolean; onReply: (username: string, commentId: string) => void; parentId?: string }) => {
   const [liked, setLiked] = useState(false);
   const [clikes, setClikes] = useState(comment.likes);
   const [showReplies, setShowReplies] = useState(false);
@@ -144,7 +144,7 @@ const CommentItem = ({ comment, isReply = false, onReply }: { comment: Comment; 
           <span className="text-[10px] text-muted-foreground/60">{comment.timestamp}</span>
           <button 
             onClick={() => {
-              onReply(comment.author.name);
+              onReply(comment.author.name, parentId || comment.id);
               setShowReplies(true);
             }}
             className="text-[10px] font-bold text-muted-foreground/60 hover:text-white transition-colors"
@@ -173,7 +173,7 @@ const CommentItem = ({ comment, isReply = false, onReply }: { comment: Comment; 
         )}
 
         {showReplies && comment.replies?.map(reply => (
-          <CommentItem key={reply.id} comment={reply} isReply onReply={onReply} />
+          <CommentItem key={reply.id} comment={reply} isReply onReply={onReply} parentId={parentId || comment.id} />
         ))}
       </div>
     </div>
@@ -191,12 +191,15 @@ const FeedCard = memo(({ post }: { post: Post }) => {
   const [commentInput, setCommentInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
+
   const handleLike = () => {
     setIsLiked(!isLiked);
     setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
   };
 
-  const handleReply = (username: string) => {
+  const handleReply = (username: string, commentId: string) => {
+    setReplyTo({ id: commentId, name: username });
     setCommentInput(`@${username.replace(/\s+/g, '').toLowerCase()} `);
     setTimeout(() => inputRef.current?.focus(), 0);
   };
@@ -216,7 +219,21 @@ const FeedCard = memo(({ post }: { post: Post }) => {
       likes: 0
     };
 
-    setComments(prev => [...prev, newComment]);
+    if (replyTo) {
+      setComments(prev => prev.map(c => {
+        if (c.id === replyTo.id) {
+          return { ...c, replies: [...(c.replies || []), newComment] };
+        }
+        // Also check nested replies to allow replying to a reply
+        if (c.replies?.some(r => r.id === replyTo.id)) {
+          return { ...c, replies: [...(c.replies || []), newComment] };
+        }
+        return c;
+      }));
+      setReplyTo(null);
+    } else {
+      setComments(prev => [...prev, newComment]);
+    }
     setCommentInput("");
   };
 
