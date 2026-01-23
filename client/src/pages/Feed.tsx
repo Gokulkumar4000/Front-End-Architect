@@ -42,6 +42,7 @@ interface Comment {
   content: string;
   timestamp: string;
   likes: number;
+  replies?: Comment[];
 }
 
 interface Post {
@@ -77,7 +78,16 @@ const MOCK_POSTS: Post[] = [
         author: { name: "Bob Builder", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob", role: "Developer" },
         content: "This sounds amazing! What kind of sensors are you planning to use for soil moisture?",
         timestamp: "1h ago",
-        likes: 5
+        likes: 5,
+        replies: [
+          {
+            id: "r1",
+            author: { name: "Alice Visionary", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice", role: "Idea Holder" },
+            content: "We are currently testing capacitive sensors for better durability.",
+            timestamp: "45m ago",
+            likes: 2
+          }
+        ]
       },
       {
         id: "c2",
