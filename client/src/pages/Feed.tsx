@@ -237,6 +237,13 @@ const FeedCard = memo(({ post }: { post: Post }) => {
     setCommentInput("");
   };
 
+  const totalComments = useMemo(() => {
+    const countNested = (cms: Comment[]): number => {
+      return cms.reduce((acc, curr) => acc + 1 + (curr.replies ? countNested(curr.replies) : 0), 0);
+    };
+    return countNested(comments);
+  }, [comments]);
+
   const actionText = useMemo(() => {
     switch (post.type) {
       case "idea": return userRole === "idea-holder" ? null : "Buy Idea";
@@ -434,7 +441,7 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                 )}
               >
                 <MessageSquare className="w-4 h-4" />
-                <span>{post.stats.comments}</span>
+                <span className="tabular-nums">{totalComments}</span>
               </button>
               <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors active:scale-95">
                 <Share2 className="w-4 h-4" />
