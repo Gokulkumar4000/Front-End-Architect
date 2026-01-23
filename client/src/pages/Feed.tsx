@@ -321,7 +321,7 @@ const FeedCard = memo(({ post }: { post: Post }) => {
               </Button>
             </div>
             
-            <div className="flex-1 overflow-y-auto space-y-6 pr-2 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-primary/20 transition-colors py-2">
+            <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar transition-colors py-2">
               {comments.map((comment) => (
                 <CommentItem key={comment.id} comment={comment} onReply={handleReply} />
               ))}
