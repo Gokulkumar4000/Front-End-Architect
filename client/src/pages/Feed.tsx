@@ -1,4 +1,4 @@
-import { memo, useMemo, useState, useEffect } from "react";
+import { memo, useMemo, useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -121,36 +121,58 @@ const MOCK_POSTS: Post[] = [
   }
 ];
 
-const CommentItem = ({ comment, isReply = false }: { comment: Comment; isReply?: boolean }) => {
+const CommentItem = ({ comment, isReply = false, onReply }: { comment: Comment; isReply?: boolean; onReply: (username: string) => void }) => {
   const [liked, setLiked] = useState(false);
   const [clikes, setClikes] = useState(comment.likes);
+  const [showReplies, setShowReplies] = useState(false);
 
   return (
-    <div className={cn("flex gap-3", isReply && "ml-11 mt-3")}>
-      <Avatar className="h-8 w-8 shrink-0 border border-white/5">
+    <div className={cn("flex gap-3 group/comment", isReply && "ml-10 mt-2")}>
+      <Avatar className={cn("shrink-0 border border-white/5", isReply ? "h-6 w-6" : "h-8 w-8")}>
         <AvatarImage src={comment.author.avatar} />
-        <AvatarFallback className="text-[10px]">{comment.author.name[0]}</AvatarFallback>
+        <AvatarFallback className="text-[8px]">{comment.author.name[0]}</AvatarFallback>
       </Avatar>
       <div className="flex-1 space-y-1">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-white/90">{comment.author.name}</span>
-            <span className="text-[8px] text-muted-foreground uppercase tracking-widest bg-white/5 px-1.5 py-0.5 rounded">{comment.author.role}</span>
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1">
+            <span className="text-[11px] font-bold text-white/90 mr-2">{comment.author.name}</span>
+            <span className="text-[11px] text-white/80 leading-relaxed">{comment.content}</span>
           </div>
-          <span className="text-[10px] text-muted-foreground">{comment.timestamp}</span>
-        </div>
-        <p className="text-xs text-white/70 leading-relaxed bg-white/[0.02] p-2 rounded-lg border border-white/5">{comment.content}</p>
-        <div className="flex items-center gap-4 pt-1 ml-1">
           <button 
             onClick={() => { setLiked(!liked); setClikes(prev => liked ? prev - 1 : prev + 1); }}
-            className={cn("text-[10px] transition-all flex items-center gap-1.5 hover:scale-110 active:scale-90", liked ? "text-primary font-bold" : "text-muted-foreground hover:text-primary")}
+            className={cn("shrink-0 transition-all hover:scale-110 active:scale-90 pt-1", liked ? "text-primary" : "text-muted-foreground/40 hover:text-muted-foreground")}
           >
-            <Heart className={cn("w-3.5 h-3.5", liked && "fill-current")} />
-            <span className="tabular-nums">{clikes}</span>
+            <Heart className={cn("w-3 h-3", liked && "fill-current")} />
           </button>
-          <button className="text-[10px] text-muted-foreground hover:text-primary transition-all hover:scale-110 active:scale-90 font-medium">Reply</button>
         </div>
-        {comment.replies?.map(reply => <CommentItem key={reply.id} comment={reply} isReply />)}
+        
+        <div className="flex items-center gap-3 ml-0.5">
+          <span className="text-[10px] text-muted-foreground/60">{comment.timestamp}</span>
+          {clikes > 0 && <span className="text-[10px] font-bold text-muted-foreground/60">{clikes} like{clikes !== 1 ? 's' : ''}</span>}
+          <button 
+            onClick={() => {
+              onReply(comment.author.name);
+              setShowReplies(true);
+            }}
+            className="text-[10px] font-bold text-muted-foreground/60 hover:text-white transition-colors"
+          >
+            Reply
+          </button>
+        </div>
+
+        {comment.replies && comment.replies.length > 0 && !showReplies && (
+          <button 
+            onClick={() => setShowReplies(true)}
+            className="flex items-center gap-2 mt-2 group/view-replies"
+          >
+            <div className="w-6 h-[1px] bg-muted-foreground/20 group-hover/view-replies:bg-muted-foreground/40 transition-colors" />
+            <span className="text-[10px] font-bold text-muted-foreground/60 group-hover/view-replies:text-white transition-colors">View replies ({comment.replies.length})</span>
+          </button>
+        )}
+
+        {showReplies && comment.replies?.map(reply => (
+          <CommentItem key={reply.id} comment={reply} isReply onReply={onReply} />
+        ))}
       </div>
     </div>
   );
@@ -163,10 +185,37 @@ const FeedCard = memo(({ post }: { post: Post }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.stats.likes);
   const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<Comment[]>(post.comments || []);
+  const [commentInput, setCommentInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
     setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+  };
+
+  const handleReply = (username: string) => {
+    setCommentInput(`@${username.replace(/\s+/g, '').toLowerCase()} `);
+    setTimeout(() => inputRef.current?.focus(), 0);
+  };
+
+  const handleAddComment = () => {
+    if (!commentInput.trim()) return;
+    
+    const newComment: Comment = {
+      id: Date.now().toString(),
+      author: {
+        name: "Visionary Builder",
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=Me`,
+        role: userRole || "Member"
+      },
+      content: commentInput,
+      timestamp: "Just now",
+      likes: 0
+    };
+
+    setComments(prev => [...prev, newComment]);
+    setCommentInput("");
   };
 
   const actionText = useMemo(() => {
@@ -273,10 +322,10 @@ const FeedCard = memo(({ post }: { post: Post }) => {
             </div>
             
             <div className="flex-1 overflow-y-auto space-y-6 pr-2 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-primary/20 transition-colors py-2">
-              {post.comments?.map((comment) => (
-                <CommentItem key={comment.id} comment={comment} />
+              {comments.map((comment) => (
+                <CommentItem key={comment.id} comment={comment} onReply={handleReply} />
               ))}
-              {(!post.comments || post.comments.length === 0) && (
+              {comments.length === 0 && (
                 <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-3">
                   <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center">
                     <MessageSquare className="w-6 h-6 text-primary/20" />
@@ -293,10 +342,19 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                 </Avatar>
                 <div className="flex-1 relative group/input">
                   <input 
+                    ref={inputRef}
+                    value={commentInput}
+                    onChange={(e) => setCommentInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
                     placeholder="Contribute to the vision..." 
                     className="w-full bg-white/5 border border-white/10 rounded-full py-2 px-4 text-[11px] focus:outline-none focus:ring-1 focus:ring-primary/40 transition-all placeholder:text-muted-foreground/30"
                   />
-                  <Button variant="ghost" size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 text-primary/60 hover:text-primary hover:bg-primary/10 rounded-full transition-colors">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={handleAddComment}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 text-primary/60 hover:text-primary hover:bg-primary/10 rounded-full transition-colors"
+                  >
                     <Send className="w-3.5 h-3.5" />
                   </Button>
                 </div>
