@@ -17,8 +17,20 @@ import {
   CheckCircle2,
   Send,
   X,
-  Bookmark
+  Bookmark,
+  Eye,
+  Flag,
+  Share2,
+  Slash,
+  UserX
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -337,9 +349,36 @@ const FeedCard = memo(({ post }: { post: Post }) => {
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <MoreHorizontal className="w-4 h-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 rounded-full transition-colors">
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="glass-card border-white/10 bg-background/80 backdrop-blur-xl w-48 p-1 animate-in fade-in zoom-in-95 duration-200">
+              <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 cursor-pointer focus:bg-primary/10 rounded-md group/menu-item transition-colors">
+                <Eye className="w-4 h-4 text-muted-foreground group-hover/menu-item:text-primary transition-colors" />
+                <span className="text-xs font-medium group-hover/menu-item:text-primary transition-colors">View Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 cursor-pointer focus:bg-primary/10 rounded-md group/menu-item transition-colors">
+                <Share2 className="w-4 h-4 text-muted-foreground group-hover/menu-item:text-primary transition-colors" />
+                <span className="text-xs font-medium group-hover/menu-item:text-primary transition-colors">Share</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-white/5 my-1" />
+              <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 cursor-pointer focus:bg-primary/10 rounded-md group/menu-item transition-colors">
+                <Slash className="w-4 h-4 text-muted-foreground group-hover/menu-item:text-primary transition-colors" />
+                <span className="text-xs font-medium group-hover/menu-item:text-primary transition-colors">Not Interested</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 cursor-pointer focus:bg-destructive/10 text-destructive rounded-md group/menu-item transition-colors">
+                <UserX className="w-4 h-4" />
+                <span className="text-xs font-medium">Block User</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 cursor-pointer focus:bg-destructive/10 text-destructive rounded-md group/menu-item transition-colors">
+                <Flag className="w-4 h-4" />
+                <span className="text-xs font-medium">Report Post</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </CardHeader>
 
         <CardContent className="px-4 pb-4 pt-0 space-y-3 h-[320px] relative overflow-hidden">
