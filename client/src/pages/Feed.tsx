@@ -162,13 +162,15 @@ const CommentItem = ({ comment, isReply = false, onReply, parentId }: { comment:
           </div>
         </div>
 
-        {comment.replies && comment.replies.length > 0 && !showReplies && (
+        {(comment.replies && comment.replies.length > 0) && (
           <button 
-            onClick={() => setShowReplies(true)}
+            onClick={() => setShowReplies(!showReplies)}
             className="flex items-center gap-2 mt-2 group/view-replies"
           >
             <div className="w-6 h-[1px] bg-muted-foreground/20 group-hover/view-replies:bg-muted-foreground/40 transition-colors" />
-            <span className="text-[10px] font-bold text-muted-foreground/60 group-hover/view-replies:text-white transition-colors">View replies ({comment.replies.length})</span>
+            <span className="text-[10px] font-bold text-muted-foreground/60 group-hover/view-replies:text-white transition-colors">
+              {showReplies ? "Hide replies" : `View replies (${comment.replies.length})`}
+            </span>
           </button>
         )}
 
