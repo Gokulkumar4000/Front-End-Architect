@@ -17,7 +17,8 @@ import {
   Briefcase,
   Coins,
   CheckCircle2,
-  Send
+  Send,
+  X
 } from "lucide-react";
 import {
   AlertDialog,
@@ -251,31 +252,87 @@ const FeedCard = memo(({ post }: { post: Post }) => {
           </Button>
         </CardHeader>
 
-        <CardContent className="px-4 pb-4 pt-0 space-y-3">
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 flex items-center gap-1 text-[10px] h-5 px-2">
-              {typeIcon}
-              <span className="capitalize">{post.type}</span>
-            </Badge>
-          </div>
-          <h3 className="text-lg font-bold font-display leading-tight">{post.title}</h3>
-          <div className="relative group/content overflow-hidden flex flex-col items-center">
-            <div className="relative w-full">
-              <p className="text-sm text-muted-foreground leading-relaxed line-clamp-[10]">
-                {post.content}
-              </p>
-              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card via-card/80 to-transparent pointer-events-none" />
+        <CardContent className="px-4 pb-4 pt-0 space-y-3 h-[320px] relative overflow-hidden">
+          <div className={cn(
+            "absolute inset-0 z-20 bg-background/98 backdrop-blur-md p-4 flex flex-col h-full transition-all duration-300 ease-in-out",
+            showComments ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full pointer-events-none"
+          )}>
+            <div className="flex items-center justify-between mb-4 shrink-0">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-3.5 h-3.5 text-primary" />
+                <h4 className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Discussions</h4>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-6 w-6 rounded-full hover:bg-primary/10 transition-colors" 
+                onClick={() => setShowComments(false)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
             </div>
-            <Button 
-              variant="ghost" 
-              className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2 bg-transparent border-0 hover:bg-transparent shadow-none relative z-10 mx-auto"
-              onClick={() => {
-                // In a real app, this would navigate to a detailed view
-                console.log("View full details for:", post.id);
-              }}
-            >
-              View full {String(post.type) === "investment" ? "investment" : String(post.type) === "project" ? "project" : "idea"}
-            </Button>
+            
+            <div className="flex-1 overflow-y-auto space-y-6 pr-2 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-primary/20 transition-colors py-2">
+              {post.comments?.map((comment) => (
+                <CommentItem key={comment.id} comment={comment} />
+              ))}
+              {(!post.comments || post.comments.length === 0) && (
+                <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-3">
+                  <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center">
+                    <MessageSquare className="w-6 h-6 text-primary/20" />
+                  </div>
+                  <p className="text-xs text-muted-foreground italic">No connections have shared their thoughts yet.</p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-white/5 shrink-0">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-8 w-8 border border-white/10 shrink-0">
+                  <AvatarFallback className="text-[10px] font-bold">ME</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 relative group/input">
+                  <input 
+                    placeholder="Contribute to the vision..." 
+                    className="w-full bg-white/5 border border-white/10 rounded-full py-2 px-4 text-[11px] focus:outline-none focus:ring-1 focus:ring-primary/40 transition-all placeholder:text-muted-foreground/30"
+                  />
+                  <Button variant="ghost" size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 text-primary/60 hover:text-primary hover:bg-primary/10 rounded-full transition-colors">
+                    <Send className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={cn(
+            "space-y-3 transition-all duration-300 h-full flex flex-col justify-center",
+            showComments ? "opacity-0 scale-95 pointer-events-none" : "opacity-100 scale-100"
+          )}>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 flex items-center gap-1 text-[10px] h-5 px-2">
+                {typeIcon}
+                <span className="capitalize">{post.type}</span>
+              </Badge>
+            </div>
+            <h3 className="text-lg font-bold font-display leading-tight">{post.title}</h3>
+            <div className="relative group/content overflow-hidden flex flex-col items-center flex-1 justify-center">
+              <div className="relative w-full">
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-[8]">
+                  {post.content}
+                </p>
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card via-card/80 to-transparent pointer-events-none" />
+              </div>
+              <Button 
+                variant="ghost" 
+                className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2 bg-transparent border-0 hover:bg-transparent shadow-none relative z-10 mx-auto"
+                onClick={() => {
+                  // In a real app, this would navigate to a detailed view
+                  console.log("View full details for:", post.id);
+                }}
+              >
+                View full {String(post.type) === "investment" ? "investment" : String(post.type) === "project" ? "project" : "idea"}
+              </Button>
+            </div>
           </div>
         </CardContent>
 
@@ -316,35 +373,6 @@ const FeedCard = memo(({ post }: { post: Post }) => {
               </Button>
             )}
           </div>
-
-          {showComments && (
-            <div className="mt-4 pt-4 border-t border-white/5 w-full animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="max-h-60 overflow-y-auto space-y-6 pr-3 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-primary/20 transition-colors">
-                {post.comments?.map((comment) => (
-                  <CommentItem key={comment.id} comment={comment} />
-                ))}
-                {(!post.comments || post.comments.length === 0) && (
-                  <p className="text-center text-xs text-muted-foreground py-4 italic">No comments yet. Be the first to start the conversation!</p>
-                )}
-              </div>
-              <div className="mt-4 pt-4 border-t border-white/5">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8 border border-white/10">
-                    <AvatarFallback className="text-[10px]">ME</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 relative group/input">
-                    <input 
-                      placeholder="Share your thoughts..." 
-                      className="w-full bg-white/5 border border-white/10 rounded-full py-2 px-4 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40 transition-all placeholder:text-muted-foreground/50"
-                    />
-                    <Button variant="ghost" size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 text-primary/60 hover:text-primary hover:bg-primary/10 rounded-full transition-colors">
-                      <Send className="w-3.5 h-3.5" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </CardFooter>
       </Card>
       <AlertDialog open={showFollowDialog} onOpenChange={setShowFollowDialog}>
