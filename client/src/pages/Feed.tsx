@@ -219,9 +219,10 @@ const DetailsSidebar = ({
         { id: "goal", label: "Funding Goal", icon: Target },
         { id: "status", label: "Current Status", icon: BarChart3 },
         { id: "usage", label: "Fund Usage", icon: PieChart },
-        { id: "progress", label: "Progress & Charts", icon: TrendingUp },
+        { id: "progress", label: "Progress & Trends", icon: TrendingUp },
         { id: "roadmap", label: "Roadmap", icon: Map },
         { id: "updates", label: "Updates", icon: Bell },
+        { id: "supporters", label: "Supporters & Activity", icon: Users },
         { id: "team", label: "Team / Founder", icon: ShieldCheck },
       ];
     }
@@ -809,12 +810,24 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                       </p>
                       <div className="flex items-center gap-3 mt-6 p-3 rounded-xl bg-white/[0.02] border border-white/5">
                          <div className="px-2 py-1 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">
-                           {post.type === "project" ? "Status: In Progress" : post.type === "fund" ? "Stage: Seed" : "Stage: Concept"}
+                           {post.type === "project" ? "Status: In Progress" : post.type === "fund" ? "Stage: Growth" : "Stage: Concept"}
                          </div>
                          <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">
                            Category: {post.type === "idea" ? "SaaS / AI" : post.type === "project" ? "Open Source" : "FinTech"}
                          </div>
                       </div>
+                      {post.type === "fund" && (
+                        <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2">
+                          <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-widest">
+                            <span>Duration</span>
+                            <span className="text-white font-bold">Jan 2026 - June 2026</span>
+                          </div>
+                          <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-widest">
+                            <span>Creator</span>
+                            <span className="text-white font-bold">GreenTech Solutions Org</span>
+                          </div>
+                        </div>
+                      )}
                       <p className="text-white/70 leading-relaxed text-sm mt-6">
                         {post.content}
                       </p>
@@ -836,79 +849,81 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                   </div>
                 )}
 
-                {activeSection === "problem" && (
-                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
-                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
-                      <HelpCircle className="w-4 h-4" /> Problem Statement
-                    </h3>
-                    <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
-                      <p className="text-sm text-white/70 leading-relaxed">
-                        What problem this {post.type} addresses and why it matters to the target audience.
-                      </p>
-                      <div className="h-32 rounded-xl bg-gradient-to-br from-primary/5 to-transparent border border-white/5 flex items-center justify-center italic text-muted-foreground text-xs">
-                        Detailed problem analysis for {post.title}...
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {activeSection === "description" && (
-                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
-                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
-                      <FileText className="w-4 h-4" /> Project Description
-                    </h3>
-                    <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
-                      <p className="text-sm text-white/70 leading-relaxed">
-                        Full project scope, technical stack, and expected outcomes.
-                      </p>
-                      <div className="h-48 rounded-xl bg-gradient-to-br from-primary/5 to-transparent border border-white/5 flex items-center justify-center italic text-muted-foreground text-xs">
-                        {post.content}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {activeSection === "roles" && (
-                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
-                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
-                      <Users className="w-4 h-4" /> Roles Needed
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {[
-                        { title: "Frontend Developer", skills: "React, TypeScript", commitment: "Part-time" },
-                        { title: "UI/UX Designer", skills: "Figma, Design Systems", commitment: "Project-based" }
-                      ].map((role) => (
-                        <div key={role.title} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-primary/20 transition-all">
-                          <h4 className="text-sm font-bold text-white mb-1">{role.title}</h4>
-                          <p className="text-[10px] text-muted-foreground mb-3">{role.commitment}</p>
-                          <Badge variant="outline" className="text-[9px] h-4">{role.skills}</Badge>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
                 {activeSection === "goal" && (
                   <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
                     <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
                       <Target className="w-4 h-4" /> Funding Goal
                     </h3>
                     <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-6">
-                      <div className="flex items-end justify-between">
+                      <div className="grid grid-cols-2 gap-8">
                         <div className="space-y-1">
                           <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Target Amount</p>
                           <p className="text-3xl font-bold text-white">$50,000</p>
                         </div>
-                        <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 mb-1">Seed Stage</Badge>
+                        <div className="space-y-1">
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Min. Contribution</p>
+                          <p className="text-xl font-bold text-white">$100</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/10">
+                        <div className="space-y-1">
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Deadline</p>
+                          <p className="text-xs font-bold text-white">June 30, 2026</p>
+                        </div>
+                        <div className="space-y-1 text-right">
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Currency</p>
+                          <p className="text-xs font-bold text-white">USD (Digital Assets)</p>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
-                          <span className="text-primary">Progress: 65%</span>
-                          <span className="text-muted-foreground">$17,500 left</span>
+                          <span className="text-primary">Progress</span>
+                          <span className="text-muted-foreground">Target Reach</span>
                         </div>
-                        <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
                           <div className="h-full bg-primary rounded-full w-[65%]" />
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeSection === "status" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                      <BarChart3 className="w-4 h-4" /> Current Status
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col items-center justify-center text-center space-y-2 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-primary/5 blur-3xl -z-10" />
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Amount Raised</p>
+                        <p className="text-4xl font-bold text-primary">$32,500</p>
+                        <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">65% Completed</Badge>
+                      </div>
+                      <div className="space-y-4">
+                        {[
+                          { label: "Raised", value: "$32,500", icon: TrendingUp },
+                          { label: "Remaining", value: "$17,500", icon: Coins },
+                          { label: "Supporters", value: "124", icon: Users },
+                          { label: "Days Left", value: "42 Days", icon: Calendar },
+                        ].map((stat) => (
+                          <div key={stat.label} className="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <stat.icon className="w-4 h-4 text-primary/40" />
+                              <span className="text-xs text-muted-foreground uppercase tracking-widest">{stat.label}</span>
+                            </div>
+                            <span className="text-xs font-bold text-white">{stat.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2">
+                      <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest mb-1">
+                        <span className="text-primary">Live Funding Progress</span>
+                        <span className="text-muted-foreground">65%</span>
+                      </div>
+                      <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div className="h-full bg-primary rounded-full w-[65%]" />
                       </div>
                     </div>
                   </div>
@@ -917,28 +932,222 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                 {activeSection === "usage" && (
                   <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
                     <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
-                      <PieChart className="w-4 h-4" /> Fund Usage
+                      <PieChart className="w-4 h-4" /> Fund Usage Breakdown
                     </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {[
-                        { label: "Development", value: "40%", color: "bg-blue-500" },
-                        { label: "Marketing", value: "25%", color: "bg-purple-500" },
-                        { label: "Operations", value: "20%", color: "bg-emerald-500" },
-                        { label: "Misc", value: "15%", color: "bg-amber-500" }
-                      ].map((item) => (
-                        <div key={item.label} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                          <div className="flex items-center gap-3">
-                            <div className={cn("w-2 h-2 rounded-full", item.color)} />
-                            <span className="text-xs font-medium text-white/80">{item.label}</span>
+                    <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-8">
+                      <div className="flex items-center justify-center py-6">
+                         {/* CSS-only Donut Chart approximation */}
+                         <div className="relative w-48 h-48 rounded-full border-[16px] border-white/5 flex items-center justify-center">
+                            <div className="absolute inset-0 rounded-full border-[16px] border-blue-500 border-t-transparent border-r-transparent rotate-45" />
+                            <div className="absolute inset-0 rounded-full border-[16px] border-purple-500 border-b-transparent border-l-transparent -rotate-12" />
+                            <div className="text-center">
+                              <p className="text-2xl font-bold text-white">100%</p>
+                              <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Allocation</p>
+                            </div>
+                         </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {[
+                          { label: "Product Development", value: "40%", amount: "$20,000", color: "bg-blue-500", desc: "Core engineering & infra" },
+                          { label: "Marketing", value: "25%", amount: "$12,500", color: "bg-purple-500", desc: "Growth & community" },
+                          { label: "Operations", value: "20%", amount: "$10,000", color: "bg-emerald-500", desc: "Legal & administration" },
+                          { label: "Miscellaneous", value: "15%", amount: "$7,500", color: "bg-amber-500", desc: "Contingency funds" }
+                        ].map((item) => (
+                          <div key={item.label} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 group hover:border-primary/20 transition-colors">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-3">
+                                <div className={cn("w-2 h-2 rounded-full", item.color)} />
+                                <span className="text-xs font-bold text-white/90">{item.label}</span>
+                              </div>
+                              <span className="text-xs font-bold text-primary">{item.value}</span>
+                            </div>
+                            <p className="text-[10px] text-muted-foreground mb-2">{item.desc}</p>
+                            <p className="text-xs font-bold text-white/60">{item.amount}</p>
                           </div>
-                          <span className="text-xs font-bold text-white">{item.value}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeSection === "progress" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4" /> Progress & Trends
+                    </h3>
+                    <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-8">
+                       <div className="h-64 flex flex-col justify-end gap-1 relative pt-10">
+                          <div className="absolute top-0 left-0 space-y-1">
+                             <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Funding Growth</p>
+                             <p className="text-lg font-bold text-white">Steady Upward Trend</p>
+                          </div>
+                          {/* Visual representation of a line chart using simple divs */}
+                          <div className="flex items-end justify-between h-40 px-2">
+                             {[20, 35, 30, 45, 60, 55, 75, 80, 70, 90, 100].map((h, i) => (
+                               <div key={i} className="w-full mx-0.5 group relative">
+                                  <div 
+                                    className="w-full bg-primary/20 group-hover:bg-primary/40 transition-colors rounded-t-sm" 
+                                    style={{ height: `${h}%` }}
+                                  />
+                                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-background border border-white/10 rounded text-[8px] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                                    Week {i+1}: {h}%
+                                  </div>
+                               </div>
+                             ))}
+                          </div>
+                          <div className="flex justify-between border-t border-white/5 pt-2">
+                             <span className="text-[9px] text-muted-foreground">Week 1</span>
+                             <span className="text-[9px] text-muted-foreground">Week 6</span>
+                             <span className="text-[9px] text-muted-foreground">Week 12</span>
+                          </div>
+                       </div>
+                       <div className="grid grid-cols-2 gap-4">
+                          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                             <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Growth Rate</p>
+                             <p className="text-xl font-bold text-emerald-500">+12% WoW</p>
+                          </div>
+                          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                             <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Total Supporters</p>
+                             <p className="text-xl font-bold text-white">124 Members</p>
+                          </div>
+                       </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeSection === "roadmap" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                      <Map className="w-4 h-4" /> Funding Roadmap
+                    </h3>
+                    <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+                      <div className="space-y-0 relative before:absolute before:inset-0 before:left-[11px] before:w-[2px] before:bg-white/5">
+                        {[
+                          { level: "25%", title: "Core Infrastructure", outcome: "MVP development and initial cloud deployment", timeline: "Q1 2026", status: "completed" },
+                          { level: "50%", title: "Beta Launch", outcome: "Limited release to first 500 waitlist users", timeline: "Q2 2026", status: "current" },
+                          { level: "75%", title: "Marketing Expansion", outcome: "Global outreach and community scaling programs", timeline: "Q3 2026", status: "upcoming" },
+                          { level: "100%", title: "Full Public Launch", outcome: "V1.0 release with full feature set and support", timeline: "Q4 2026", status: "upcoming" }
+                        ].map((milestone, idx) => (
+                          <div key={milestone.level} className="relative pl-10 pb-10 last:pb-0">
+                            <div className={cn(
+                              "absolute left-0 top-1 w-6 h-6 rounded-full flex items-center justify-center border-2 z-10",
+                              milestone.status === "completed" ? "bg-primary border-primary" : 
+                              milestone.status === "current" ? "bg-background border-primary animate-pulse" : "bg-background border-white/10"
+                            )}>
+                              {milestone.status === "completed" && <Check className="w-3 h-3 text-white" />}
+                              {milestone.status === "current" && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                            </div>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{milestone.level}</span>
+                                <span className="text-xs font-bold text-white">{milestone.title}</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground leading-relaxed">{milestone.outcome}</p>
+                              <p className="text-[10px] text-white/40 font-medium uppercase tracking-tighter">{milestone.timeline}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeSection === "updates" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                      <Bell className="w-4 h-4" /> Updates & Announcements
+                    </h3>
+                    <div className="space-y-4">
+                      {[
+                        { title: "Reached 65% of our goal!", date: "2 days ago", content: "Huge thanks to our new community supporters. We've officially unlocked the infrastructure milestone.", type: "milestone" },
+                        { title: "Technical Architecture Reveal", date: "1 week ago", content: "We're sharing a deep dive into our decentralized energy management system tonight at 6 PM EST.", type: "update" },
+                        { title: "Seed Round Opening", date: "2 weeks ago", content: "Applications for the first cohort are now live. Founders, check your dashboards for the intake form.", type: "announcement" }
+                      ].map((update, i) => (
+                        <div key={update.title} className={cn(
+                          "p-5 rounded-2xl bg-white/[0.02] border border-white/5 relative overflow-hidden group",
+                          i === 0 && "border-primary/20 bg-primary/[0.02]"
+                        )}>
+                          {i === 0 && <div className="absolute top-0 right-0 px-3 py-1 bg-primary/10 text-primary text-[8px] font-bold uppercase tracking-widest rounded-bl-xl">New</div>}
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">{update.date}</p>
+                          <h4 className="text-sm font-bold text-white mb-2 group-hover:text-primary transition-colors">{update.title}</h4>
+                          <p className="text-xs text-white/60 leading-relaxed">{update.content}</p>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {(isIdea && !isOwner && ["solution", "traction", "market"].includes(activeSection)) ? (
+                {activeSection === "team" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4" /> Team & Founder
+                    </h3>
+                    <div className="space-y-6">
+                      <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex items-start gap-6">
+                        <Avatar className="h-20 w-20 border-2 border-primary/20">
+                          <AvatarImage src={post.author.avatar} />
+                          <AvatarFallback>{post.author.name[0]}</AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-3">
+                          <div>
+                            <h4 className="text-xl font-bold text-white leading-none">{post.author.name}</h4>
+                            <p className="text-xs text-primary font-medium mt-1">{post.author.role}</p>
+                          </div>
+                          <p className="text-xs text-white/60 leading-relaxed">
+                            Visionary founder with 10+ years in sustainable tech and decentralized systems. Previously built and scaled two successful climate-focused startups.
+                          </p>
+                          <div className="flex gap-2">
+                             <Badge variant="outline" className="text-[9px] border-white/10">Founder</Badge>
+                             <Badge variant="outline" className="text-[9px] border-white/10">10x Builder</Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {[
+                          { name: "Sarah Chen", role: "CTO / Engineering", bio: "Ex-Google engineer, distributed systems expert." },
+                          { name: "Marcus Miller", role: "Head of Operations", bio: "Specialist in supply chain transparency & logistics." }
+                        ].map(member => (
+                          <div key={member.name} className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                            <h5 className="text-sm font-bold text-white">{member.name}</h5>
+                            <p className="text-[10px] text-primary mb-2">{member.role}</p>
+                            <p className="text-[10px] text-muted-foreground leading-relaxed">{member.bio}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeSection === "supporters" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                      <Users className="w-4 h-4" /> Community Supporters
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {[
+                        { name: "John Builder", type: "Platinum", range: "$5k - $10k" },
+                        { name: "Anonymous", type: "Gold", range: "$2k - $5k" },
+                        { name: "Elena Vision", type: "Silver", range: "$500 - $2k" },
+                        { name: "Marcus Capital", type: "Gold", range: "$2k - $5k" }
+                      ].map((supporter, i) => (
+                        <div key={i} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-8 w-8">
+                              <AvatarFallback>{supporter.name[0]}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h5 className="text-xs font-bold text-white">{supporter.name}</h5>
+                              <p className="text-[10px] text-muted-foreground">{supporter.type} Supporter</p>
+                            </div>
+                          </div>
+                          <Badge variant="ghost" className="text-[9px] bg-primary/5 text-primary">{supporter.range}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {(post.type !== "fund" && isIdea && !isOwner && ["solution", "traction", "market"].includes(activeSection)) ? (
                   <div className="h-[400px] flex flex-col items-center justify-center text-center p-8 space-y-6 animate-in zoom-in-95 duration-300">
                     <div className="w-20 h-20 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10 relative overflow-hidden group">
                       <div className="absolute inset-0 bg-primary/20 scale-0 group-hover:scale-150 transition-transform duration-700 rounded-full" />

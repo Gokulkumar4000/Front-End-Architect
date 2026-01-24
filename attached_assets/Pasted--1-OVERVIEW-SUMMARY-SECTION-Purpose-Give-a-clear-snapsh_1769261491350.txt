@@ -1,0 +1,286 @@
+🔹 1. OVERVIEW (SUMMARY SECTION)
+🎯 Purpose
+
+Give a clear snapshot of what the funding is about.
+
+Content shown:
+
+Funding title
+
+Short description (2–3 lines)
+
+Category / domain
+
+Funding stage (Early / Growth / Expansion)
+
+Creator / organization profile
+
+Funding duration (start → end date)
+
+Visuals:
+
+Simple info cards
+
+No charts here (keep it clean)
+
+🔹 2. FUNDING GOAL (TARGET DETAILS)
+🎯 Purpose
+
+Clearly show what is being asked.
+
+Content shown:
+
+Total funding goal (numeric)
+
+Minimum contribution (if any)
+
+Funding deadline
+
+Currency type (text only)
+
+Visuals:
+
+Large numeric highlight
+
+Goal progress indicator (static, no animation yet)
+
+🔹 3. CURRENT STATUS (LIVE PROGRESS)
+🎯 Purpose
+
+Show real-time state of funding.
+
+Content shown:
+
+Amount raised
+
+Amount remaining
+
+Percentage completed
+
+Number of supporters
+
+Days remaining
+
+Visualizations:
+
+Horizontal progress bar
+
+Percentage badge
+
+Small stat cards:
+
+Raised
+
+Remaining
+
+Supporters
+
+This section should be immediately understandable.
+
+🔹 4. FUND USAGE (WHERE MONEY GOES)
+🎯 Purpose
+
+Explain how the funds will be used.
+
+Content shown:
+
+Breakdown categories (example):
+
+Product development
+
+Marketing
+
+Operations
+
+Infrastructure
+
+Miscellaneous
+
+Each category shows:
+
+Percentage
+
+Approximate amount
+
+Short description
+
+Visualizations:
+
+Pie chart (primary)
+
+Legend with colors + labels
+
+Optional stacked bar (secondary)
+
+This is one of the most important trust sections.
+
+🔹 5. PROGRESS & TRENDS (ANALYTICS)
+🎯 Purpose
+
+Show how funding is evolving over time.
+
+Content shown:
+
+Funds raised per day/week
+
+Growth trend
+
+Supporter growth over time
+
+Visualizations:
+
+Line chart → funds raised vs time
+
+Optional second line → number of supporters
+
+Tooltips on hover (date + value)
+
+No hidden or blurred data.
+
+🔹 6. ROADMAP & MILESTONES
+🎯 Purpose
+
+Explain what happens at different funding levels.
+
+Content shown:
+
+Milestones like:
+
+25% → MVP development
+
+50% → Beta launch
+
+75% → Marketing expansion
+
+100% → Full launch
+
+Each milestone shows:
+
+Funding level
+
+Planned outcome
+
+Estimated timeline
+
+Visuals:
+
+Vertical timeline
+
+Progress indicator showing current position
+
+🔹 7. UPDATES & ANNOUNCEMENTS
+🎯 Purpose
+
+Maintain communication & trust.
+
+Content shown:
+
+Updates posted by funding owner
+
+Date + title
+
+Short update content
+
+Visuals:
+
+Timeline style list
+
+Most recent update highlighted
+
+🔹 8. SUPPORTERS & ACTIVITY
+🎯 Purpose
+
+Show community confidence.
+
+Content shown:
+
+List of supporters (name / anonymous label)
+
+Contribution ranges (not exact amounts if privacy needed)
+
+Recent activity feed
+
+Visuals:
+
+Avatar list
+
+Activity cards
+
+🔹 9. TEAM / ORGANIZATION
+🎯 Purpose
+
+Show who is behind the funding.
+
+Content shown:
+
+Founder / organization details
+
+Short bio
+
+Previous work (if any)
+
+Team members (optional)
+
+No restrictions here.
+
+📌 ACTION PANEL (RIGHT / HEADER AREA)
+
+Always visible:
+
+Support / Invest button
+
+Save
+
+Share
+
+This panel stays visible while scrolling.
+
+📊 SIDEBAR → SECTION → VISUAL MAP (QUICK VIEW)
+Sidebar Section	Data Type	Visualization
+Overview	Summary	Info cards
+Funding Goal	Target	Highlight numbers
+Current Status	Live progress	Progress bar + stats
+Fund Usage	Allocation	Pie chart
+Progress & Trends	Time-based	Line chart
+Roadmap	Milestones	Timeline
+Updates	Communication	Feed / list
+Supporters	Social proof	Avatar list
+Team	Identity	Profile cards
+🎨 UI & UX RULES (VERY IMPORTANT)
+
+Charts must be:
+
+Simple
+
+Clearly labeled
+
+No clutter
+
+Colors:
+
+Use consistent palette
+
+Same color in chart + legend
+
+Numbers:
+
+Rounded
+
+Readable
+
+No horizontal scroll
+
+No multiple scrollbars
+
+🚫 WHAT SHOULD NOT EXIST IN FUNDING PAGE
+
+❌ No locked sections
+❌ No hidden financials
+❌ No vague numbers
+❌ No “contact for details”
+❌ No fake scarcity
+
+🧠 FINAL GOLDEN RULE FOR FUNDING
+
+If someone is asked to support,
+they must be able to see everything clearly.
