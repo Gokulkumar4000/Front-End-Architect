@@ -24,7 +24,15 @@ import {
   Slash,
   UserX,
   Copy,
-  Check
+  Check,
+  Lock,
+  ChevronRight,
+  Info,
+  Target,
+  BarChart3,
+  Rocket,
+  ShieldCheck,
+  Zap
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -41,6 +49,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -217,10 +227,15 @@ const FeedCard = memo(({ post }: { post: Post }) => {
 
   const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [activeSection, setActiveSection] = useState("overview");
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
   const postUrl = `${window.location.origin}/post/${post.id}`;
+
+  const isIdea = post.type === "idea";
+  const isOwner = false; // Mock owner check
 
   const handleCopyLink = async () => {
     try {
@@ -499,10 +514,7 @@ const FeedCard = memo(({ post }: { post: Post }) => {
               <Button 
                 variant="ghost" 
                 className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2 bg-transparent border-0 hover:bg-transparent shadow-none relative z-10 mx-auto"
-                onClick={() => {
-                  // In a real app, this would navigate to a detailed view
-                  console.log("View full details for:", post.id);
-                }}
+                onClick={() => setShowDetailsDialog(true)}
               >
                 View full {String(post.type) === "investment" ? "investment" : String(post.type) === "project" ? "project" : "idea"}
               </Button>
@@ -613,6 +625,177 @@ const FeedCard = memo(({ post }: { post: Post }) => {
               {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
               {copied ? "Copied" : "Copy"}
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+        <DialogContent className="glass-card border-white/10 bg-background/95 backdrop-blur-2xl max-w-[900px] w-[95vw] h-[80vh] p-0 overflow-hidden flex flex-col md:flex-row border-0 shadow-2xl">
+          {/* Sidebar Navigation */}
+          <div className="w-full md:w-64 bg-white/[0.02] border-r border-white/5 p-4 flex flex-col gap-4">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                {typeIcon}
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white leading-none capitalize">{post.type}</h3>
+                <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-tighter">Navigation</p>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              {[
+                { id: "overview", label: "Overview", icon: Info, locked: false },
+                { id: "solution", label: "Solution", icon: Zap, locked: isIdea && !isOwner },
+                { id: "market", label: "Market", icon: Target, locked: isIdea && !isOwner },
+                { id: "traction", label: "Validation", icon: BarChart3, locked: isIdea && !isOwner },
+                { id: "needs", label: "Collaboration", icon: Users, locked: false },
+                { id: "owner", label: "Execution", icon: ShieldCheck, locked: !isOwner },
+              ].map((section) => (
+                <button
+                  key={section.id}
+                  onClick={() => setActiveSection(section.id)}
+                  className={cn(
+                    "w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-all duration-200 group/nav",
+                    activeSection === section.id 
+                      ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                      : "text-muted-foreground hover:bg-white/5 hover:text-white"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <section.icon className={cn("w-4 h-4", activeSection === section.id ? "text-white" : "text-muted-foreground group-hover/nav:text-primary")} />
+                    <span className="font-medium">{section.label}</span>
+                  </div>
+                  {section.locked && <Lock className="w-3 h-3 opacity-50" />}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-auto p-4 rounded-xl bg-primary/5 border border-primary/10">
+              <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-2">Engagement</p>
+              <div className="flex items-center justify-between">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full" onClick={handleLike}>
+                  <Heart className={cn("w-4 h-4", isLiked && "fill-current")} />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full" onClick={handleSave}>
+                  <Bookmark className={cn("w-4 h-4", isSaved && "fill-current")} />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full" onClick={() => setShowShareDialog(true)}>
+                  <Share2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col min-w-0 bg-background/40">
+            <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-10 w-10 border border-primary/20">
+                  <AvatarImage src={post.author.avatar} />
+                  <AvatarFallback>{post.author.name[0]}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <h2 className="text-lg font-bold text-white leading-none">{post.title}</h2>
+                  <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest">{post.author.name} • {post.author.role}</p>
+                </div>
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => setShowDetailsDialog(false)} className="rounded-full hover:bg-white/5">
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+
+            <ScrollArea className="flex-1 p-6">
+              <div className="max-w-2xl mx-auto space-y-8">
+                {activeSection === "overview" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <Info className="w-4 h-4" /> Project Overview
+                    </h3>
+                    <div className="prose prose-invert prose-sm">
+                      <p className="text-white/80 leading-relaxed text-base italic border-l-2 border-primary/30 pl-4 py-2 bg-primary/[0.02] rounded-r-lg">
+                        "Bridging the gap between initial concept and real-world implementation through data-driven innovation."
+                      </p>
+                      <p className="text-white/70 leading-relaxed text-sm mt-6">
+                        {post.content}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-8">
+                      {[
+                        { label: "Stage", value: "Concept / MVP", icon: Rocket },
+                        { label: "Industry", value: "SaaS / AI", icon: Zap },
+                        { label: "Target", value: "Enterprise", icon: Target },
+                      ].map((stat) => (
+                        <div key={stat.label} className="p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-primary/20 transition-colors group">
+                          <stat.icon className="w-4 h-4 text-primary/40 group-hover:text-primary transition-colors mb-2" />
+                          <p className="text-[10px] text-muted-foreground uppercase font-medium">{stat.label}</p>
+                          <p className="text-xs font-bold text-white mt-1">{stat.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {(isIdea && !isOwner && ["solution", "market", "traction"].includes(activeSection)) ? (
+                  <div className="h-[400px] flex flex-col items-center justify-center text-center p-8 space-y-6 animate-in zoom-in-95 duration-300">
+                    <div className="w-20 h-20 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10 relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-primary/20 scale-0 group-hover:scale-150 transition-transform duration-700 rounded-full" />
+                      <Lock className="w-8 h-8 text-primary relative z-10" />
+                    </div>
+                    <div className="space-y-2 max-w-sm">
+                      <h3 className="text-xl font-bold text-white">Restricted Access</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        To protect the integrity of this vision, {activeSection} details are only visible to verified collaborators and investors.
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3 w-full max-w-xs">
+                      <Button className="flex-1 font-bold shadow-lg shadow-primary/20">Request Access</Button>
+                      <Button variant="outline" className="flex-1 font-bold border-white/10 hover:bg-white/5">Connect</Button>
+                    </div>
+                  </div>
+                ) : (
+                  activeSection !== "overview" && (
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                       <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                        {activeSection === "solution" && <Zap className="w-4 h-4" />}
+                        {activeSection === "market" && <Target className="w-4 h-4" />}
+                        {activeSection === "traction" && <BarChart3 className="w-4 h-4" />}
+                        {activeSection === "needs" && <Users className="w-4 h-4" />}
+                        {activeSection === "owner" && <ShieldCheck className="w-4 h-4" />}
+                        {activeSection}
+                      </h3>
+                      <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                        <p className="text-sm text-white/70 leading-relaxed">
+                          Detailed implementation strategies, market analysis reports, and validation metrics for the {post.title} initiative.
+                        </p>
+                        <div className="h-32 rounded-xl bg-gradient-to-br from-primary/5 to-transparent border border-white/5 flex items-center justify-center italic text-muted-foreground text-xs">
+                          Extended content for {activeSection} section...
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            </ScrollArea>
+
+            <div className="p-4 border-t border-white/5 bg-white/[0.02] shrink-0">
+              <div className="flex items-center justify-between max-w-2xl mx-auto w-full">
+                <div className="flex items-center gap-3">
+                   <div className="flex -space-x-2">
+                    {[1, 2, 3].map((i) => (
+                      <Avatar key={i} className="h-7 w-7 border-2 border-background">
+                        <AvatarFallback className="text-[8px]">U{i}</AvatarFallback>
+                      </Avatar>
+                    ))}
+                  </div>
+                  <span className="text-[10px] text-muted-foreground font-medium">12 others are interested</span>
+                </div>
+                <Button size="sm" className="font-bold px-6 h-9 shadow-lg shadow-primary/20">
+                  {actionText || "Get Involved"}
+                </Button>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

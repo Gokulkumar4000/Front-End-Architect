@@ -1,0 +1,199 @@
+🧠 IDEA POSTS (STRICT VISIBILITY CONTROL ✅)
+
+Reason: Ideas can be copied → must be protected.
+
+✅ PUBLIC (Everyone can see)
+
+Shown in Feed + Preview popup
+
+Idea title
+
+Short tagline
+
+Problem statement (high-level)
+
+Target users / industry
+
+Domain tags
+
+Idea stage (Concept / MVP / Live)
+
+Vision / outcome (non-technical)
+
+Owner name + role (no contact info)
+
+Engagement:
+
+Like
+
+Save
+
+Comment (optional, moderated)
+
+🚫 No solution details
+🚫 No technical explanation
+
+🔒 RESTRICTED (LOCKED – requires action)
+
+Visible as locked sections in popup sidebar
+
+Solution overview (what, not how)
+
+Validation summary (numbers only)
+
+Market opportunity (high-level)
+
+Revenue idea (1–2 lines)
+
+Collaboration needs
+
+What buyer/investor gets
+
+Access methods:
+
+Request access
+
+Buy idea
+
+👑 OWNER-ONLY (Never visible to others)
+
+Full execution steps
+
+Architecture / algorithms
+
+Exact workflows
+
+Financial projections
+
+Documents / pitch decks
+
+Edit visibility controls
+
+Grant / revoke access
+
+Transfer ownership
+
+🔐 IDEA-SPECIFIC PROTECTION RULES
+
+Disable text selection in restricted sections
+
+No copy / paste
+
+No downloads
+
+No screenshots warning (UX-level)
+
+Watermark sensitive previews
+
+Access logs for owner
+
+✅ ONLY ideas follow this strict rule
+
+🛠 PROJECT POSTS (NO STRICT RESTRICTION ❌)
+
+Projects are meant to collaborate on — NOT hidden
+
+Publicly visible:
+
+Full project description
+
+Tech stack
+
+Roles needed
+
+Responsibilities
+
+Benefits
+
+Timeline
+
+Apply button
+
+🔓 No locked sections
+👑 Owner-only:
+
+Applicant management
+
+Edit project
+
+Close/open hiring
+
+💰 FUNDING POSTS (NO STRICT RESTRICTION ❌)
+
+Funding requires transparency
+
+Publicly visible:
+
+Full idea/business explanation
+
+Funding goal
+
+Usage of funds
+
+Progress bar
+
+Domain & stage
+
+Investor CTA
+
+👑 Owner-only:
+
+Investor list
+
+Payment tracking
+
+Legal docs
+
+Cap table (optional)
+
+🧑‍💼 JOB / RECRUITMENT POSTS (NO STRICT RESTRICTION ❌)
+Publicly visible:
+
+Role details
+
+Skills
+
+Experience
+
+Apply options
+
+Company/project info
+
+👑 Owner-only:
+
+Applications
+
+Reviews
+
+Accept / reject
+
+🧭 POPUP BEHAVIOR (IMPORTANT)
+
+When user clicks View full idea / project / funding:
+
+For IDEAS
+
+Opens popup
+
+Sidebar with sections:
+
+🔓 Public
+
+🔒 Locked
+
+👑 Owner
+
+Locked sections show CTA
+
+For PROJECT / FUNDING / JOB
+
+Opens popup
+
+All content visible
+
+Sidebar only for navigation (no locks)
+
+🧠 GOLDEN RULE (FINAL)
+
+Only IDEAS are protected.
+Everything else is built to be open, discoverable, and collaborative.
