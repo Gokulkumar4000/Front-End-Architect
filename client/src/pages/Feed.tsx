@@ -160,6 +160,127 @@ const MOCK_POSTS: Post[] = [
   }
 ];
 
+interface DetailsSidebarProps {
+  post: Post;
+  isOwner: boolean;
+  activeSection: string;
+  setActiveSection: (section: string) => void;
+  isLiked: boolean;
+  isSaved: boolean;
+  handleLike: () => void;
+  handleSave: () => void;
+  setShowShareDialog: (show: boolean) => void;
+  typeIcon: React.ReactNode;
+}
+
+const DetailsSidebar = ({ 
+  post, 
+  isOwner, 
+  activeSection, 
+  setActiveSection, 
+  isLiked, 
+  isSaved, 
+  handleLike, 
+  handleSave, 
+  setShowShareDialog,
+  typeIcon 
+}: DetailsSidebarProps) => {
+  const navItems = useMemo(() => {
+    const isIdea = post.type === "idea";
+    if (isIdea) {
+      return [
+        { id: "overview", label: "Overview", icon: Info, locked: false },
+        { id: "problem", label: "Problem Statement", icon: Target, locked: false },
+        { id: "solution", label: "Solution Snapshot", icon: Zap, locked: !isOwner },
+        { id: "traction", label: "Validation & Traction", icon: BarChart3, locked: !isOwner },
+        { id: "market", label: "Market & Business", icon: Coins, locked: !isOwner },
+        { id: "needs", label: "Collaboration Needs", icon: Users, locked: false },
+        { id: "owner", label: "Owner Panel", icon: ShieldCheck, locked: !isOwner, ownerOnly: true },
+      ];
+    }
+    
+    if (post.type === "project") {
+      return [
+        { id: "overview", label: "Overview", icon: Info },
+        { id: "problem", label: "Problem Statement", icon: HelpCircle },
+        { id: "description", label: "Project Description", icon: FileText },
+        { id: "roles", label: "Roles Needed", icon: Users },
+        { id: "skills", icon: Star, label: "Skills Required" },
+        { id: "timeline", label: "Timeline & Milestones", icon: Calendar },
+        { id: "benefits", label: "Benefits & Learning", icon: GraduationCap },
+        { id: "team", label: "Team & Owner", icon: ShieldCheck },
+        { id: "updates", label: "Updates", icon: Bell },
+      ];
+    }
+
+    if (post.type === "fund") {
+      return [
+        { id: "overview", label: "Overview", icon: Info },
+        { id: "goal", label: "Funding Goal", icon: Target },
+        { id: "status", label: "Current Status", icon: BarChart3 },
+        { id: "usage", label: "Fund Usage", icon: PieChart },
+        { id: "progress", label: "Progress & Charts", icon: TrendingUp },
+        { id: "roadmap", label: "Roadmap", icon: Map },
+        { id: "updates", label: "Updates", icon: Bell },
+        { id: "team", label: "Team / Founder", icon: ShieldCheck },
+      ];
+    }
+
+    return [{ id: "overview", label: "Overview", icon: Info }];
+  }, [post.type, isOwner]);
+
+  return (
+    <div className="w-full md:w-64 bg-white/[0.02] border-r border-white/5 p-4 flex flex-col gap-4">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+          {typeIcon}
+        </div>
+        <div>
+          <h3 className="text-sm font-bold text-white leading-none capitalize">{post.type}</h3>
+          <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-tighter">Navigation</p>
+        </div>
+      </div>
+
+      <div className="space-y-1">
+        {navItems.map((section) => (
+          <button
+            key={section.id}
+            onClick={() => setActiveSection(section.id)}
+            className={cn(
+              "w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-all duration-200 group/nav",
+              activeSection === section.id 
+                ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                : "text-muted-foreground hover:bg-white/5 hover:text-white"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <section.icon className={cn("w-4 h-4", activeSection === section.id ? "text-white" : "text-muted-foreground group-hover/nav:text-primary")} />
+              <span className="font-medium">{section.label}</span>
+            </div>
+            {('locked' in section && section.locked) && <Lock className="w-3 h-3 opacity-50" />}
+            {('ownerOnly' in section && section.ownerOnly) && <span className="text-[10px]">*</span>}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-auto p-4 rounded-xl bg-primary/5 border border-primary/10">
+        <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-2">Engagement</p>
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full" onClick={handleLike}>
+            <Heart className={cn("w-4 h-4", isLiked && "fill-current")} />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full" onClick={handleSave}>
+            <Bookmark className={cn("w-4 h-4", isSaved && "fill-current")} />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full" onClick={() => setShowShareDialog(true)}>
+            <Share2 className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const CommentItem = ({ comment, isReply = false, onReply, parentId }: { comment: Comment; isReply?: boolean; onReply: (username: string, commentId: string) => void; parentId?: string }) => {
   const [liked, setLiked] = useState(false);
   const [clikes, setClikes] = useState(comment.likes);
@@ -640,110 +761,18 @@ const FeedCard = memo(({ post }: { post: Post }) => {
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
         <DialogContent className="glass-card border-white/10 bg-background/95 backdrop-blur-2xl max-w-[900px] w-[95vw] h-[80vh] p-0 overflow-hidden flex flex-col md:flex-row border-0 shadow-2xl">
           {/* Sidebar Navigation */}
-          <div className="w-full md:w-64 bg-white/[0.02] border-r border-white/5 p-4 flex flex-col gap-4">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                {typeIcon}
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-white leading-none capitalize">{post.type}</h3>
-                <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-tighter">Navigation</p>
-              </div>
-            </div>
-
-    const navItems = useMemo(() => {
-      const isIdea = post.type === "idea";
-      if (isIdea) {
-        return [
-          { id: "overview", label: "Overview", icon: Info, locked: false },
-          { id: "problem", label: "Problem Statement", icon: Target, locked: false },
-          { id: "solution", label: "Solution Snapshot", icon: Zap, locked: !isOwner },
-          { id: "traction", label: "Validation & Traction", icon: BarChart3, locked: !isOwner },
-          { id: "market", label: "Market & Business", icon: Coins, locked: !isOwner },
-          { id: "needs", label: "Collaboration Needs", icon: Users, locked: false },
-          { id: "owner", label: "Owner Panel", icon: ShieldCheck, locked: !isOwner, ownerOnly: true },
-        ];
-      }
-      
-      if (post.type === "project") {
-        return [
-          { id: "overview", label: "Overview", icon: Info },
-          { id: "problem", label: "Problem Statement", icon: HelpCircle },
-          { id: "description", label: "Project Description", icon: FileText },
-          { id: "roles", label: "Roles Needed", icon: Users },
-          { id: "skills", icon: Star, label: "Skills Required" },
-          { id: "timeline", label: "Timeline & Milestones", icon: Calendar },
-          { id: "benefits", label: "Benefits & Learning", icon: GraduationCap },
-          { id: "team", label: "Team & Owner", icon: ShieldCheck },
-          { id: "updates", label: "Updates", icon: Bell },
-        ];
-      }
-
-      if (post.type === "fund") {
-        return [
-          { id: "overview", label: "Overview", icon: Info },
-          { id: "goal", label: "Funding Goal", icon: Target },
-          { id: "status", label: "Current Status", icon: BarChart3 },
-          { id: "usage", label: "Fund Usage", icon: PieChart },
-          { id: "progress", label: "Progress & Charts", icon: TrendingUp },
-          { id: "roadmap", label: "Roadmap", icon: Map },
-          { id: "updates", label: "Updates", icon: Bell },
-          { id: "team", label: "Team / Founder", icon: ShieldCheck },
-        ];
-      }
-
-      return [{ id: "overview", label: "Overview", icon: Info }];
-    }, [post.type, isOwner]);
-
-    return (
-      <div className="w-full md:w-64 bg-white/[0.02] border-r border-white/5 p-4 flex flex-col gap-4">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
-            {typeIcon}
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white leading-none capitalize">{post.type}</h3>
-            <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-tighter">Navigation</p>
-          </div>
-        </div>
-
-        <div className="space-y-1">
-          {navItems.map((section) => (
-            <button
-              key={section.id}
-              onClick={() => setActiveSection(section.id)}
-              className={cn(
-                "w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-all duration-200 group/nav",
-                activeSection === section.id 
-                  ? "bg-primary text-white shadow-lg shadow-primary/20" 
-                  : "text-muted-foreground hover:bg-white/5 hover:text-white"
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <section.icon className={cn("w-4 h-4", activeSection === section.id ? "text-white" : "text-muted-foreground group-hover/nav:text-primary")} />
-                <span className="font-medium">{section.label}</span>
-              </div>
-              {('locked' in section && section.locked) && <Lock className="w-3 h-3 opacity-50" />}
-              {('ownerOnly' in section && section.ownerOnly) && <span className="text-[10px]">👑</span>}
-            </button>
-          ))}
-        </div>
-
-            <div className="mt-auto p-4 rounded-xl bg-primary/5 border border-primary/10">
-              <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-2">Engagement</p>
-              <div className="flex items-center justify-between">
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full" onClick={handleLike}>
-                  <Heart className={cn("w-4 h-4", isLiked && "fill-current")} />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full" onClick={handleSave}>
-                  <Bookmark className={cn("w-4 h-4", isSaved && "fill-current")} />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full" onClick={() => setShowShareDialog(true)}>
-                  <Share2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
+          <DetailsSidebar 
+            post={post} 
+            isOwner={isOwner} 
+            activeSection={activeSection} 
+            setActiveSection={setActiveSection}
+            isLiked={isLiked}
+            isSaved={isSaved}
+            handleLike={handleLike}
+            handleSave={handleSave}
+            setShowShareDialog={setShowShareDialog}
+            typeIcon={typeIcon}
+          />
 
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col min-w-0 bg-background/40">
