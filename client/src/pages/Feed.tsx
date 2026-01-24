@@ -1283,8 +1283,70 @@ const FeedSkeleton = () => (
   </div>
 );
 
+const TRENDING_POSTS_DATA = [
+  { id: 1, title: "The Future of Web3 in 2026", author: "Alice Visionary", likes: 2847, comments: 342 },
+  { id: 2, title: "Sustainable Tech: More than a trend", author: "Bob Builder", likes: 2534, comments: 289 },
+  { id: 3, title: "Why MVPs Fail: A post-mortem", author: "Charlie Dev", likes: 2156, comments: 267 },
+  { id: 4, title: "AI-Powered Development: The New Normal", author: "Diana Code", likes: 1892, comments: 198 },
+  { id: 5, title: "Building in Public: Lessons Learned", author: "Evan Startup", likes: 1756, comments: 187 },
+  { id: 6, title: "From Zero to Series A in 18 Months", author: "Fiona Founder", likes: 1654, comments: 176 },
+  { id: 7, title: "The Rise of No-Code Platforms", author: "George Tech", likes: 1543, comments: 165 },
+  { id: 8, title: "Remote Team Management Best Practices", author: "Hannah HR", likes: 1432, comments: 154 },
+  { id: 9, title: "Scaling Your Startup: Common Pitfalls", author: "Ian Investor", likes: 1321, comments: 143 },
+  { id: 10, title: "UX Design for SaaS Products", author: "Julia Design", likes: 1210, comments: 132 },
+  { id: 11, title: "Customer Discovery: Finding Product-Market Fit", author: "Kevin PM", likes: 1198, comments: 128 },
+  { id: 12, title: "The Art of Pitching to VCs", author: "Lisa Pitch", likes: 1087, comments: 117 },
+  { id: 13, title: "Bootstrapping vs Raising Capital", author: "Mike Money", likes: 976, comments: 106 },
+  { id: 14, title: "Technical Debt: When to Pay It Off", author: "Nancy CTO", likes: 965, comments: 95 },
+  { id: 15, title: "Building a Developer Community", author: "Oscar DevRel", likes: 854, comments: 84 },
+  { id: 16, title: "The Future of Remote Work", author: "Paula Remote", likes: 843, comments: 73 },
+  { id: 17, title: "Hiring Your First 10 Engineers", author: "Quinn Hire", likes: 732, comments: 62 },
+  { id: 18, title: "Growth Hacking for Early-Stage Startups", author: "Rachel Growth", likes: 721, comments: 51 },
+  { id: 19, title: "API Design Best Practices", author: "Sam Backend", likes: 610, comments: 40 },
+  { id: 20, title: "Mobile-First Development Strategy", author: "Tina Mobile", likes: 599, comments: 39 },
+  { id: 21, title: "Security Considerations for Startups", author: "Uma Security", likes: 588, comments: 38 },
+  { id: 22, title: "Data-Driven Decision Making", author: "Victor Data", likes: 577, comments: 37 },
+  { id: 23, title: "Building Inclusive Products", author: "Wendy DEI", likes: 566, comments: 36 },
+  { id: 24, title: "The Psychology of User Engagement", author: "Xavier UX", likes: 555, comments: 35 },
+  { id: 25, title: "Microservices vs Monolith", author: "Yara Arch", likes: 544, comments: 34 },
+  { id: 26, title: "Effective Sprint Planning", author: "Zach Agile", likes: 533, comments: 33 },
+  { id: 27, title: "Cloud Cost Optimization Tips", author: "Amy Cloud", likes: 522, comments: 32 },
+  { id: 28, title: "Building Real-Time Applications", author: "Ben Real", likes: 511, comments: 31 },
+  { id: 29, title: "The Impact of AI on Jobs", author: "Carol AI", likes: 500, comments: 30 },
+  { id: 30, title: "Creating Viral Content", author: "Dan Viral", likes: 489, comments: 29 },
+  { id: 31, title: "Edge Computing Explained", author: "Emma Edge", likes: 478, comments: 28 },
+  { id: 32, title: "Building Trust with Users", author: "Frank Trust", likes: 467, comments: 27 },
+  { id: 33, title: "The Art of Delegation", author: "Grace Lead", likes: 456, comments: 26 },
+  { id: 34, title: "Open Source Business Models", author: "Henry Open", likes: 445, comments: 25 },
+  { id: 35, title: "Monitoring and Observability", author: "Ivy Ops", likes: 434, comments: 24 },
+  { id: 36, title: "Cross-Platform Development", author: "Jack Cross", likes: 423, comments: 23 },
+  { id: 37, title: "Building Accessible Interfaces", author: "Kate A11y", likes: 412, comments: 22 },
+  { id: 38, title: "The Future of Payments", author: "Leo Fintech", likes: 401, comments: 21 },
+  { id: 39, title: "Machine Learning for Beginners", author: "Mia ML", likes: 390, comments: 20 },
+  { id: 40, title: "Sustainable Software Engineering", author: "Noah Green", likes: 379, comments: 19 },
+  { id: 41, title: "Building APIs That Scale", author: "Olivia Scale", likes: 368, comments: 18 },
+  { id: 42, title: "The Power of User Feedback", author: "Pete Feedback", likes: 357, comments: 17 },
+  { id: 43, title: "Effective Documentation Practices", author: "Quinn Docs", likes: 346, comments: 16 },
+  { id: 44, title: "Testing Strategies for Startups", author: "Rose Test", likes: 335, comments: 15 },
+  { id: 45, title: "Building a Strong Brand", author: "Steve Brand", likes: 324, comments: 14 },
+  { id: 46, title: "Understanding Your Competition", author: "Tara Compete", likes: 313, comments: 13 },
+  { id: 47, title: "The Value of Side Projects", author: "Uri Side", likes: 302, comments: 12 },
+  { id: 48, title: "Building Resilient Systems", author: "Val Resilient", likes: 291, comments: 11 },
+  { id: 49, title: "The Art of Code Reviews", author: "Will Review", likes: 280, comments: 10 },
+  { id: 50, title: "Planning for Scale from Day One", author: "Xena Scale", likes: 269, comments: 9 }
+];
+
 export default function Feed() {
   const [loading, setLoading] = useState(true);
+  const [showTrendingDialog, setShowTrendingDialog] = useState(false);
+  const [trendingPage, setTrendingPage] = useState(1);
+  const postsPerPage = 10;
+  const totalPages = 5;
+
+  const paginatedTrendingPosts = TRENDING_POSTS_DATA.slice(
+    (trendingPage - 1) * postsPerPage,
+    trendingPage * postsPerPage
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 300);
@@ -1336,18 +1398,129 @@ export default function Feed() {
           <Card className="glass-card border-white/5 p-6">
             <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Trending Posts</h4>
             <div className="space-y-3">
-              {[
-                "The Future of Web3 in 2026",
-                "Sustainable Tech: More than a trend",
-                "Why MVPs Fail: A post-mortem"
-              ].map((topic, i) => (
-                <div key={topic} className="group cursor-pointer">
+              {TRENDING_POSTS_DATA.slice(0, 3).map((post, i) => (
+                <div 
+                  key={post.id} 
+                  className={cn(
+                    "group cursor-pointer p-2 rounded-lg transition-all",
+                    i === 0 && "bg-gradient-to-r from-primary/20 to-primary/5 shadow-[0_0_20px_rgba(168,85,247,0.4)]",
+                    i === 1 && "bg-gradient-to-r from-primary/15 to-primary/5 shadow-[0_0_12px_rgba(168,85,247,0.25)]",
+                    i === 2 && "bg-gradient-to-r from-primary/10 to-transparent shadow-[0_0_6px_rgba(168,85,247,0.15)]"
+                  )}
+                >
                   <p className="text-[10px] text-muted-foreground mb-0.5">#{i+1} Trending</p>
-                  <h5 className="text-xs font-bold group-hover:text-primary transition-colors line-clamp-1">{topic}</h5>
+                  <h5 className="text-xs font-bold group-hover:text-primary transition-colors line-clamp-1">{post.title}</h5>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="text-[9px] text-muted-foreground flex items-center gap-1">
+                      <Heart className="w-3 h-3" /> {post.likes.toLocaleString()}
+                    </span>
+                    <span className="text-[9px] text-muted-foreground flex items-center gap-1">
+                      <MessageSquare className="w-3 h-3" /> {post.comments}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
+            <Button 
+              variant="outline" 
+              className="w-full mt-4 text-xs" 
+              onClick={() => setShowTrendingDialog(true)}
+              data-testid="button-view-more-trending"
+            >
+              View More
+            </Button>
           </Card>
+
+          <Dialog open={showTrendingDialog} onOpenChange={setShowTrendingDialog}>
+            <DialogContent className="glass-card border-white/10 bg-background/95 backdrop-blur-xl max-w-[600px] max-h-[80vh] overflow-hidden flex flex-col">
+              <DialogHeader>
+                <DialogTitle className="text-gradient-primary flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5" />
+                  Trending Posts
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground">
+                  The most popular posts this week
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex-1 overflow-y-auto space-y-2 py-4">
+                {paginatedTrendingPosts.map((post, idx) => {
+                  const globalIndex = (trendingPage - 1) * postsPerPage + idx;
+                  return (
+                    <div 
+                      key={post.id} 
+                      className={cn(
+                        "p-3 rounded-lg cursor-pointer hover-elevate transition-all",
+                        globalIndex === 0 && "bg-gradient-to-r from-primary/25 to-primary/10 shadow-[0_0_24px_rgba(168,85,247,0.5)] border border-primary/30",
+                        globalIndex === 1 && "bg-gradient-to-r from-primary/18 to-primary/8 shadow-[0_0_16px_rgba(168,85,247,0.35)] border border-primary/20",
+                        globalIndex === 2 && "bg-gradient-to-r from-primary/12 to-primary/5 shadow-[0_0_10px_rgba(168,85,247,0.2)] border border-primary/15",
+                        globalIndex > 2 && "bg-white/5 border border-white/5"
+                      )}
+                      data-testid={`trending-post-${post.id}`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge variant="secondary" className={cn(
+                              "text-[9px]",
+                              globalIndex === 0 && "bg-primary/30 text-primary",
+                              globalIndex === 1 && "bg-primary/25 text-primary",
+                              globalIndex === 2 && "bg-primary/20 text-primary"
+                            )}>
+                              #{globalIndex + 1}
+                            </Badge>
+                            <span className="text-[10px] text-muted-foreground">{post.author}</span>
+                          </div>
+                          <h5 className="text-sm font-bold line-clamp-1">{post.title}</h5>
+                          <div className="flex items-center gap-4 mt-2">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Heart className="w-3.5 h-3.5 text-red-400" /> {post.likes.toLocaleString()}
+                            </span>
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <MessageSquare className="w-3.5 h-3.5 text-blue-400" /> {post.comments}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setTrendingPage(p => Math.max(1, p - 1))}
+                  disabled={trendingPage === 1}
+                  data-testid="button-trending-prev"
+                >
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <Button
+                      key={page}
+                      variant={trendingPage === page ? "default" : "outline"}
+                      size="sm"
+                      className="w-8 h-8 p-0"
+                      onClick={() => setTrendingPage(page)}
+                      data-testid={`button-trending-page-${page}`}
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setTrendingPage(p => Math.min(totalPages, p + 1))}
+                  disabled={trendingPage === totalPages}
+                  data-testid="button-trending-next"
+                >
+                  Next
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           <Card className="glass-card border-white/5 p-6">
             <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Suggested Connections</h4>
