@@ -248,18 +248,25 @@ const DetailsSidebar = ({
             key={section.id}
             onClick={() => setActiveSection(section.id)}
             className={cn(
-              "w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-all duration-200 group/nav",
+              "w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-all duration-300 group/nav relative overflow-hidden",
               activeSection === section.id 
                 ? "bg-primary text-white shadow-lg shadow-primary/20" 
-                : "text-muted-foreground hover:bg-white/5 hover:text-white"
+                : "text-muted-foreground hover:bg-white/5 hover:text-white active-elevate-2"
             )}
           >
-            <div className="flex items-center gap-3">
+            {activeSection === section.id && (
+              <div className="absolute inset-0 translate-x-[-100%] animate-[shimmer_2s_infinite] pointer-events-none z-10">
+                <div className="h-full w-full bg-gradient-to-r from-transparent via-purple-400/20 to-transparent skew-x-[-20deg]" />
+              </div>
+            )}
+            <div className="flex items-center gap-3 relative z-20">
               <section.icon className={cn("w-4 h-4", activeSection === section.id ? "text-white" : "text-muted-foreground group-hover/nav:text-primary")} />
               <span className="font-medium">{section.label}</span>
             </div>
-            {('locked' in section && section.locked) && <Lock className="w-3 h-3 text-muted-foreground/50" />}
-            {('ownerOnly' in section && section.ownerOnly) && <Lock className="w-3 h-3 text-primary/80" />}
+            <div className="relative z-20">
+              {('locked' in section && section.locked && !('ownerOnly' in section)) && <Lock className="w-3 h-3 text-muted-foreground/50" />}
+              {('ownerOnly' in section && section.ownerOnly) && <Lock className="w-3 h-3 text-primary/80" />}
+            </div>
           </button>
         ))}
       </div>
