@@ -601,8 +601,8 @@ const FeedCard = memo(({ post }: { post: Post }) => {
               Copy the link below to share this vision with your network.
             </DialogDescription>
           </DialogHeader>
-          <div className="mt-4 flex items-center gap-2">
-            <div className="flex-1 bg-white/5 border border-white/10 rounded-md p-2 text-[11px] text-white/60 truncate">
+          <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <div className="flex-1 bg-white/5 border border-white/10 rounded-md p-2 text-[11px] text-white/60 break-all">
               {postUrl}
             </div>
             <Button 
