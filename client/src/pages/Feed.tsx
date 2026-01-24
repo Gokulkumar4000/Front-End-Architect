@@ -354,6 +354,7 @@ const FeedCard = memo(({ post }: { post: Post }) => {
   const userRole = localStorage.getItem("userRole") as string;
   const [isFollowing, setIsFollowing] = useState(false);
   const [showFollowDialog, setShowFollowDialog] = useState(false);
+  const [showUnfollowDialog, setShowUnfollowDialog] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(post.stats.likes);
@@ -484,11 +485,16 @@ const FeedCard = memo(({ post }: { post: Post }) => {
   };
 
   const handleFollowClick = () => {
-    if (isFollowing) {
-      setIsFollowing(false);
-    } else {
-      setShowFollowDialog(true);
-    }
+    setShowFollowDialog(true);
+  };
+
+  const handleUnfollowClick = () => {
+    setIsFollowing(false);
+    setShowUnfollowDialog(false);
+    toast({
+      title: "Unfollowed",
+      description: `You are no longer following ${post.author.name}.`,
+    });
   };
 
   const confirmFollow = () => {
@@ -509,10 +515,13 @@ const FeedCard = memo(({ post }: { post: Post }) => {
               <div className="flex items-center gap-2 flex-wrap">
                 <h4 className="text-sm font-bold leading-none">{post.author.name}</h4>
                 {isFollowing ? (
-                  <div className="flex items-center gap-1.5 text-[10px] text-primary/80 font-medium bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10">
+                  <button 
+                    onClick={() => setShowUnfollowDialog(true)}
+                    className="flex items-center gap-1.5 text-[10px] text-primary/80 font-medium bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10 hover:bg-primary/10 transition-colors"
+                  >
                     <CheckCircle2 className="w-3 h-3" />
                     Following
-                  </div>
+                  </button>
                 ) : (
                   <Button 
                     variant="default"
@@ -737,6 +746,37 @@ const FeedCard = memo(({ post }: { post: Post }) => {
               className="bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 h-10 font-bold"
             >
               Follow Now
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showUnfollowDialog} onOpenChange={setShowUnfollowDialog}>
+        <AlertDialogContent className="glass-card border-white/10 bg-background/90 backdrop-blur-xl max-w-[400px]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-3">
+              <Avatar className="h-10 w-10 border border-primary/20">
+                <AvatarImage src={post.author.avatar} />
+                <AvatarFallback>{post.author.name[0]}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                <span className="text-lg font-bold text-gradient-primary">Unfollow {post.author.name}?</span>
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{post.author.role}</span>
+              </div>
+            </AlertDialogTitle>
+            <AlertDialogDescription className="pt-4">
+              <p className="text-sm text-white/70">
+                Are you sure you want to unfollow <span className="text-primary font-bold">{post.author.name}</span>? You will stop receiving updates from this visionary.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-0 mt-6">
+            <AlertDialogCancel className="bg-white/5 border-white/10 hover:bg-white/10 hover:text-white transition-all h-10">Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleUnfollowClick}
+              className="bg-destructive text-white hover:bg-destructive/90 shadow-lg shadow-destructive/20 h-10 font-bold"
+            >
+              Unfollow
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
