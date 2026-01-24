@@ -1184,7 +1184,7 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                               <p className="text-[10px] text-muted-foreground">{supporter.type} Supporter</p>
                             </div>
                           </div>
-                          <Badge variant="ghost" className="text-[9px] bg-primary/5 text-primary">{supporter.range}</Badge>
+                          <Badge variant="secondary" className="text-[9px] bg-primary/5 text-primary">{supporter.range}</Badge>
                         </div>
                       ))}
                     </div>
@@ -1354,11 +1354,14 @@ export default function Feed() {
             <div className="space-y-4">
               {[
                 { name: "Sarah Tech", role: "CTO" },
-                { name: "Mike Money", role: "Angel Investor" }
+                { name: "Mike Money", role: "Angel Investor" },
+                { name: "Alex Builder", role: "Full Stack Developer" },
+                { name: "Emma Vision", role: "Product Designer" },
+                { name: "James Capital", role: "VC Partner" }
               ].map(person => (
-                <div key={person.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
+                <div key={person.name} className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Avatar className="h-8 w-8 shrink-0">
                       <AvatarFallback>{person.name[0]}</AvatarFallback>
                     </Avatar>
                     <div className="overflow-hidden">
@@ -1366,10 +1369,13 @@ export default function Feed() {
                       <p className="text-[10px] text-muted-foreground truncate">{person.role}</p>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" className="h-7 text-[10px] px-2">Follow</Button>
+                  <Button variant="outline" size="sm" data-testid={`button-follow-${person.name.replace(/\s+/g, '-').toLowerCase()}`}>Follow</Button>
                 </div>
               ))}
             </div>
+            <Button variant="ghost" className="w-full mt-4 text-xs text-muted-foreground" data-testid="button-view-more-connections">
+              View More
+            </Button>
           </Card>
         </div>
       </div>
