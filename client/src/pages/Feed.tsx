@@ -258,8 +258,8 @@ const DetailsSidebar = ({
               <section.icon className={cn("w-4 h-4", activeSection === section.id ? "text-white" : "text-muted-foreground group-hover/nav:text-primary")} />
               <span className="font-medium">{section.label}</span>
             </div>
-            {('locked' in section && section.locked) && <Lock className="w-3 h-3 opacity-50" />}
-            {('ownerOnly' in section && section.ownerOnly) && <span className="text-[10px]"></span>}
+            {('locked' in section && section.locked) && <Lock className="w-3 h-3 text-muted-foreground/50" />}
+            {('ownerOnly' in section && section.ownerOnly) && <Lock className="w-3 h-3 text-primary/80" />}
           </button>
         ))}
       </div>
