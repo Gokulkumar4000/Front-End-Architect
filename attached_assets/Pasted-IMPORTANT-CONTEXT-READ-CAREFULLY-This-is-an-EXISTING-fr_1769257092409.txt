@@ -1,0 +1,191 @@
+IMPORTANT CONTEXT (READ CAREFULLY)
+
+This is an EXISTING frontend-only project.
+Use mock data ONLY.
+Do NOT add backend logic.
+Do NOT add payment flows.
+Do NOT add premium, upgrade, pricing, or subscription UI.
+Do NOT navigate to new pages.
+
+Your task is to create a REUSABLE FULL-SCREEN POPUP (MODAL)
+that opens when a user clicks:
+- View Full Idea
+- View Full Project
+- View Full Funding
+
+================================================
+GLOBAL POPUP RULES (STRICT)
+================================================
+
+- Popup must NOT change the current page route
+- Popup covers ~85–90% of the screen
+- Background page should blur
+- Popup has:
+  - Fixed header
+  - Fixed left sidebar (navigation)
+  - ONE scrollable content area
+- No horizontal scrolling anywhere
+- No multiple vertical scrollbars
+
+================================================
+POPUP HEADER (COMMON)
+================================================
+
+Header must include:
+- Title
+- Content type badge (Idea / Project / Funding)
+- Close button (✕)
+- Primary action button (context-based, UI only)
+
+Header is fixed and always visible.
+
+================================================
+LEFT SIDEBAR (NAVIGATION ONLY)
+================================================
+
+Sidebar:
+- Used ONLY for section navigation
+- Clicking an item scrolls to that section
+- Active item highlighted
+- Sticky position
+
+Sidebar content depends on popup type.
+
+================================================
+IDEA POPUP (STRICT VISIBILITY CONTROL)
+================================================
+
+ONLY IDEAS have restricted visibility.
+
+SIDEBAR SECTIONS FOR IDEA:
+1. Overview (Public)
+2. Problem & Opportunity (Public)
+3. Solution Snapshot (Restricted)
+4. Validation & Traction (Restricted)
+5. Market & Business (Restricted)
+6. Collaboration Needs (Partially Public)
+7. Access & Ownership (Public)
+8. Updates (Public)
+9. Owner Control Panel (Owner-only)
+
+------------------------------------------------
+IDEA CONTENT RULES
+------------------------------------------------
+
+PUBLIC SECTIONS (visible to all):
+- High-level explanation
+- No technical details
+- No implementation steps
+
+RESTRICTED SECTIONS:
+- Show locked UI with blur
+- Show short teaser text
+- Show buttons:
+  - Request Access
+  - Buy Idea
+- Do NOT reveal content
+
+OWNER-ONLY SECTIONS:
+- Fully visible only to owner
+- Edit & visibility controls
+- Never shown or hinted to others
+
+Disable copy/select actions in restricted sections.
+
+================================================
+PROJECT POPUP (NO RESTRICTIONS)
+================================================
+
+Projects must be FULLY VISIBLE to everyone.
+
+SIDEBAR SECTIONS FOR PROJECT:
+1. Overview
+2. Problem Statement
+3. Project Description
+4. Roles Needed
+5. Skills Required
+6. Timeline & Milestones
+7. Benefits & Learning
+8. Team & Owner
+9. Updates
+
+PROJECT CONTENT RULES:
+- All information visible to everyone
+- No locked sections
+- No hidden data
+- Owner-only actions are buttons only (Edit, Close)
+
+================================================
+FUNDING POPUP (100% TRANSPARENCY)
+================================================
+
+Funding must be FULLY TRANSPARENT.
+
+SIDEBAR SECTIONS FOR FUNDING:
+1. Overview
+2. Funding Goal
+3. Current Status
+4. Fund Usage
+5. Progress & Charts
+6. Roadmap
+7. Updates
+8. Team / Founder
+
+FUNDING CONTENT RULES:
+- All data visible to everyone
+- Use mock charts:
+  - Progress bar
+  - Pie chart for fund usage
+  - Line chart for progress over time
+- No restricted sections
+- No hidden financial data
+
+================================================
+PRIMARY ACTION BUTTONS (UI ONLY)
+================================================
+
+- Idea → Buy Idea / Request Access
+- Project → Apply / Connect
+- Funding → Support / Invest
+
+(No real transactions or logic)
+
+================================================
+DESIGN RULES
+================================================
+
+- Use existing dark + purple theme
+- Glassmorphism popup container
+- Rounded corners
+- Thin custom scrollbar inside content
+- Clean typography
+- Smooth scroll between sections
+
+================================================
+REUSABILITY RULE (CRITICAL)
+================================================
+
+- Use ONE reusable popup component
+- Content and sidebar items injected dynamically
+- Same popup used for Idea, Project, and Funding
+- Easy to extend later
+
+================================================
+DO NOT
+================================================
+
+- Do NOT add payments
+- Do NOT add pricing
+- Do NOT add premium UI
+- Do NOT add backend calls
+- Do NOT change routing
+- Do NOT create new pages
+
+================================================
+DELIVERABLE
+================================================
+
+- Reusable popup component
+- Works for Idea, Project, and Funding
+- Mock data only
+- Clean, scalable UI
