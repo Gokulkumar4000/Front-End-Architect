@@ -259,7 +259,7 @@ const DetailsSidebar = ({
               <span className="font-medium">{section.label}</span>
             </div>
             {('locked' in section && section.locked) && <Lock className="w-3 h-3 opacity-50" />}
-            {('ownerOnly' in section && section.ownerOnly) && <span className="text-[10px]">*</span>}
+            {('ownerOnly' in section && section.ownerOnly) && <span className="text-[10px]"></span>}
           </button>
         ))}
       </div>
