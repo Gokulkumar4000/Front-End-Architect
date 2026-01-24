@@ -22,8 +22,11 @@ import {
   Flag,
   Share2,
   Slash,
-  UserX
+  UserX,
+  Copy,
+  Check
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +34,13 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -206,6 +216,29 @@ const FeedCard = memo(({ post }: { post: Post }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
+
+  const postUrl = `${window.location.origin}/post/${post.id}`;
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(postUrl);
+      setCopied(true);
+      toast({
+        title: "Link copied!",
+        description: "Post URL has been copied to your clipboard.",
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      toast({
+        title: "Failed to copy",
+        description: "Please try manually copying the link.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -360,7 +393,10 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                 <Eye className="w-4 h-4 text-muted-foreground group-hover/menu-item:text-primary transition-colors" />
                 <span className="text-xs font-medium group-hover/menu-item:text-primary transition-colors">View Profile</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 cursor-pointer focus:bg-primary/10 rounded-md group/menu-item transition-colors">
+              <DropdownMenuItem 
+                onClick={() => setShowShareDialog(true)}
+                className="flex items-center gap-2 px-3 py-2 cursor-pointer focus:bg-primary/10 rounded-md group/menu-item transition-colors"
+              >
                 <Share2 className="w-4 h-4 text-muted-foreground group-hover/menu-item:text-primary transition-colors" />
                 <span className="text-xs font-medium group-hover/menu-item:text-primary transition-colors">Share</span>
               </DropdownMenuItem>
@@ -556,6 +592,30 @@ const FeedCard = memo(({ post }: { post: Post }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="glass-card border-white/10 bg-background/90 backdrop-blur-xl max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="text-gradient-primary">Share Post</DialogTitle>
+            <DialogDescription className="text-white/70">
+              Copy the link below to share this vision with your network.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 flex items-center gap-2">
+            <div className="flex-1 bg-white/5 border border-white/10 rounded-md p-2 text-[11px] text-white/60 truncate">
+              {postUrl}
+            </div>
+            <Button 
+              size="sm" 
+              onClick={handleCopyLink}
+              className="shrink-0 font-bold h-9"
+            >
+              {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
+              {copied ? "Copied" : "Copy"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 });
