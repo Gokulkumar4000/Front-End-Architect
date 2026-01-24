@@ -1,0 +1,293 @@
+📌 PROJECT POPUP STRUCTURE
+🔹 LEFT SIDEBAR (Navigation Only – No Locks)
+
+Sidebar topics (click → scroll to section):
+
+Overview
+
+Problem Statement
+
+Project Description
+
+Roles Needed
+
+Skills Required
+
+Timeline & Milestones
+
+Benefits & Learning
+
+Team & Owner
+
+Updates
+
+⚠️ No lock icons anywhere.
+
+📄 MAIN CONTENT (RIGHT SIDE)
+1️⃣ Overview
+
+Project title
+
+One-line mission
+
+Domain / category
+
+Current status (Planning / In Progress / Live)
+
+Owner / team lead profile
+
+2️⃣ Problem Statement
+
+What problem this project addresses
+
+Why it matters
+
+Who benefits
+
+3️⃣ Project Description (DETAILED)
+
+What is being built
+
+How it will work (conceptual)
+
+Expected outcome
+
+Scope of the project
+
+✅ This section is fully visible to everyone
+
+4️⃣ Roles Needed (VERY IMPORTANT)
+
+For each role:
+
+Role title
+
+Responsibilities
+
+Required skills
+
+Commitment type (full-time / part-time)
+
+Duration
+
+Shown as cards for clarity.
+
+5️⃣ Skills Required
+
+Technical skills
+
+Non-technical skills (if any)
+
+Tools / platforms (names only)
+
+6️⃣ Timeline & Milestones
+
+Phases (Design → Build → Test → Launch)
+
+Estimated duration per phase
+
+Current progress indicator
+
+7️⃣ Benefits & Learning
+
+Hands-on experience
+
+Portfolio building
+
+Team collaboration
+
+Mentorship (if any)
+
+Exposure / recognition
+
+🚫 No money promises here.
+
+8️⃣ Team & Owner
+
+Owner profile
+
+Existing team members (optional)
+
+Team size range
+
+9️⃣ Updates
+
+Project updates
+
+Milestone completions
+
+Announcements
+
+📌 ACTIONS (Always Visible)
+
+Apply / Connect
+
+Save
+
+Share
+
+👑 OWNER-ONLY (NOT CONTENT)
+
+Owner-only controls (icons / buttons only):
+
+Edit project
+
+Close / reopen roles
+
+Manage applications
+
+❌ No hidden content.
+
+💰 FUNDING – FULL VIEW (100% TRANSPARENCY)
+🎯 Core Principle
+
+Funding requires trust — trust comes from complete visibility.
+
+Anyone viewing a funding post should see everything.
+
+📌 FUNDING POPUP STRUCTURE
+🔹 LEFT SIDEBAR (Navigation Only)
+
+Sidebar topics:
+
+Overview
+
+Funding Goal
+
+Current Status
+
+Fund Usage
+
+Progress & Charts
+
+Roadmap
+
+Updates
+
+Team / Founder
+
+No locks. No restrictions.
+
+📄 MAIN CONTENT (RIGHT SIDE)
+1️⃣ Overview
+
+Funding title
+
+Business / project summary
+
+Domain / industry
+
+Funding stage
+
+Founder / owner profile
+
+2️⃣ Funding Goal
+
+Total goal amount
+
+Minimum contribution (if any)
+
+Funding duration
+
+3️⃣ Current Status (LIVE DATA)
+
+Amount raised
+
+Amount remaining
+
+Percentage completed
+
+Number of supporters
+
+Shown with:
+
+Progress bar
+
+Percentage badge
+
+4️⃣ Fund Usage (BREAKDOWN)
+
+Clear visual breakdown:
+
+Development
+
+Marketing
+
+Operations
+
+Miscellaneous
+
+Use:
+
+Pie chart
+
+Bar chart
+
+5️⃣ Progress & Charts (KEY SECTION)
+
+Funds raised over time (line chart)
+
+Supporter growth
+
+Milestone-based funding levels
+
+📊 This is the heart of funding transparency
+
+6️⃣ Roadmap
+
+What happens at:
+
+25%
+
+50%
+
+75%
+
+100%
+
+Deliverables per stage
+
+7️⃣ Updates
+
+Funding updates
+
+Announcements
+
+Status changes
+
+8️⃣ Team / Founder
+
+Founder profile
+
+Team overview
+
+Past work (optional)
+
+📌 ACTIONS (Always Visible)
+
+Support / Invest
+
+Save
+
+Share
+
+👑 OWNER-ONLY (NOT CONTENT)
+
+Owner-only controls:
+
+Edit funding details
+
+Post updates
+
+Close funding
+
+❌ No hidden data.
+
+🧠 FINAL COMPARISON (VERY IMPORTANT)
+Feature	Idea	Project	Funding
+Visibility Control	✅ Yes	❌ No	❌ No
+Locked Sections	✅ Yes	❌ No	❌ No
+Full Transparency	❌ No	✅ Yes	✅ Yes
+Charts & Stats	❌ Minimal	❌ Minimal	✅ Heavy
+Collaboration Focus	Medium	High	Medium
+Trust Requirement	Medium	Medium	Very High

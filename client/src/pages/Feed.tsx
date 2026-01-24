@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { 
   Heart, 
   MessageSquare, 
+  Share2, 
   MoreHorizontal,
   TrendingUp,
   Users,
@@ -20,7 +21,6 @@ import {
   Bookmark,
   Eye,
   Flag,
-  Share2,
   Slash,
   UserX,
   Copy,
@@ -32,7 +32,15 @@ import {
   BarChart3,
   Rocket,
   ShieldCheck,
-  Zap
+  Zap,
+  HelpCircle,
+  FileText,
+  Star,
+  Calendar,
+  GraduationCap,
+  Bell,
+  PieChart,
+  Map
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -643,33 +651,83 @@ const FeedCard = memo(({ post }: { post: Post }) => {
               </div>
             </div>
 
-            <div className="space-y-1">
-              {[
-                { id: "overview", label: "Overview", icon: Info, locked: false },
-                { id: "solution", label: post.type === "idea" ? "Solution" : "Features", icon: Zap, locked: false },
-                { id: "market", label: post.type === "idea" ? "Market" : "Analysis", icon: Target, locked: false },
-                { id: "traction", label: "Validation", icon: BarChart3, locked: false },
-                { id: "needs", label: "Collaboration", icon: Users, locked: false },
-                { id: "owner", label: "Execution", icon: ShieldCheck, locked: !isOwner },
-              ].map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => setActiveSection(section.id)}
-                  className={cn(
-                    "w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-all duration-200 group/nav",
-                    activeSection === section.id 
-                      ? "bg-primary text-white shadow-lg shadow-primary/20" 
-                      : "text-muted-foreground hover:bg-white/5 hover:text-white"
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <section.icon className={cn("w-4 h-4", activeSection === section.id ? "text-white" : "text-muted-foreground group-hover/nav:text-primary")} />
-                    <span className="font-medium">{section.label}</span>
-                  </div>
-                  {section.locked && <Lock className="w-3 h-3 opacity-50" />}
-                </button>
-              ))}
-            </div>
+    const navItems = useMemo(() => {
+      const isIdea = post.type === "idea";
+      if (isIdea) {
+        return [
+          { id: "overview", label: "Overview", icon: Info, locked: false },
+          { id: "problem", label: "Problem Statement", icon: Target, locked: false },
+          { id: "solution", label: "Solution Snapshot", icon: Zap, locked: !isOwner },
+          { id: "traction", label: "Validation & Traction", icon: BarChart3, locked: !isOwner },
+          { id: "market", label: "Market & Business", icon: Coins, locked: !isOwner },
+          { id: "needs", label: "Collaboration Needs", icon: Users, locked: false },
+          { id: "owner", label: "Owner Panel", icon: ShieldCheck, locked: !isOwner, ownerOnly: true },
+        ];
+      }
+      
+      if (post.type === "project") {
+        return [
+          { id: "overview", label: "Overview", icon: Info },
+          { id: "problem", label: "Problem Statement", icon: HelpCircle },
+          { id: "description", label: "Project Description", icon: FileText },
+          { id: "roles", label: "Roles Needed", icon: Users },
+          { id: "skills", icon: Star, label: "Skills Required" },
+          { id: "timeline", label: "Timeline & Milestones", icon: Calendar },
+          { id: "benefits", label: "Benefits & Learning", icon: GraduationCap },
+          { id: "team", label: "Team & Owner", icon: ShieldCheck },
+          { id: "updates", label: "Updates", icon: Bell },
+        ];
+      }
+
+      if (post.type === "fund") {
+        return [
+          { id: "overview", label: "Overview", icon: Info },
+          { id: "goal", label: "Funding Goal", icon: Target },
+          { id: "status", label: "Current Status", icon: BarChart3 },
+          { id: "usage", label: "Fund Usage", icon: PieChart },
+          { id: "progress", label: "Progress & Charts", icon: TrendingUp },
+          { id: "roadmap", label: "Roadmap", icon: Map },
+          { id: "updates", label: "Updates", icon: Bell },
+          { id: "team", label: "Team / Founder", icon: ShieldCheck },
+        ];
+      }
+
+      return [{ id: "overview", label: "Overview", icon: Info }];
+    }, [post.type, isOwner]);
+
+    return (
+      <div className="w-full md:w-64 bg-white/[0.02] border-r border-white/5 p-4 flex flex-col gap-4">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+            {typeIcon}
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-white leading-none capitalize">{post.type}</h3>
+            <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-tighter">Navigation</p>
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          {navItems.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => setActiveSection(section.id)}
+              className={cn(
+                "w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-all duration-200 group/nav",
+                activeSection === section.id 
+                  ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                  : "text-muted-foreground hover:bg-white/5 hover:text-white"
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <section.icon className={cn("w-4 h-4", activeSection === section.id ? "text-white" : "text-muted-foreground group-hover/nav:text-primary")} />
+                <span className="font-medium">{section.label}</span>
+              </div>
+              {('locked' in section && section.locked) && <Lock className="w-3 h-3 opacity-50" />}
+              {('ownerOnly' in section && section.ownerOnly) && <span className="text-[10px]">👑</span>}
+            </button>
+          ))}
+        </div>
 
             <div className="mt-auto p-4 rounded-xl bg-primary/5 border border-primary/10">
               <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-2">Engagement</p>
@@ -710,14 +768,24 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                 {activeSection === "overview" && (
                   <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
-                      <Info className="w-4 h-4" /> {post.type === "idea" ? "Project Overview" : "Details"}
+                      <Info className="w-4 h-4" /> {post.type === "idea" ? "Project Overview" : post.type === "project" ? "Project Overview" : "Funding Overview"}
                     </h3>
                     <div className="prose prose-invert prose-sm">
                       <p className="text-white/80 leading-relaxed text-base italic border-l-2 border-primary/30 pl-4 py-2 bg-primary/[0.02] rounded-r-lg">
                         {post.type === "idea" 
                           ? "\"Bridging the gap between initial concept and real-world implementation through data-driven innovation.\""
-                          : `\"Comprehensive insights into the ${post.title} ${post.type} and its strategic implementation.\"`}
+                          : post.type === "project"
+                          ? `\"${post.title}: ${post.content.substring(0, 100)}...\"`
+                          : `\"Trust-based funding for ${post.title}. Full transparency on goals and usage.\"`}
                       </p>
+                      <div className="flex items-center gap-3 mt-6 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                         <div className="px-2 py-1 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">
+                           {post.type === "project" ? "Status: In Progress" : post.type === "fund" ? "Stage: Seed" : "Stage: Concept"}
+                         </div>
+                         <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">
+                           Category: {post.type === "idea" ? "SaaS / AI" : post.type === "project" ? "Open Source" : "FinTech"}
+                         </div>
+                      </div>
                       <p className="text-white/70 leading-relaxed text-sm mt-6">
                         {post.content}
                       </p>
@@ -725,9 +793,9 @@ const FeedCard = memo(({ post }: { post: Post }) => {
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-8">
                       {[
-                        { label: "Stage", value: post.type === "fund" ? "Active" : "Concept / MVP", icon: Rocket },
-                        { label: post.type === "fund" ? "Type" : "Industry", value: post.type === "fund" ? "Venture Capital" : "SaaS / AI", icon: Zap },
-                        { label: "Target", value: "Enterprise", icon: Target },
+                        { label: post.type === "fund" ? "Supporters" : "Team Size", value: post.type === "fund" ? "124" : "3-5 People", icon: Users },
+                        { label: post.type === "fund" ? "Goal" : "Timeline", value: post.type === "fund" ? "$50,000" : "6 Months", icon: post.type === "fund" ? Coins : Calendar },
+                        { label: "Domain", value: "Global", icon: Map },
                       ].map((stat) => (
                         <div key={stat.label} className="p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-primary/20 transition-colors group">
                           <stat.icon className="w-4 h-4 text-primary/40 group-hover:text-primary transition-colors mb-2" />
@@ -739,7 +807,109 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                   </div>
                 )}
 
-                {(isIdea && !isOwner && ["solution", "market", "traction"].includes(activeSection)) ? (
+                {activeSection === "problem" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                      <HelpCircle className="w-4 h-4" /> Problem Statement
+                    </h3>
+                    <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                      <p className="text-sm text-white/70 leading-relaxed">
+                        What problem this {post.type} addresses and why it matters to the target audience.
+                      </p>
+                      <div className="h-32 rounded-xl bg-gradient-to-br from-primary/5 to-transparent border border-white/5 flex items-center justify-center italic text-muted-foreground text-xs">
+                        Detailed problem analysis for {post.title}...
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeSection === "description" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                      <FileText className="w-4 h-4" /> Project Description
+                    </h3>
+                    <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                      <p className="text-sm text-white/70 leading-relaxed">
+                        Full project scope, technical stack, and expected outcomes.
+                      </p>
+                      <div className="h-48 rounded-xl bg-gradient-to-br from-primary/5 to-transparent border border-white/5 flex items-center justify-center italic text-muted-foreground text-xs">
+                        {post.content}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeSection === "roles" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                      <Users className="w-4 h-4" /> Roles Needed
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {[
+                        { title: "Frontend Developer", skills: "React, TypeScript", commitment: "Part-time" },
+                        { title: "UI/UX Designer", skills: "Figma, Design Systems", commitment: "Project-based" }
+                      ].map((role) => (
+                        <div key={role.title} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-primary/20 transition-all">
+                          <h4 className="text-sm font-bold text-white mb-1">{role.title}</h4>
+                          <p className="text-[10px] text-muted-foreground mb-3">{role.commitment}</p>
+                          <Badge variant="outline" className="text-[9px] h-4">{role.skills}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeSection === "goal" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                      <Target className="w-4 h-4" /> Funding Goal
+                    </h3>
+                    <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-6">
+                      <div className="flex items-end justify-between">
+                        <div className="space-y-1">
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Target Amount</p>
+                          <p className="text-3xl font-bold text-white">$50,000</p>
+                        </div>
+                        <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 mb-1">Seed Stage</Badge>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+                          <span className="text-primary">Progress: 65%</span>
+                          <span className="text-muted-foreground">$17,500 left</span>
+                        </div>
+                        <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                          <div className="h-full bg-primary rounded-full w-[65%]" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeSection === "usage" && (
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                      <PieChart className="w-4 h-4" /> Fund Usage
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {[
+                        { label: "Development", value: "40%", color: "bg-blue-500" },
+                        { label: "Marketing", value: "25%", color: "bg-purple-500" },
+                        { label: "Operations", value: "20%", color: "bg-emerald-500" },
+                        { label: "Misc", value: "15%", color: "bg-amber-500" }
+                      ].map((item) => (
+                        <div key={item.label} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                          <div className="flex items-center gap-3">
+                            <div className={cn("w-2 h-2 rounded-full", item.color)} />
+                            <span className="text-xs font-medium text-white/80">{item.label}</span>
+                          </div>
+                          <span className="text-xs font-bold text-white">{item.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {(isIdea && !isOwner && ["solution", "traction", "market"].includes(activeSection)) ? (
                   <div className="h-[400px] flex flex-col items-center justify-center text-center p-8 space-y-6 animate-in zoom-in-95 duration-300">
                     <div className="w-20 h-20 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10 relative overflow-hidden group">
                       <div className="absolute inset-0 bg-primary/20 scale-0 group-hover:scale-150 transition-transform duration-700 rounded-full" />
