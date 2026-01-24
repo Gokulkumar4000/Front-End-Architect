@@ -646,9 +646,9 @@ const FeedCard = memo(({ post }: { post: Post }) => {
             <div className="space-y-1">
               {[
                 { id: "overview", label: "Overview", icon: Info, locked: false },
-                { id: "solution", label: "Solution", icon: Zap, locked: isIdea && !isOwner },
-                { id: "market", label: "Market", icon: Target, locked: isIdea && !isOwner },
-                { id: "traction", label: "Validation", icon: BarChart3, locked: isIdea && !isOwner },
+                { id: "solution", label: post.type === "idea" ? "Solution" : "Features", icon: Zap, locked: false },
+                { id: "market", label: post.type === "idea" ? "Market" : "Analysis", icon: Target, locked: false },
+                { id: "traction", label: "Validation", icon: BarChart3, locked: false },
                 { id: "needs", label: "Collaboration", icon: Users, locked: false },
                 { id: "owner", label: "Execution", icon: ShieldCheck, locked: !isOwner },
               ].map((section) => (
@@ -710,11 +710,13 @@ const FeedCard = memo(({ post }: { post: Post }) => {
                 {activeSection === "overview" && (
                   <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
-                      <Info className="w-4 h-4" /> Project Overview
+                      <Info className="w-4 h-4" /> {post.type === "idea" ? "Project Overview" : "Details"}
                     </h3>
                     <div className="prose prose-invert prose-sm">
                       <p className="text-white/80 leading-relaxed text-base italic border-l-2 border-primary/30 pl-4 py-2 bg-primary/[0.02] rounded-r-lg">
-                        "Bridging the gap between initial concept and real-world implementation through data-driven innovation."
+                        {post.type === "idea" 
+                          ? "\"Bridging the gap between initial concept and real-world implementation through data-driven innovation.\""
+                          : `\"Comprehensive insights into the ${post.title} ${post.type} and its strategic implementation.\"`}
                       </p>
                       <p className="text-white/70 leading-relaxed text-sm mt-6">
                         {post.content}
@@ -723,8 +725,8 @@ const FeedCard = memo(({ post }: { post: Post }) => {
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-8">
                       {[
-                        { label: "Stage", value: "Concept / MVP", icon: Rocket },
-                        { label: "Industry", value: "SaaS / AI", icon: Zap },
+                        { label: "Stage", value: post.type === "fund" ? "Active" : "Concept / MVP", icon: Rocket },
+                        { label: post.type === "fund" ? "Type" : "Industry", value: post.type === "fund" ? "Venture Capital" : "SaaS / AI", icon: Zap },
                         { label: "Target", value: "Enterprise", icon: Target },
                       ].map((stat) => (
                         <div key={stat.label} className="p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-primary/20 transition-colors group">
