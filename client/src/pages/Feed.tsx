@@ -350,7 +350,7 @@ const CommentItem = ({ comment, isReply = false, onReply, parentId }: { comment:
   );
 };
 
-const FeedCard = memo(({ post }: { post: Post }) => {
+const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { post: Post; forceShowDetails?: boolean; onClose?: () => void }) => {
   const userRole = localStorage.getItem("userRole") as string;
   const [isFollowing, setIsFollowing] = useState(false);
   const [showFollowDialog, setShowFollowDialog] = useState(false);
@@ -365,8 +365,22 @@ const FeedCard = memo(({ post }: { post: Post }) => {
 
   const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
-  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(forceShowDetails);
   const [activeSection, setActiveSection] = useState("overview");
+
+  useEffect(() => {
+    if (forceShowDetails) {
+      setShowDetailsDialog(true);
+    }
+  }, [forceShowDetails]);
+
+  const handleDetailsClose = (open: boolean) => {
+    setShowDetailsDialog(open);
+    if (!open && onClose) {
+      onClose();
+    }
+  };
+
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
@@ -806,8 +820,8 @@ const FeedCard = memo(({ post }: { post: Post }) => {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-        <DialogContent className="glass-card border-white/10 bg-background/95 backdrop-blur-2xl max-w-[900px] w-[95vw] h-[80vh] p-0 overflow-hidden flex flex-col md:flex-row border-0 shadow-2xl">
+      <Dialog open={showDetailsDialog} onOpenChange={handleDetailsClose}>
+        <DialogContent className="glass-card border-white/10 bg-background/95 backdrop-blur-2xl max-w-[1100px] w-[96vw] h-[85vh] p-0 overflow-hidden flex flex-col md:flex-row border-0 shadow-2xl">
           {/* Sidebar Navigation */}
           <DetailsSidebar 
             post={post} 
@@ -1340,6 +1354,7 @@ export default function Feed() {
   const [loading, setLoading] = useState(true);
   const [showTrendingDialog, setShowTrendingDialog] = useState(false);
   const [trendingPage, setTrendingPage] = useState(1);
+  const [selectedTrendingPost, setSelectedTrendingPost] = useState<any>(null);
   const postsPerPage = 10;
   const totalPages = 5;
 
@@ -1401,6 +1416,10 @@ export default function Feed() {
               {TRENDING_POSTS_DATA.slice(0, 3).map((post, i) => (
                 <div 
                   key={post.id} 
+                  onClick={() => {
+                    const basePost = MOCK_POSTS.find(p => p.type === "idea") || MOCK_POSTS[0];
+                    setSelectedTrendingPost({ ...basePost, title: post.title, id: `trending-${post.id}` });
+                  }}
                   className={cn(
                     "group cursor-pointer p-2 rounded-lg transition-all",
                     i === 0 && "bg-gradient-to-r from-primary/20 to-primary/5 shadow-[0_0_20px_rgba(168,85,247,0.4)]",
@@ -1448,6 +1467,11 @@ export default function Feed() {
                   return (
                     <div 
                       key={post.id} 
+                      onClick={() => {
+                        const basePost = MOCK_POSTS.find(p => p.type === "idea") || MOCK_POSTS[0];
+                        setSelectedTrendingPost({ ...basePost, title: post.title, id: `trending-${post.id}` });
+                        setShowTrendingDialog(false);
+                      }}
                       className={cn(
                         "p-3 rounded-lg cursor-pointer hover-elevate transition-all",
                         globalIndex === 0 && "bg-gradient-to-r from-primary/25 to-primary/10 shadow-[0_0_24px_rgba(168,85,247,0.5)] border border-primary/30",
@@ -1552,6 +1576,14 @@ export default function Feed() {
           </Card>
         </div>
       </div>
+      
+      {selectedTrendingPost && (
+        <FeedCard 
+          post={selectedTrendingPost} 
+          forceShowDetails={true} 
+          onClose={() => setSelectedTrendingPost(null)} 
+        />
+      )}
     </AppLayout>
   );
 }
