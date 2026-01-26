@@ -32,47 +32,47 @@ interface SavedPostCardProps {
 
 export function SavedPostCard({ post, onOpenNote }: SavedPostCardProps) {
   return (
-    <Card className="glass-card border-white/5 p-6 hover-elevate transition-all group">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10 border-2 border-primary/10">
+    <Card className="glass-card border-white/5 p-5 hover-elevate transition-all group flex flex-col h-full overflow-hidden">
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <Avatar className="h-9 w-9 border-2 border-primary/10 shrink-0">
             <AvatarImage src={post.author.avatar} />
-            <AvatarFallback className="bg-primary/5 text-primary">
+            <AvatarFallback className="bg-primary/5 text-primary text-xs">
               {post.author.name[0]}
             </AvatarFallback>
           </Avatar>
-          <div>
-            <h5 className="text-sm font-bold group-hover:text-primary transition-colors">
+          <div className="min-w-0">
+            <h5 className="text-xs font-bold group-hover:text-primary transition-colors truncate">
               {post.author.name}
             </h5>
-            <Badge variant="secondary" className="text-[10px] font-bold h-4">
+            <Badge variant="secondary" className="text-[9px] font-bold h-3.5 px-1.5">
               {post.type.toUpperCase()}
             </Badge>
           </div>
         </div>
       </div>
 
-      <h4 className="text-lg font-bold mb-2 line-clamp-1">{post.title}</h4>
-      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+      <h4 className="text-base font-bold mb-1.5 line-clamp-1 leading-tight">{post.title}</h4>
+      <p className="text-xs text-muted-foreground mb-3 line-clamp-2 leading-relaxed">
         {post.description}
       </p>
 
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex flex-wrap gap-1.5 mb-4">
         {post.domains.map((domain) => (
-          <Badge key={domain} variant="outline" className="text-[10px] border-white/10">
+          <Badge key={domain} variant="outline" className="text-[9px] px-1.5 py-0 border-white/10 whitespace-nowrap">
             {domain}
           </Badge>
         ))}
       </div>
 
-      <div className="flex items-center justify-between pt-4 border-t border-white/5">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" className="h-8 gap-2 text-muted-foreground hover:text-red-400">
-            <Heart className="w-4 h-4" />
-            <span className="text-xs font-bold">{post.likes}</span>
+      <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
+        <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
+          <Button variant="ghost" size="sm" className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-red-400 shrink-0">
+            <Heart className="w-3.5 h-3.5" />
+            <span className="text-[11px] font-bold">{post.likes}</span>
           </Button>
-          <Button variant="ghost" size="sm" className="h-8 gap-2 text-primary">
-            <Bookmark className="w-4 h-4 fill-primary" />
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-primary shrink-0">
+            <Bookmark className="w-3.5 h-3.5 fill-primary" />
           </Button>
           <TooltipProvider>
             <Tooltip>
@@ -81,16 +81,16 @@ export function SavedPostCard({ post, onOpenNote }: SavedPostCardProps) {
                   variant={post.note ? "default" : "outline"} 
                   size="sm" 
                   className={cn(
-                    "h-8 gap-2",
+                    "h-8 gap-1.5 px-2 shrink-0 relative",
                     post.note && "bg-primary/20 text-primary hover:bg-primary/30 border-primary/30"
                   )}
                   onClick={() => onOpenNote(post)}
                 >
-                  <StickyNote className={cn("w-4 h-4", post.note && "fill-primary/20")} />
-                  <span className="text-xs font-bold">
-                    {post.note ? "View note" : "Add note"}
+                  <StickyNote className={cn("w-3.5 h-3.5", post.note && "fill-primary/20")} />
+                  <span className="text-[11px] font-bold">
+                    {post.note ? "Note" : "Add note"}
                   </span>
-                  {post.note && <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />}
+                  {post.note && <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-primary rounded-full border-2 border-background animate-pulse" />}
                 </Button>
               </TooltipTrigger>
               {post.note && (
@@ -101,9 +101,8 @@ export function SavedPostCard({ post, onOpenNote }: SavedPostCardProps) {
             </Tooltip>
           </TooltipProvider>
         </div>
-        <Button variant="ghost" size="sm" className="h-8 gap-2">
-          <ExternalLink className="w-4 h-4" />
-          <span className="text-xs font-bold">Full Post</span>
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0 ml-1">
+          <ExternalLink className="w-3.5 h-3.5" />
         </Button>
       </div>
     </Card>
