@@ -10,36 +10,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Feed, { FeedCard } from "./Feed";
 
-const MOCK_SAVED_POSTS: SavedPost[] = [
-  {
-    id: "1",
-    type: "idea",
-    title: "AI-Powered Climate Prediction",
-    description: "A decentralized network for real-time climate monitoring and predictive modeling using edge computing.",
-    author: { name: "Sarah Tech" },
-    domains: ["AI/ML", "Sustainability"],
-    likes: 124,
-    note: "Potential investment for Q3."
-  },
-  {
-    id: "2",
-    type: "project",
-    title: "EcoSwap DEX",
-    description: "A carbon-neutral decentralized exchange protocol with automated carbon credit offsetting.",
-    author: { name: "Alex Builder" },
-    domains: ["Web3", "FinTech"],
-    likes: 89
-  },
-  {
-    id: "3",
-    type: "funding",
-    title: "Seed Series: HealthGen",
-    description: "Raising $2M for personalized genomics platform targeting rare metabolic disorders.",
-    author: { name: "Emma Vision" },
-    domains: ["HealthTech", "AI/ML"],
-    likes: 256
-  }
-];
+import { MOCK_POSTS } from "@/mocks/posts";
+import { MOCK_USERS } from "@/mocks/users";
 
 export default function Saved() {
   const [search, setSearch] = useState("");
@@ -52,7 +24,16 @@ export default function Saved() {
 
   const [posts, setPosts] = useState<SavedPost[]>(() => {
     const saved = localStorage.getItem('saved_posts');
-    return saved ? JSON.parse(saved) : MOCK_SAVED_POSTS;
+    if (saved) return JSON.parse(saved);
+    return MOCK_POSTS.map(p => ({
+      id: p.id,
+      type: (p.type === "fund" ? "funding" : p.type) as any,
+      title: p.title,
+      description: p.content,
+      author: p.author,
+      domains: p.domains || ["General"],
+      likes: p.stats.likes
+    }));
   });
 
   useEffect(() => {
@@ -64,8 +45,9 @@ export default function Saved() {
       const { post, isSaved } = e.detail;
       if (isSaved) {
         setPosts(prev => {
-          if (prev.find(p => p.id === String(post.id))) return prev;
-          return [...prev, {
+          const exists = prev.find(p => String(p.id) === String(post.id));
+          if (exists) return prev;
+          const newPosts = [...prev, {
             id: String(post.id),
             type: post.type || "idea",
             title: post.title,
@@ -74,9 +56,15 @@ export default function Saved() {
             domains: post.domains || ["General"],
             likes: post.likes || 0
           }];
+          localStorage.setItem('saved_posts', JSON.stringify(newPosts));
+          return newPosts;
         });
       } else {
-        setPosts(prev => prev.filter(p => p.id !== String(post.id)));
+        setPosts(prev => {
+          const newPosts = prev.filter(p => String(p.id) !== String(post.id));
+          localStorage.setItem('saved_posts', JSON.stringify(newPosts));
+          return newPosts;
+        });
       }
     };
 

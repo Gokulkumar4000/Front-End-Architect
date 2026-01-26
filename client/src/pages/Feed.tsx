@@ -71,6 +71,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+// Type definitions
 type PostType = "idea" | "project" | "fund" | "recruitment";
 
 interface Comment {
@@ -104,62 +105,9 @@ interface Post {
   comments?: Comment[];
 }
 
-const MOCK_POSTS: Post[] = [
-  {
-    id: "1",
-    type: "idea",
-    author: { name: "Alice Visionary", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice", role: "Idea Holder" },
-    title: "AI-Powered Sustainable Farming",
-    content: "We are developing an revolutionary automated sensor network specifically designed for small-scale urban farmers. Our goal is to democratize precision agriculture by making it affordable and accessible to everyone, from balcony gardeners to community farm managers. By utilizing advanced low-energy IoT sensors and machine learning algorithms, our system optimizes water usage based on real-time soil moisture and weather forecasts, significantly increasing crop yields while reducing environmental impact. We're currently looking for early-stage feedback from the agricultural community and potential technical co-founders who are passionate about food security and sustainable living. Our vision is to create a global network of hyper-local, high-efficiency urban farms that can feed cities from within their own boundaries, reducing the carbon footprint of food transportation and ensuring fresh produce is always available. Join us in building the future of decentralized, data-driven agriculture that respects the planet.",
-    timestamp: "2h ago",
-    stats: { likes: 124, comments: 2 },
-    comments: [
-      {
-        id: "c1",
-        author: { name: "Bob Builder", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob", role: "Developer" },
-        content: "This sounds amazing! What kind of sensors are you planning to use for soil moisture?",
-        timestamp: "1h ago",
-        likes: 5,
-        replies: [
-          {
-            id: "r1",
-            author: { name: "Alice Visionary", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice", role: "Idea Holder" },
-            content: "We are currently testing capacitive sensors for better durability.",
-            timestamp: "45m ago",
-            likes: 2
-          }
-        ]
-      },
-      {
-        id: "c2",
-        author: { name: "Charlie Capital", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie", role: "Investor" },
-        content: "Interested in the scalability of this. Let's connect.",
-        timestamp: "30m ago",
-        likes: 2
-      }
-    ]
-  },
-  {
-    id: "2",
-    type: "project",
-    author: { name: "Bob Builder", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob", role: "Developer" },
-    title: "Open Source CRM for Non-Profits",
-    content: "Our team has just reached a major milestone in the DevConnect UI library project. We've officially released version 1.0 of our high-performance, accessible component library built on top of Radix UI and Tailwind CSS. This isn't just another component library; it's a meticulously crafted design system specifically tailored for the needs of the DevConnect ecosystem. Every component has been tested for WCAG 2.1 compliance and optimized for lightning-fast rendering even on low-end devices. We've included over 50+ pre-built patterns for common startup needs, from complex data tables to high-conversion landing page sections. The library is fully themeable and supports automatic dark mode switching out of the box. We are inviting the developer community to contribute, report bugs, and suggest new features as we scale this into a comprehensive framework for building professional, visionary-focused applications. Let's build a better web together, one pixel-perfect component at a time.",
-    timestamp: "4h ago",
-    stats: { likes: 85, comments: 0 },
-    comments: []
-  },
-  {
-    id: "3",
-    type: "fund",
-    author: { name: "Charlie Capital", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie", role: "Investor" },
-    title: "Seed Fund for GreenTech",
-    content: "Mike Money Capital is officially opening applications for our early-stage CleanTech Seed Fund for the 2026 cohort. We are actively seeking brilliant founders who are tackling the most pressing environmental challenges through software and deep-tech innovations. Our investment focus is broad but deep, covering areas such as decentralized energy grid management, next-generation carbon capture technologies, circular economy platforms, and sustainable supply chain transparency tools. We don't just provide capital; we offer a comprehensive support ecosystem including mentorship from industry veterans, access to a global network of corporate partners for pilot programs, and dedicated technical resources to help you scale your MVP. If you're building a solution that can realistically mitigate climate change or improve global resource efficiency, we want to hear from you. We are looking for mission-driven teams with high technical competency and a clear path to commercial viability. Let's invest in a future that our children will be proud of.",
-    timestamp: "6h ago",
-    stats: { likes: 210, comments: 45 },
-    comments: []
-  }
-];
+import { MOCK_POSTS } from "@/mocks/posts";
+import { MOCK_USERS } from "@/mocks/users";
+
 
 interface DetailsSidebarProps {
   post: Post;
@@ -356,9 +304,32 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
   const [isFollowing, setIsFollowing] = useState(false);
   const [showFollowDialog, setShowFollowDialog] = useState(false);
   const [showUnfollowDialog, setShowUnfollowDialog] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isLiked, setIsLiked] = useState(() => {
+    const liked = localStorage.getItem(`liked_${post.id}`);
+    return liked === 'true';
+  });
+  const [isSaved, setIsSaved] = useState(() => {
+    const saved = localStorage.getItem('saved_posts');
+    if (!saved) return false;
+    const posts = JSON.parse(saved);
+    return posts.some((p: any) => String(p.id) === String(post.id));
+  });
   const [likesCount, setLikesCount] = useState(post.stats.likes);
+
+  useEffect(() => {
+    localStorage.setItem(`liked_${post.id}`, String(isLiked));
+  }, [isLiked, post.id]);
+
+  useEffect(() => {
+    const handleSavedChange = (e: any) => {
+      const { post: updatedPost, isSaved: newStatus } = e.detail;
+      if (String(updatedPost.id) === String(post.id)) {
+        setIsSaved(newStatus);
+      }
+    };
+    window.addEventListener('post-saved-change', handleSavedChange);
+    return () => window.removeEventListener('post-saved-change', handleSavedChange);
+  }, [post.id]);
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>(post.comments || []);
   const [commentInput, setCommentInput] = useState("");
