@@ -47,15 +47,16 @@ export default function Saved() {
         setPosts(prev => {
           const exists = prev.find(p => String(p.id) === String(post.id));
           if (exists) return prev;
-          const newPosts = [...prev, {
+          const newPost: SavedPost = {
             id: String(post.id),
-            type: post.type || "idea",
+            type: (post.type === "fund" ? "funding" : post.type) || "idea",
             title: post.title,
             description: post.content || post.description,
             author: typeof post.author === 'string' ? { name: post.author } : post.author,
             domains: post.domains || ["General"],
-            likes: post.likes || 0
-          }];
+            likes: post.stats?.likes || post.likes || 0
+          };
+          const newPosts = [...prev, newPost];
           localStorage.setItem('saved_posts', JSON.stringify(newPosts));
           return newPosts;
         });
