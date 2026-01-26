@@ -547,6 +547,12 @@ function GlassSelect({ label, placeholder, icon: Icon, options, value, onChange 
   );
 }
 
+const containerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+  exit: { opacity: 0, y: -20, transition: { duration: 0.3, ease: "easeIn" } }
+};
+
 const SummaryField = ({ label, value }: { label: string, value: any }) => {
   if (value === undefined || value === null || (typeof value === "string" && value.trim() === "") || (Array.isArray(value) && value.length === 0)) return null;
   return (
@@ -565,6 +571,7 @@ const SummaryField = ({ label, value }: { label: string, value: any }) => {
 
 export default function Auth() {
   const [location, setLocation] = useLocation();
+  const { toast } = useToast();
   const initialMode: AuthMode = location.includes("register") ? "signup" : "login";
   
   const [mode, setMode] = useState<AuthMode>(initialMode);
