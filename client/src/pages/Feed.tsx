@@ -1369,6 +1369,7 @@ export default function Feed() {
   const connectionsToShow = showAllConnections ? allConnections : allConnections.slice(0, 5);
 
   const [loading, setLoading] = useState(true);
+  const [feedFilter, setFeedFilter] = useState<'latest' | 'following'>('latest');
   const [showTrendingDialog, setShowTrendingDialog] = useState(false);
   const [trendingPage, setTrendingPage] = useState(1);
   const postsPerPage = 10;
@@ -1391,15 +1392,29 @@ export default function Feed() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-display font-bold text-gradient-primary">Activity Feed</h2>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="h-8 text-xs font-bold">Latest</Button>
-              <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted-foreground">Trending</Button>
+              <Button 
+                variant={feedFilter === 'latest' ? "outline" : "ghost"} 
+                size="sm" 
+                className={cn("h-8 text-xs font-bold", feedFilter !== 'latest' && "text-muted-foreground")}
+                onClick={() => setFeedFilter('latest')}
+              >
+                Latest
+              </Button>
+              <Button 
+                variant={feedFilter === 'following' ? "outline" : "ghost"} 
+                size="sm" 
+                className={cn("h-8 text-xs font-bold", feedFilter !== 'following' && "text-muted-foreground")}
+                onClick={() => setFeedFilter('following')}
+              >
+                Following
+              </Button>
             </div>
           </div>
           
           {loading ? (
             <FeedSkeleton />
           ) : (
-            MOCK_POSTS.map(post => (
+            MOCK_POSTS.filter(post => feedFilter === 'latest' || post.author.includes("Sarah") || post.author.includes("Alex")).map(post => (
               <FeedCard key={post.id} post={post} />
             ))
           )}
