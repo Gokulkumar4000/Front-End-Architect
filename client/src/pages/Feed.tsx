@@ -26,6 +26,7 @@ import {
   Copy,
   Check,
   Lock,
+  ChevronLeft,
   ChevronRight,
   Info,
   Target,
@@ -1514,15 +1515,16 @@ export default function Feed() {
                   );
                 })}
               </div>
-              <div className="flex items-center justify-between pt-4 border-t border-white/10">
+              <div className="flex items-center justify-center gap-4 p-4 border-t border-white/10">
                 <Button 
                   variant="outline" 
-                  size="sm" 
+                  size="sm"
+                  className="h-8 text-[10px] font-bold"
                   onClick={() => setTrendingPage(p => Math.max(1, p - 1))}
                   disabled={trendingPage === 1}
                   data-testid="button-trending-prev"
                 >
-                  Previous
+                  <ChevronLeft className="w-3 h-3 mr-1" /> Previous
                 </Button>
                 <div className="flex items-center gap-1">
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
@@ -1530,7 +1532,7 @@ export default function Feed() {
                       key={page}
                       variant={trendingPage === page ? "default" : "outline"}
                       size="sm"
-                      className="w-8 h-8 p-0"
+                      className="w-8 h-8 p-0 text-[10px] font-bold"
                       onClick={() => setTrendingPage(page)}
                       data-testid={`button-trending-page-${page}`}
                     >
@@ -1540,12 +1542,13 @@ export default function Feed() {
                 </div>
                 <Button 
                   variant="outline" 
-                  size="sm" 
+                  size="sm"
+                  className="h-8 text-[10px] font-bold"
                   onClick={() => setTrendingPage(p => Math.min(totalPages, p + 1))}
                   disabled={trendingPage === totalPages}
                   data-testid="button-trending-next"
                 >
-                  Next
+                  Next <ChevronRight className="w-3 h-3 ml-1" />
                 </Button>
               </div>
             </DialogContent>
