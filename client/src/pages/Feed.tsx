@@ -1452,16 +1452,16 @@ export default function Feed() {
 
       <Dialog open={showTrendingDialog} onOpenChange={setShowTrendingDialog}>
         <DialogContent className="glass-card border-white/10 bg-background/95 backdrop-blur-2xl max-w-[1100px] w-[96vw] h-[85vh] p-0 overflow-hidden flex flex-col border-0 shadow-2xl">
-          <DialogHeader className="p-8 border-b border-white/5 bg-white/[0.02]">
-            <DialogTitle className="text-gradient-primary flex items-center gap-3 text-3xl">
-              <TrendingUp className="w-8 h-8" />
+          <DialogHeader className="p-4 border-b border-white/5 bg-white/[0.02]">
+            <DialogTitle className="text-gradient-primary flex items-center gap-2 text-xl">
+              <TrendingUp className="w-5 h-5" />
               Trending Posts
             </DialogTitle>
-            <DialogDescription className="text-muted-foreground text-lg">
+            <DialogDescription className="text-muted-foreground text-sm">
               The most popular posts this week across the DevConnect ecosystem.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto space-y-4 p-8 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto space-y-3 p-4 custom-scrollbar">
                 {paginatedTrendingPosts.map((post, idx) => {
                   const globalIndex = (trendingPage - 1) * postsPerPage + idx;
                   return (
@@ -1494,13 +1494,13 @@ export default function Feed() {
                           </Badge>
                           <span className="text-xs text-muted-foreground font-medium">{post.author}</span>
                         </div>
-                        <h5 className="text-lg font-bold line-clamp-1 group-hover:text-primary transition-colors">{post.title}</h5>
-                        <div className="flex items-center gap-6 mt-3">
-                          <span className="text-sm text-muted-foreground flex items-center gap-1.5 font-medium">
-                            <Heart className="w-4 h-4 text-red-400" /> {post.likes.toLocaleString()}
+                        <h5 className="text-sm font-bold line-clamp-1 group-hover:text-primary transition-colors">{post.title}</h5>
+                        <div className="flex items-center gap-4 mt-2">
+                          <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
+                            <Heart className="w-3 h-3 text-red-400" /> {post.likes.toLocaleString()}
                           </span>
-                          <span className="text-sm text-muted-foreground flex items-center gap-1.5 font-medium">
-                            <MessageSquare className="w-4 h-4 text-blue-400" /> {post.comments}
+                          <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
+                            <MessageSquare className="w-3 h-3 text-blue-400" /> {post.comments}
                           </span>
                         </div>
                       </div>
