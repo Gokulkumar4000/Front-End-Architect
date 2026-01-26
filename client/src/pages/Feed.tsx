@@ -1390,7 +1390,7 @@ export default function Feed() {
           )}
         </div>
 
-        <div className="hidden lg:block w-[300px] shrink-0 sticky top-24">
+        <div className="hidden lg:block w-[300px] shrink-0 sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
           <div className="space-y-6">
             <Card className="glass-card border-white/5 p-6">
             <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Platform Stats</h4>
