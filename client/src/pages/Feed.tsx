@@ -1352,10 +1352,25 @@ const TRENDING_POSTS_DATA = [
 ];
 
 export default function Feed() {
+  const [selectedTrendingPost, setSelectedTrendingPost] = useState<Post | null>(null);
+  const [showAllConnections, setShowAllConnections] = useState(false);
+  const allConnections = [
+    { name: "Sarah Tech", role: "CTO" },
+    { name: "Mike Money", role: "Angel Investor" },
+    { name: "Alex Builder", role: "Full Stack Developer" },
+    { name: "Emma Vision", role: "Product Designer" },
+    { name: "James Capital", role: "VC Partner" },
+    { name: "Lisa Growth", role: "Marketing Lead" },
+    { name: "David Code", role: "Backend Engineer" },
+    { name: "Sophia UI", role: "UX Researcher" },
+    { name: "Ryan Scale", role: "DevOps Architect" },
+    { name: "Maya Social", role: "Community Manager" }
+  ];
+  const connectionsToShow = showAllConnections ? allConnections : allConnections.slice(0, 5);
+
   const [loading, setLoading] = useState(true);
   const [showTrendingDialog, setShowTrendingDialog] = useState(false);
   const [trendingPage, setTrendingPage] = useState(1);
-  const [selectedTrendingPost, setSelectedTrendingPost] = useState<any>(null);
   const postsPerPage = 10;
   const totalPages = 5;
 
@@ -1558,13 +1573,7 @@ export default function Feed() {
           <Card className="glass-card border-white/5 p-6">
             <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Suggested Connections</h4>
             <div className="space-y-4">
-              {[
-                { name: "Sarah Tech", role: "CTO" },
-                { name: "Mike Money", role: "Angel Investor" },
-                { name: "Alex Builder", role: "Full Stack Developer" },
-                { name: "Emma Vision", role: "Product Designer" },
-                { name: "James Capital", role: "VC Partner" }
-              ].map(person => (
+              {connectionsToShow.map(person => (
                 <div key={person.name} className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-3 min-w-0">
                     <Avatar className="h-8 w-8 shrink-0">
@@ -1579,8 +1588,13 @@ export default function Feed() {
                 </div>
               ))}
             </div>
-            <Button variant="ghost" className="w-full mt-4 text-xs text-muted-foreground" data-testid="button-view-more-connections">
-              View More
+            <Button 
+              variant="ghost" 
+              className="w-full mt-4 text-xs text-muted-foreground" 
+              onClick={() => setShowAllConnections(!showAllConnections)}
+              data-testid="button-view-more-connections"
+            >
+              {showAllConnections ? "Show Less" : "View More"}
             </Button>
           </Card>
         </div>
