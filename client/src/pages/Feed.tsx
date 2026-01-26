@@ -231,26 +231,26 @@ const DetailsSidebar = ({
   }, [post.type, isOwner]);
 
   return (
-    <div className="w-full md:w-64 bg-white/[0.02] border-r border-white/5 p-4 flex flex-col gap-4">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+    <div className="w-full md:w-80 bg-white/[0.02] border-r border-white/5 p-6 flex flex-col gap-6 overflow-y-auto custom-scrollbar shrink-0">
+      <div className="flex items-center gap-4 mb-8 shrink-0">
+        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-lg shadow-primary/5">
           {typeIcon}
         </div>
         <div>
-          <h3 className="text-sm font-bold text-white leading-none capitalize">{post.type}</h3>
-          <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-tighter">Navigation</p>
+          <h3 className="text-base font-bold text-white leading-none capitalize tracking-tight">{post.type}</h3>
+          <p className="text-[10px] text-muted-foreground mt-1.5 uppercase tracking-[0.2em] font-medium">Project Navigation</p>
         </div>
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-2 flex-1">
         {navItems.map((section) => (
           <button
             key={section.id}
             onClick={() => setActiveSection(section.id)}
             className={cn(
-              "w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-all duration-300 group/nav relative overflow-hidden",
+              "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group/nav relative overflow-hidden",
               activeSection === section.id 
-                ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                ? "bg-primary text-white shadow-xl shadow-primary/25 translate-x-1" 
                 : "text-muted-foreground hover:bg-white/5 hover:text-white active-elevate-2"
             )}
           >
@@ -838,21 +838,21 @@ const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { post: Post
 
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col min-w-0 bg-background/40">
-            <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-4">
-                <Avatar className="h-10 w-10 border border-primary/20">
+            <div className="p-8 border-b border-white/5 flex items-center justify-between shrink-0 bg-white/[0.01]">
+              <div className="flex items-center gap-6">
+                <Avatar className="h-14 w-14 border-2 border-primary/20 shadow-lg shadow-primary/10">
                   <AvatarImage src={post.author.avatar} />
                   <AvatarFallback>{post.author.name[0]}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h2 className="text-lg font-bold text-white leading-none">{post.title}</h2>
-                  <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest">{post.author.name} • {post.author.role}</p>
+                  <h2 className="text-2xl font-bold text-white leading-tight tracking-tight">{post.title}</h2>
+                  <p className="text-xs text-muted-foreground mt-1 uppercase tracking-[0.2em] font-medium">{post.author.name} • {post.author.role}</p>
                 </div>
               </div>
             </div>
 
-            <ScrollArea className="flex-1 p-6">
-              <div className="max-w-2xl mx-auto space-y-8">
+      <ScrollArea className="flex-1 p-8 custom-scrollbar">
+              <div className="max-w-3xl mx-auto space-y-10">
                 {activeSection === "overview" && (
                   <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -1450,62 +1450,67 @@ export default function Feed() {
             </Button>
           </Card>
 
-          <Dialog open={showTrendingDialog} onOpenChange={setShowTrendingDialog}>
-            <DialogContent className="glass-card border-white/10 bg-background/95 backdrop-blur-xl max-w-[600px] max-h-[80vh] overflow-hidden flex flex-col">
-              <DialogHeader>
-                <DialogTitle className="text-gradient-primary flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
-                  Trending Posts
-                </DialogTitle>
-                <DialogDescription className="text-muted-foreground">
-                  The most popular posts this week
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex-1 overflow-y-auto space-y-2 py-4">
+      <Dialog open={showTrendingDialog} onOpenChange={setShowTrendingDialog}>
+        <DialogContent className="glass-card border-white/10 bg-background/95 backdrop-blur-2xl max-w-[1100px] w-[96vw] h-[85vh] p-0 overflow-hidden flex flex-col border-0 shadow-2xl">
+          <DialogHeader className="p-8 border-b border-white/5 bg-white/[0.02]">
+            <DialogTitle className="text-gradient-primary flex items-center gap-3 text-3xl">
+              <TrendingUp className="w-8 h-8" />
+              Trending Posts
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground text-lg">
+              The most popular posts this week across the DevConnect ecosystem.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto space-y-4 p-8 custom-scrollbar">
                 {paginatedTrendingPosts.map((post, idx) => {
                   const globalIndex = (trendingPage - 1) * postsPerPage + idx;
                   return (
-                    <div 
-                      key={post.id} 
-                      onClick={() => {
-                        const basePost = MOCK_POSTS.find(p => p.type === "idea") || MOCK_POSTS[0];
-                        setSelectedTrendingPost({ ...basePost, title: post.title, id: `trending-${post.id}` });
-                        setShowTrendingDialog(false);
-                      }}
-                      className={cn(
-                        "p-3 rounded-lg cursor-pointer hover-elevate transition-all",
-                        globalIndex === 0 && "bg-gradient-to-r from-primary/25 to-primary/10 shadow-[0_0_24px_rgba(168,85,247,0.5)] border border-primary/30",
-                        globalIndex === 1 && "bg-gradient-to-r from-primary/18 to-primary/8 shadow-[0_0_16px_rgba(168,85,247,0.35)] border border-primary/20",
-                        globalIndex === 2 && "bg-gradient-to-r from-primary/12 to-primary/5 shadow-[0_0_10px_rgba(168,85,247,0.2)] border border-primary/15",
-                        globalIndex > 2 && "bg-white/5 border border-white/5"
-                      )}
-                      data-testid={`trending-post-${post.id}`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Badge variant="secondary" className={cn(
-                              "text-[9px]",
-                              globalIndex === 0 && "bg-primary/30 text-primary",
-                              globalIndex === 1 && "bg-primary/25 text-primary",
-                              globalIndex === 2 && "bg-primary/20 text-primary"
-                            )}>
-                              #{globalIndex + 1}
-                            </Badge>
-                            <span className="text-[10px] text-muted-foreground">{post.author}</span>
-                          </div>
-                          <h5 className="text-sm font-bold line-clamp-1">{post.title}</h5>
-                          <div className="flex items-center gap-4 mt-2">
-                            <span className="text-xs text-muted-foreground flex items-center gap-1">
-                              <Heart className="w-3.5 h-3.5 text-red-400" /> {post.likes.toLocaleString()}
-                            </span>
-                            <span className="text-xs text-muted-foreground flex items-center gap-1">
-                              <MessageSquare className="w-3.5 h-3.5 text-blue-400" /> {post.comments}
-                            </span>
-                          </div>
+                  <div 
+                    key={post.id} 
+                    onClick={() => {
+                      const basePost = MOCK_POSTS.find(p => p.type === "idea") || MOCK_POSTS[0];
+                      setSelectedTrendingPost({ ...basePost, title: post.title, id: `trending-${post.id}` });
+                      setShowTrendingDialog(false);
+                    }}
+                    className={cn(
+                      "p-5 rounded-2xl cursor-pointer hover-elevate transition-all border border-white/5",
+                      globalIndex === 0 && "bg-gradient-to-r from-primary/25 to-primary/10 shadow-[0_0_24px_rgba(168,85,247,0.5)] border-primary/30",
+                      globalIndex === 1 && "bg-gradient-to-r from-primary/18 to-primary/8 shadow-[0_0_16px_rgba(168,85,247,0.35)] border-primary/20",
+                      globalIndex === 2 && "bg-gradient-to-r from-primary/12 to-primary/5 shadow-[0_0_10px_rgba(168,85,247,0.2)] border-primary/15",
+                      globalIndex > 2 && "bg-white/[0.03] hover:bg-white/[0.06]"
+                    )}
+                    data-testid={`trending-post-${post.id}`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Badge variant="secondary" className={cn(
+                            "text-[10px] font-bold px-2 py-0",
+                            globalIndex === 0 && "bg-primary/30 text-primary",
+                            globalIndex === 1 && "bg-primary/25 text-primary",
+                            globalIndex === 2 && "bg-primary/20 text-primary"
+                          )}>
+                            RANK #{globalIndex + 1}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground font-medium">{post.author}</span>
+                        </div>
+                        <h5 className="text-lg font-bold line-clamp-1 group-hover:text-primary transition-colors">{post.title}</h5>
+                        <div className="flex items-center gap-6 mt-3">
+                          <span className="text-sm text-muted-foreground flex items-center gap-1.5 font-medium">
+                            <Heart className="w-4 h-4 text-red-400" /> {post.likes.toLocaleString()}
+                          </span>
+                          <span className="text-sm text-muted-foreground flex items-center gap-1.5 font-medium">
+                            <MessageSquare className="w-4 h-4 text-blue-400" /> {post.comments}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="shrink-0 pt-1">
+                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary/20 group-hover:text-primary transition-all">
+                          <ChevronRight className="w-5 h-5" />
                         </div>
                       </div>
                     </div>
+                  </div>
                   );
                 })}
               </div>
