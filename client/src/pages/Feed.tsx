@@ -426,8 +426,9 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
           title: post.title,
           content: post.content,
           author: post.author,
-          type: post.type,
-          likes: likesCount
+          type: post.type === "fund" ? "funding" : post.type, // Map "fund" to "funding" for SavedPost compatibility
+          likes: likesCount,
+          domains: ["General"] // Ensure domains is present
         },
         isSaved: newSavedStatus
       }
@@ -471,7 +472,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
     };
 
     if (replyTo) {
-      setComments(prev => prev.map(c => {
+      setComments(prev => (Array.isArray(prev) ? prev : []).map(c => {
         if (c.id === replyTo.id) {
           return { ...c, replies: [...(c.replies || []), newComment] };
         }
@@ -483,13 +484,14 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
       }));
       setReplyTo(null);
     } else {
-      setComments(prev => [...prev, newComment]);
+      setComments(prev => [...(Array.isArray(prev) ? prev : []), newComment]);
     }
     setCommentInput("");
   };
 
   const totalComments = useMemo(() => {
-    const countNested = (cms: Comment[]): number => {
+    const countNested = (cms: any): number => {
+      if (!Array.isArray(cms)) return 0;
       return cms.reduce((acc, curr) => acc + 1 + (curr.replies ? countNested(curr.replies) : 0), 0);
     };
     return countNested(comments);

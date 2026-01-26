@@ -151,19 +151,21 @@ export default function Saved() {
                 setIsNoteOpen(true);
               }}
               onClick={(p) => {
-                setDetailedPost({
-                  ...p,
+                const feedPost = {
                   id: p.id,
+                  title: p.title,
                   content: p.description,
-                  timestamp: "Saved",
-                  comments: 12,
-                  stats: { likes: p.likes, comments: 12 },
+                  type: (p.type === "funding" ? "fund" : p.type) as any,
                   author: {
-                    ...p.author,
-                    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.author.name}`,
+                    name: p.author.name,
+                    avatar: p.author.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.author.name}`,
                     role: "Visionary"
-                  }
-                });
+                  },
+                  timestamp: "Saved",
+                  stats: { likes: p.likes, comments: 0 },
+                  comments: []
+                };
+                setDetailedPost(feedPost);
               }}
             />
           ))}
