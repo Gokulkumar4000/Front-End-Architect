@@ -86,29 +86,10 @@
 [data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb:hover {
   background: hsla(270, 70%, 60%, 0.5);
 }
-  height: 8px;
+
+* {
+  @apply border-border;
 }
-
-[data-radix-scroll-area-viewport]::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 10px;
-}
-
-[data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb {
-  background: hsla(270, 70%, 60%, 0.2);
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background-clip: content-box;
-}
-
-[data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb:hover {
-  background: hsla(270, 70%, 60%, 0.4);
-}
-
-
-  * {
-    @apply border-border;
-  }
   
   html {
     scroll-behavior: smooth;
