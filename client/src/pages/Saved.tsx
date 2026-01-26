@@ -61,7 +61,7 @@ export default function Saved() {
             id: String(post.id),
             type: post.type || "idea",
             title: post.title,
-            description: post.content,
+            description: post.content || post.description,
             author: typeof post.author === 'string' ? { name: post.author } : post.author,
             domains: post.domains || ["General"],
             likes: post.likes || 0
@@ -88,16 +88,16 @@ export default function Saved() {
   }, [posts, search, type, domain, withNotes]);
 
   const analyticsData = useMemo(() => [
-    { name: "Ideas", value: posts.filter(p => p.type === "idea").length },
-    { name: "Projects", value: posts.filter(p => p.type === "project").length },
-    { name: "Funding", value: posts.filter(p => p.type === "funding").length }
-  ], [posts]);
+    { name: "Ideas", value: filteredPosts.filter(p => p.type === "idea").length },
+    { name: "Projects", value: filteredPosts.filter(p => p.type === "project").length },
+    { name: "Funding", value: filteredPosts.filter(p => p.type === "funding").length }
+  ], [filteredPosts]);
 
   const domainData = useMemo(() => {
     const counts: Record<string, number> = {};
-    posts.forEach(p => p.domains.forEach(d => counts[d] = (counts[d] || 0) + 1));
+    filteredPosts.forEach(p => p.domains.forEach(d => counts[d] = (counts[d] || 0) + 1));
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
-  }, [posts]);
+  }, [filteredPosts]);
 
   const handleUpdateNote = (postId: string, note: string) => {
     setPosts(prev => prev.map(p => p.id === postId ? { ...p, note } : p));

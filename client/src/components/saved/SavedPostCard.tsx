@@ -32,6 +32,29 @@ interface SavedPostCardProps {
 }
 
 export function SavedPostCard({ post, onOpenNote, onClick }: SavedPostCardProps) {
+  const handleSaveToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const event = new CustomEvent('post-saved-change', {
+      detail: {
+        post: {
+          ...post,
+          content: post.description // Map description back to content for FeedCard compatibility
+        },
+        isSaved: false
+      }
+    });
+    window.dispatchEvent(event);
+  };
+
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likes);
+
+  const handleLike = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsLiked(!isLiked);
+    setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+  };
+
   return (
     <Card 
       className="glass-card border-white/5 p-5 hover-elevate transition-all group flex flex-col h-full overflow-hidden cursor-pointer"
@@ -74,21 +97,20 @@ export function SavedPostCard({ post, onOpenNote, onClick }: SavedPostCardProps)
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-red-400 shrink-0"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
+            className={cn(
+              "h-8 gap-1.5 px-2 transition-colors shrink-0",
+              isLiked ? "text-red-400 font-bold" : "text-muted-foreground hover:text-red-400"
+            )}
+            onClick={handleLike}
           >
-            <Heart className="w-3.5 h-3.5" />
-            <span className="text-[11px] font-bold">{post.likes}</span>
+            <Heart className={cn("w-3.5 h-3.5", isLiked && "fill-current")} />
+            <span className="text-[11px] font-bold tabular-nums">{likesCount}</span>
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0 text-primary shrink-0"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
+            onClick={handleSaveToggle}
           >
             <Bookmark className="w-3.5 h-3.5 fill-primary" />
           </Button>
