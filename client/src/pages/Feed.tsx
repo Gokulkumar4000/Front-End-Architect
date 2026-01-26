@@ -351,7 +351,7 @@ const CommentItem = ({ comment, isReply = false, onReply, parentId }: { comment:
   );
 };
 
-const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { post: Post; forceShowDetails?: boolean; onClose?: () => void }) => {
+export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { post: Post; forceShowDetails?: boolean; onClose?: () => void }) => {
   const userRole = localStorage.getItem("userRole") as string;
   const [isFollowing, setIsFollowing] = useState(false);
   const [showFollowDialog, setShowFollowDialog] = useState(false);
@@ -414,7 +414,30 @@ const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { post: Post
   };
 
   const handleSave = () => {
-    setIsSaved(!isSaved);
+    const newSavedStatus = !isSaved;
+    setIsSaved(newSavedStatus);
+    
+    // Dispatch custom event for Saved page to listen to
+    const event = new CustomEvent('post-saved-change', {
+      detail: {
+        post: {
+          ...post,
+          id: post.id,
+          title: post.title,
+          content: post.content,
+          author: post.author,
+          type: post.type,
+          likes: likesCount
+        },
+        isSaved: newSavedStatus
+      }
+    });
+    window.dispatchEvent(event);
+
+    toast({
+      title: newSavedStatus ? "Post saved" : "Post removed",
+      description: newSavedStatus ? "You can find this post in your saved collection." : "Post has been removed from your saved collection.",
+    });
   };
 
   const handleReply = (username: string, commentId: string) => {

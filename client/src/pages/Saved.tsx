@@ -8,6 +8,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import Feed, { FeedCard } from "./Feed";
 
 const MOCK_SAVED_POSTS: SavedPost[] = [
   {
@@ -144,10 +145,16 @@ export default function Saved() {
               onClick={(p) => {
                 setDetailedPost({
                   ...p,
-                  id: Number(p.id),
+                  id: p.id,
                   content: p.description,
                   timestamp: "Saved",
-                  comments: 12
+                  comments: 12,
+                  stats: { likes: p.likes, comments: 12 },
+                  author: {
+                    ...p.author,
+                    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.author.name}`,
+                    role: "Visionary"
+                  }
                 });
               }}
             />
@@ -162,34 +169,21 @@ export default function Saved() {
 
         {detailedPost && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-            <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-card border-white/10 p-6 relative shadow-2xl">
+            <div className="w-full max-w-[95vw] h-[90vh] glass-card border-white/10 relative shadow-2xl overflow-hidden rounded-2xl">
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="absolute top-2 right-2 hover:bg-white/10"
+                className="absolute top-4 right-4 z-[110] hover:bg-white/10 text-white"
                 onClick={() => setDetailedPost(null)}
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </Button>
-              <h2 className="text-2xl font-bold mb-4 text-gradient-primary">{detailedPost.title}</h2>
-              <div className="flex items-center gap-3 mb-6 p-3 bg-white/5 rounded-xl border border-white/5">
-                <Avatar className="h-10 w-10 border border-primary/20">
-                  <AvatarFallback className="bg-primary/10 text-primary">{detailedPost.author.name[0]}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-bold text-sm">{detailedPost.author.name}</p>
-                  <p className="text-[10px] text-primary font-bold uppercase tracking-wider">{detailedPost.type.toUpperCase()}</p>
-                </div>
-              </div>
-              <div className="prose prose-invert max-w-none">
-                <p className="text-muted-foreground mb-8 leading-relaxed text-sm">
-                  {detailedPost.description}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2 pt-6 border-t border-white/5">
-                {detailedPost.domains.map((d: string) => (
-                  <Badge key={d} variant="outline" className="text-[10px] bg-primary/5 border-primary/10">{d}</Badge>
-                ))}
+              <div className="h-full w-full">
+                <FeedCard 
+                  post={detailedPost} 
+                  forceShowDetails={true} 
+                  onClose={() => setDetailedPost(null)}
+                />
               </div>
             </div>
           </div>
