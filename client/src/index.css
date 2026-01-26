@@ -86,11 +86,6 @@
 [data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb:hover {
   background: hsla(270, 70%, 60%, 0.5);
 }
-  scrollbar-color: rgba(124, 58, 237, 0.2) rgba(255, 255, 255, 0.02);
-}
-
-[data-radix-scroll-area-viewport]::-webkit-scrollbar {
-  width: 8px;
   height: 8px;
 }
 
