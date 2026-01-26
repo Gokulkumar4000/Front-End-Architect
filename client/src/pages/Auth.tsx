@@ -663,6 +663,40 @@ export default function Auth() {
     exit: { opacity: 0, y: -10, transition: { duration: 0.3, ease: "easeIn" } }
   };
 
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPass, setLoginPass] = useState("");
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // Find user by username or email for convenience
+    const user = MOCK_USERS.find(u => 
+      (u.username === loginEmail || u.email === loginEmail) && u.password === loginPass
+    );
+    
+    if (user) {
+      localStorage.setItem("userRole", user.role);
+      localStorage.setItem("username", user.username);
+      localStorage.setItem("isLoggedIn", "true");
+      toast({
+        title: "Welcome back!",
+        description: `Logged in as ${user.name}`,
+      });
+      setLocation("/feed");
+    } else {
+      toast({
+        title: "Login failed",
+        description: "Invalid credentials. Try alice / password123",
+        variant: "destructive",
+      });
+    }
+    setIsSubmitting(false);
+  };
+
   const updateFormData = (field: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
@@ -880,15 +914,35 @@ export default function Auth() {
                   </div>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="john@example.com" className="bg-white/5 border-white/10" />
+                      <Label htmlFor="email">Email or Username</Label>
+                      <Input 
+                        id="email" 
+                        type="text" 
+                        placeholder="alice" 
+                        className="bg-white/5 border-white/10" 
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="pass">Password</Label>
-                      <Input id="pass" type="password" placeholder="••••••••" className="bg-white/5 border-white/10" />
+                      <Input 
+                        id="pass" 
+                        type="password" 
+                        placeholder="••••••••" 
+                        className="bg-white/5 border-white/10" 
+                        value={loginPass}
+                        onChange={(e) => setLoginPass(e.target.value)}
+                      />
                     </div>
                   </div>
-                  <Button className="w-full py-6 font-bold text-lg mt-4 shadow-lg shadow-primary/20">Login to DevConnect</Button>
+                  <Button 
+                    onClick={handleLogin}
+                    disabled={isSubmitting}
+                    className="w-full py-6 font-bold text-lg mt-4 shadow-lg shadow-primary/20"
+                  >
+                    {isSubmitting ? "Logging in..." : "Login to DevConnect"}
+                  </Button>
                 </CardContent>
               </Card>
             </motion.div>
