@@ -1414,7 +1414,13 @@ export default function Feed() {
           {loading ? (
             <FeedSkeleton />
           ) : (
-            MOCK_POSTS.filter(post => feedFilter === 'latest' || post.author.includes("Sarah") || post.author.includes("Alex")).map(post => (
+            MOCK_POSTS.filter(post => {
+              if (feedFilter === 'latest') return true;
+              // Simple heuristic: if post.author is a string, check if it contains Sarah or Alex
+              // If it's an object, check the name property
+              const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
+              return authorName?.includes?.("Sarah") || authorName?.includes?.("Alex");
+            }).map(post => (
               <FeedCard key={post.id} post={post} />
             ))
           )}
