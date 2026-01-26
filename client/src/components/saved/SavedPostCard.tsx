@@ -126,6 +126,3 @@ export function SavedPostCard({ post, onOpenNote, onClick }: SavedPostCardProps)
     </Card>
   );
 }
-    </Card>
-  );
-}

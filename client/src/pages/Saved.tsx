@@ -1,10 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { SavedPostCard, SavedPost } from "@/components/saved/SavedPostCard";
 import { SavedAnalytics } from "@/components/saved/SavedAnalytics";
 import { SavedFilters } from "@/components/saved/SavedFilters";
 import { NoteModal } from "@/components/saved/NoteModal";
-import { FeedCard } from "@/components/feed/FeedCard";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 const MOCK_SAVED_POSTS: SavedPost[] = [
   {
@@ -46,6 +49,31 @@ export default function Saved() {
   const [selectedPost, setSelectedPost] = useState<SavedPost | null>(null);
   const [detailedPost, setDetailedPost] = useState<any>(null);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
+
+  useEffect(() => {
+    const handleSavedChange = (e: any) => {
+      const { post, isSaved } = e.detail;
+      if (isSaved) {
+        setPosts(prev => {
+          if (prev.find(p => p.id === String(post.id))) return prev;
+          return [...prev, {
+            id: String(post.id),
+            type: post.type || "idea",
+            title: post.title,
+            description: post.content,
+            author: typeof post.author === 'string' ? { name: post.author } : post.author,
+            domains: post.domains || ["General"],
+            likes: post.likes || 0
+          }];
+        });
+      } else {
+        setPosts(prev => prev.filter(p => p.id !== String(post.id)));
+      }
+    };
+
+    window.addEventListener('post-saved-change', handleSavedChange);
+    return () => window.removeEventListener('post-saved-change', handleSavedChange);
+  }, []);
 
   const filteredPosts = useMemo(() => {
     return posts.filter(post => {
@@ -133,11 +161,38 @@ export default function Saved() {
         )}
 
         {detailedPost && (
-          <FeedCard 
-            post={detailedPost} 
-            forceShowDetails={true} 
-            onClose={() => setDetailedPost(null)} 
-          />
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+            <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-card border-white/10 p-6 relative shadow-2xl">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="absolute top-2 right-2 hover:bg-white/10"
+                onClick={() => setDetailedPost(null)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+              <h2 className="text-2xl font-bold mb-4 text-gradient-primary">{detailedPost.title}</h2>
+              <div className="flex items-center gap-3 mb-6 p-3 bg-white/5 rounded-xl border border-white/5">
+                <Avatar className="h-10 w-10 border border-primary/20">
+                  <AvatarFallback className="bg-primary/10 text-primary">{detailedPost.author.name[0]}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-bold text-sm">{detailedPost.author.name}</p>
+                  <p className="text-[10px] text-primary font-bold uppercase tracking-wider">{detailedPost.type.toUpperCase()}</p>
+                </div>
+              </div>
+              <div className="prose prose-invert max-w-none">
+                <p className="text-muted-foreground mb-8 leading-relaxed text-sm">
+                  {detailedPost.description}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-6 border-t border-white/5">
+                {detailedPost.domains.map((d: string) => (
+                  <Badge key={d} variant="outline" className="text-[10px] bg-primary/5 border-primary/10">{d}</Badge>
+                ))}
+              </div>
+            </div>
+          </div>
         )}
 
         <NoteModal
