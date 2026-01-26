@@ -54,6 +54,9 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
+import { useToast } from "@/hooks/use-toast";
+import { MOCK_USERS } from "@/mocks/users";
+
 type AuthMode = "login" | "signup";
 type UserRole = "idea-holder" | "developer" | "investor";
 type OnboardingStep = "role-selection" | "role-overview" | "registration";
@@ -636,33 +639,6 @@ export default function Auth() {
     return baseSteps;
   }, [selectedRole]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen w-full bg-background flex items-center justify-center p-4">
-        <div className="max-w-md w-full space-y-8 text-center">
-          <div className="mx-auto h-20 w-20 rounded-2xl shimmer-bg flex items-center justify-center border border-primary/20">
-             <Lightbulb className="w-10 h-10 text-primary animate-pulse" />
-          </div>
-          <div className="space-y-4">
-            <div className="h-8 w-48 rounded mx-auto shimmer-bg" />
-            <div className="h-4 w-64 rounded mx-auto shimmer-bg opacity-70" />
-          </div>
-          <div className="grid grid-cols-3 gap-4 mt-12">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="h-24 rounded-xl border border-white/5 shimmer-bg" />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const containerVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
-    exit: { opacity: 0, y: -10, transition: { duration: 0.3, ease: "easeIn" } }
-  };
-
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPass, setLoginPass] = useState("");
 
@@ -675,7 +651,7 @@ export default function Auth() {
     
     // Find user by username or email for convenience
     const user = MOCK_USERS.find(u => 
-      (u.username === loginEmail || u.email === loginEmail) && u.password === loginPass
+      (u.username === loginEmail || (u as any).email === loginEmail) && u.password === loginPass
     );
     
     if (user) {
@@ -696,6 +672,27 @@ export default function Auth() {
     }
     setIsSubmitting(false);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full bg-background flex items-center justify-center p-4">
+        <div className="max-w-md w-full space-y-8 text-center">
+          <div className="mx-auto h-20 w-20 rounded-2xl shimmer-bg flex items-center justify-center border border-primary/20">
+             <Lightbulb className="w-10 h-10 text-primary animate-pulse" />
+          </div>
+          <div className="space-y-4">
+            <div className="h-8 w-48 rounded mx-auto shimmer-bg" />
+            <div className="h-4 w-64 rounded mx-auto shimmer-bg opacity-70" />
+          </div>
+          <div className="grid grid-cols-3 gap-4 mt-12">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-24 rounded-xl border border-white/5 shimmer-bg" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const updateFormData = (field: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
