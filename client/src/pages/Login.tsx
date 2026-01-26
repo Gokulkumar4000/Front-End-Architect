@@ -1,8 +1,45 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { ArrowLeft, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { MOCK_USERS } from "@/mocks/users";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    const user = MOCK_USERS.find(u => u.username === username && u.password === password);
+    
+    if (user) {
+      localStorage.setItem("userRole", user.role);
+      localStorage.setItem("username", user.username);
+      localStorage.setItem("isLoggedIn", "true");
+      toast({
+        title: "Welcome back!",
+        description: `Logged in as ${user.name}`,
+      });
+      setLocation("/feed");
+    } else {
+      toast({
+        title: "Login failed",
+        description: "Invalid username or password. Try alice/password123",
+        variant: "destructive",
+      });
+    }
+    setIsSubmitting(false);
+  };
+
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-background">
       {/* Left Panel - Visual */}
@@ -37,13 +74,16 @@ export default function Login() {
             <p className="text-muted-foreground">Access your dashboard</p>
           </div>
 
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-6" onSubmit={handleLogin}>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">Email Address</label>
+              <label className="text-sm font-medium text-muted-foreground">Username</label>
               <input 
-                type="email" 
+                type="text" 
                 className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
-                placeholder="you@example.com"
+                placeholder="Username (e.g. alice)"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
               />
             </div>
             
@@ -56,11 +96,18 @@ export default function Login() {
                 type="password" 
                 className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
             </div>
 
-            <button className="w-full py-4 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-200">
-              Sign In
+            <button 
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-4 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Signing In..." : "Sign In"}
             </button>
           </form>
 
