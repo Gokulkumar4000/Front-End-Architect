@@ -1,0 +1,273 @@
+You are working on an existing React (TypeScript) frontend project with a component-based structure.
+
+Your task is to create a new page called Saved.tsx that shows all posts saved by the logged-in user.
+This is frontend-only, using mock data.
+Do NOT introduce backend, auth logic, payments, or premium features.
+
+1️⃣ PAGE PURPOSE
+
+The Saved page acts as a personal workspace where a user can:
+
+View all saved posts
+
+Understand what they saved and why
+
+Organize saved content using filters and visuals
+
+Add private notes to each saved post
+
+Notes are user-only and never visible to others.
+
+2️⃣ LAYOUT STRUCTURE
+Overall layout (same theme as Feed page):
+
+Top Navbar → reuse existing Navbar component (do not duplicate)
+
+Left Sidebar → reuse existing Sidebar layout
+
+Main Content Area → Saved page content
+
+Do NOT change global layout styles.
+
+3️⃣ PAGE SECTIONS (TOP TO BOTTOM)
+🔹 Section A: Page Header
+
+Title: Saved Posts
+
+Subtitle: “Things you saved to revisit later”
+
+Optional small stats:
+
+Total saved posts
+
+Saved Ideas
+
+Saved Projects
+
+Saved Fundings
+
+(Use mock counts)
+
+🔹 Section B: Analytics & Insights (Top Area)
+
+Create a dashboard-style analytics row:
+
+1. Pie Chart – Saved Post Types
+
+Shows distribution of:
+
+Ideas
+
+Projects
+
+Fundings
+
+Hover behavior (important):
+
+On hover, show tooltip:
+
+Type name
+
+Count
+
+Percentage
+
+Example:
+
+Ideas – 12 (40%)
+
+2. Pie / Bar Chart – Saved Domains
+
+Shows which domains the user saved most:
+
+AI/ML
+
+FinTech
+
+HealthTech
+
+Web3
+
+Others
+
+Hover tooltip:
+
+Domain name + count
+
+Use mock data only.
+
+🔹 Section C: Filters Bar
+
+Filters must be client-side only:
+
+Filter by:
+
+Post type (Idea / Project / Funding)
+
+Domain
+
+“Saved with notes” toggle
+
+Search input:
+
+Search by post title or author name
+
+Filters update the list instantly (mock logic).
+
+4️⃣ SAVED POST LIST (CORE FEATURE)
+
+Render saved posts as cards, visually similar to Feed cards.
+
+Each saved post card must include:
+
+Author avatar + name
+
+Post type badge (Idea / Project / Funding)
+
+Post title
+
+Short description (2–3 lines max)
+
+Domain tags
+
+Action row:
+
+❤️ Like (UI only)
+
+🔖 Saved (already active)
+
+📝 Note button
+
+View full post
+
+5️⃣ 📝 NOTE FEATURE (VERY IMPORTANT)
+Behavior rules:
+
+Each saved post can have one private note
+
+Notes are:
+
+Visible only to the user
+
+Stored only in frontend state (mock)
+
+Note Button States
+Case 1: No note exists
+
+Show: 📝 Add note
+
+Style: subtle (outline / muted)
+
+Case 2: Note exists
+
+Show: 📝 View note
+
+Add a small visual indicator (dot or glow)
+
+Clicking Note Button
+
+Open a small modal or popover (NOT full page).
+
+Modal contents:
+
+Title: “Your note”
+
+Textarea:
+
+Max 250 characters
+
+Character counter
+
+Buttons:
+
+Save
+
+Cancel
+
+Delete note (only if note exists)
+
+Behavior:
+
+Save → updates note
+
+Delete → removes note
+
+Close → no changes
+
+After Note Is Saved
+
+Do NOT show full note on card
+
+Show:
+
+📝 icon
+
+Tooltip on hover with first ~30 characters
+
+Example tooltip:
+
+“Potential investment, check traction…”
+
+6️⃣ UX & STYLE RULES
+
+Keep UI clean and calm
+
+Notes must feel optional, not forced
+
+No horizontal scrolling
+
+No double scrollbars
+
+Charts and modals must match existing dark / glass theme
+
+Fully responsive (desktop + mobile)
+
+7️⃣ COMPONENT RULES (IMPORTANT)
+
+Make everything reusable:
+
+Create components like:
+
+SavedPostCard
+
+SavedAnalytics
+
+NoteModal
+
+SavedFilters
+
+Do NOT hardcode logic inside the page file.
+
+Future requirement:
+
+If another page needs “notes”, this component should be reusable without rewriting.
+
+8️⃣ STRICT CONSTRAINTS
+
+❌ Do NOT add backend calls
+
+❌ Do NOT add premium / upgrade messages
+
+❌ Do NOT change auth logic
+
+❌ Do NOT refactor unrelated pages
+
+✅ Use mock data only
+
+✅ Follow existing project structure
+
+9️⃣ FINAL CHECK BEFORE FINISHING
+
+Before finishing, ensure:
+
+Notes work per post
+
+Filters update list correctly
+
+Charts respond on hover
+
+UI matches Feed theme
+
+Code is clean and readable
+
+Output only the updated frontend code needed for this page and its components.

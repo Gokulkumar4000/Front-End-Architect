@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Landing from "@/pages/Landing";
 import Auth from "@/pages/Auth";
 import Feed from "@/pages/Feed";
+import Saved from "@/pages/Saved";
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/not-found";
 
@@ -16,8 +17,8 @@ function Router() {
       <Route path="/login" component={Auth} />
       <Route path="/register" component={Auth} />
       <Route path="/feed" component={Feed} />
+      <Route path="/saved" component={Saved} />
       <Route path="/profile" component={Profile} />
-      {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
   );
