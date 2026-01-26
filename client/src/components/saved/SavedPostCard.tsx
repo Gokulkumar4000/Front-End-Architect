@@ -28,11 +28,15 @@ export interface SavedPost {
 interface SavedPostCardProps {
   post: SavedPost;
   onOpenNote: (post: SavedPost) => void;
+  onClick: (post: SavedPost) => void;
 }
 
-export function SavedPostCard({ post, onOpenNote }: SavedPostCardProps) {
+export function SavedPostCard({ post, onOpenNote, onClick }: SavedPostCardProps) {
   return (
-    <Card className="glass-card border-white/5 p-5 hover-elevate transition-all group flex flex-col h-full overflow-hidden">
+    <Card 
+      className="glass-card border-white/5 p-5 hover-elevate transition-all group flex flex-col h-full overflow-hidden cursor-pointer"
+      onClick={() => onClick(post)}
+    >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3 min-w-0">
           <Avatar className="h-9 w-9 border-2 border-primary/10 shrink-0">
@@ -67,11 +71,25 @@ export function SavedPostCard({ post, onOpenNote }: SavedPostCardProps) {
 
       <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
         <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
-          <Button variant="ghost" size="sm" className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-red-400 shrink-0">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-red-400 shrink-0"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <Heart className="w-3.5 h-3.5" />
             <span className="text-[11px] font-bold">{post.likes}</span>
           </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-primary shrink-0">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 text-primary shrink-0"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <Bookmark className="w-3.5 h-3.5 fill-primary" />
           </Button>
           <TooltipProvider>
@@ -84,7 +102,10 @@ export function SavedPostCard({ post, onOpenNote }: SavedPostCardProps) {
                     "h-8 gap-1.5 px-2 shrink-0 relative",
                     post.note && "bg-primary/20 text-primary hover:bg-primary/30 border-primary/30"
                   )}
-                  onClick={() => onOpenNote(post)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenNote(post);
+                  }}
                 >
                   <StickyNote className={cn("w-3.5 h-3.5", post.note && "fill-primary/20")} />
                   <span className="text-[11px] font-bold">
@@ -101,10 +122,10 @@ export function SavedPostCard({ post, onOpenNote }: SavedPostCardProps) {
             </Tooltip>
           </TooltipProvider>
         </div>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0 ml-1">
-          <ExternalLink className="w-3.5 h-3.5" />
-        </Button>
       </div>
+    </Card>
+  );
+}
     </Card>
   );
 }

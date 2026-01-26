@@ -4,6 +4,7 @@ import { SavedPostCard, SavedPost } from "@/components/saved/SavedPostCard";
 import { SavedAnalytics } from "@/components/saved/SavedAnalytics";
 import { SavedFilters } from "@/components/saved/SavedFilters";
 import { NoteModal } from "@/components/saved/NoteModal";
+import { FeedCard } from "@/components/feed/FeedCard";
 
 const MOCK_SAVED_POSTS: SavedPost[] = [
   {
@@ -43,6 +44,7 @@ export default function Saved() {
   const [domain, setDomain] = useState("all");
   const [withNotes, setWithNotes] = useState(false);
   const [selectedPost, setSelectedPost] = useState<SavedPost | null>(null);
+  const [detailedPost, setDetailedPost] = useState<any>(null);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
 
   const filteredPosts = useMemo(() => {
@@ -111,6 +113,15 @@ export default function Saved() {
                 setSelectedPost(p);
                 setIsNoteOpen(true);
               }}
+              onClick={(p) => {
+                setDetailedPost({
+                  ...p,
+                  id: Number(p.id),
+                  content: p.description,
+                  timestamp: "Saved",
+                  comments: 12
+                });
+              }}
             />
           ))}
         </div>
@@ -119,6 +130,14 @@ export default function Saved() {
           <div className="text-center py-20 glass-card border-white/5 bg-white/[0.02] rounded-2xl">
             <p className="text-muted-foreground font-medium">No saved posts match your filters.</p>
           </div>
+        )}
+
+        {detailedPost && (
+          <FeedCard 
+            post={detailedPost} 
+            forceShowDetails={true} 
+            onClose={() => setDetailedPost(null)} 
+          />
         )}
 
         <NoteModal
