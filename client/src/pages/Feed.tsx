@@ -1612,10 +1612,19 @@ export default function Feed() {
             <Button 
               variant="ghost" 
               className="w-full mt-4 text-xs text-muted-foreground" 
-              onClick={() => setShowAllConnections(!showAllConnections)}
+              onClick={() => {
+                if (showAllConnections) {
+                  const searchInput = document.getElementById('search-input');
+                  if (searchInput) {
+                    searchInput.focus();
+                  }
+                } else {
+                  setShowAllConnections(true);
+                }
+              }}
               data-testid="button-view-more-connections"
             >
-              {showAllConnections ? "Show Less" : "View More"}
+              {showAllConnections ? "Search More" : "View More"}
             </Button>
           </Card>
         </div>
