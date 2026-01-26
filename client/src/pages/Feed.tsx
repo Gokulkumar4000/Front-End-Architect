@@ -1371,8 +1371,8 @@ export default function Feed() {
 
   return (
     <AppLayout>
-      <div className="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8 items-start relative">
-        <div className="space-y-6">
+      <div className="max-w-6xl mx-auto p-4 md:p-6 flex flex-col lg:flex-row gap-8 items-start relative">
+        <div className="flex-1 space-y-6 w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-display font-bold text-gradient-primary">Activity Feed</h2>
             <div className="flex gap-2">
@@ -1390,8 +1390,8 @@ export default function Feed() {
           )}
         </div>
 
-        <div className="hidden lg:block">
-          <div className="sticky top-24 space-y-6 flex flex-col">
+        <div className="hidden lg:block w-[300px] shrink-0 sticky top-24">
+          <div className="space-y-6">
             <Card className="glass-card border-white/5 p-6">
             <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Platform Stats</h4>
             <div className="space-y-4">
