@@ -22,7 +22,7 @@ export function AppLayout({ children, role: propRole }: AppLayoutProps) {
       <SidebarProvider style={style as React.CSSProperties}>
         <div className="flex w-full pt-16 pb-16 md:pb-0">
           <AppSidebar role={role} />
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1">
             {children}
           </main>
         </div>
