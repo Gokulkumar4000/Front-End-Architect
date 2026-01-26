@@ -42,7 +42,6 @@ const MOCK_SAVED_POSTS: SavedPost[] = [
 ];
 
 export default function Saved() {
-  const [posts, setPosts] = useState<SavedPost[]>(MOCK_SAVED_POSTS);
   const [search, setSearch] = useState("");
   const [type, setType] = useState("all");
   const [domain, setDomain] = useState("all");
@@ -50,6 +49,15 @@ export default function Saved() {
   const [selectedPost, setSelectedPost] = useState<SavedPost | null>(null);
   const [detailedPost, setDetailedPost] = useState<any>(null);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
+
+  const [posts, setPosts] = useState<SavedPost[]>(() => {
+    const saved = localStorage.getItem('saved_posts');
+    return saved ? JSON.parse(saved) : MOCK_SAVED_POSTS;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('saved_posts', JSON.stringify(posts));
+  }, [posts]);
 
   useEffect(() => {
     const handleSavedChange = (e: any) => {

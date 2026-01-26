@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Heart, Bookmark, MessageSquare, ExternalLink, StickyNote } from "lucide-react";
+import { Heart, Bookmark, StickyNote } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -32,13 +33,16 @@ interface SavedPostCardProps {
 }
 
 export function SavedPostCard({ post, onOpenNote, onClick }: SavedPostCardProps) {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likes);
+
   const handleSaveToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     const event = new CustomEvent('post-saved-change', {
       detail: {
         post: {
           ...post,
-          content: post.description // Map description back to content for FeedCard compatibility
+          content: post.description
         },
         isSaved: false
       }
@@ -46,13 +50,11 @@ export function SavedPostCard({ post, onOpenNote, onClick }: SavedPostCardProps)
     window.dispatchEvent(event);
   };
 
-  const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(post.likes);
-
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsLiked(!isLiked);
-    setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+    const newLikedStatus = !isLiked;
+    setIsLiked(newLikedStatus);
+    setLikesCount((prev: number) => newLikedStatus ? prev + 1 : prev - 1);
   };
 
   return (
