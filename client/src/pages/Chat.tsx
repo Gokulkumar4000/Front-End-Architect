@@ -261,30 +261,31 @@ export default function ChatPage() {
           </div>
         </div>
 
-        <ScrollArea className="flex-1 w-full overflow-hidden">
-          <div className="w-full flex flex-col">
+        <ScrollArea className="flex-1 w-full overflow-hidden no-default-table">
+          <div className="w-full flex flex-col items-stretch overflow-hidden">
             {filteredChats.map((chat) => (
               <button
                 key={chat.id}
                 onClick={() => setSelectedChatId(chat.id)}
                 className={cn(
                   "w-full px-4 py-3 flex items-center gap-3 transition-all duration-200 group relative text-left border-b border-white/5",
+                  "flex-row flex-nowrap", // Force flex row
                   selectedChatId === chat.id 
                     ? "bg-white/10" 
                     : "hover:bg-white/5 active:bg-white/10"
                 )}
               >
-                <div className="relative shrink-0">
-                  <Avatar className="h-12 w-12 border border-white/10">
+                <div className="relative shrink-0 flex items-center justify-center">
+                  <Avatar className="h-12 w-12 border border-white/10 shrink-0">
                     <AvatarImage src={chat.user.avatar} />
                     <AvatarFallback>{chat.user.name[0]}</AvatarFallback>
                   </Avatar>
                   {chat.user.status === "online" && (
-                    <span className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
+                    <span className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background z-10" />
                   )}
                 </div>
-                <div className="flex-1 min-w-0 py-1 flex flex-col overflow-hidden">
-                  <div className="flex items-center justify-between mb-1 gap-2 w-full overflow-hidden">
+                <div className="flex-1 min-w-0 py-1 flex flex-col justify-center overflow-hidden">
+                  <div className="flex items-center justify-between mb-1 gap-2 w-full overflow-hidden flex-nowrap">
                     <span className={cn(
                       "font-semibold text-base truncate transition-colors min-w-0 flex-1",
                       chat.unreadCount > 0 ? "text-primary" : "text-white"
@@ -292,11 +293,11 @@ export default function ChatPage() {
                       {chat.user.name}
                     </span>
                     <span className={cn(
-                      "text-[11px] font-medium shrink-0 whitespace-nowrap ml-auto",
+                      "text-[11px] font-medium shrink-0 whitespace-nowrap ml-2",
                       chat.unreadCount > 0 ? "text-primary" : "text-muted-foreground"
                     )}>{chat.time}</span>
                   </div>
-                  <div className="flex items-center justify-between gap-2 w-full overflow-hidden">
+                  <div className="flex items-center justify-between gap-2 w-full overflow-hidden flex-nowrap">
                     <p className={cn(
                       "text-[13px] truncate transition-colors flex-1 min-w-0",
                       chat.unreadCount > 0 ? "text-white font-medium" : "text-muted-foreground"
@@ -304,7 +305,7 @@ export default function ChatPage() {
                       {chat.lastMessage}
                     </p>
                     {chat.unreadCount > 0 && (
-                      <div className="shrink-0 flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-primary rounded-full ml-auto">
+                      <div className="shrink-0 flex items-center justify-center min-w-[20px] h-[20px] px-1 bg-primary rounded-full ml-2">
                         <span className="text-[10px] font-bold text-white leading-none">{chat.unreadCount}</span>
                       </div>
                     )}

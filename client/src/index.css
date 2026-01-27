@@ -111,6 +111,18 @@
 }
 
 @layer utilities {
+  .no-default-table,
+  .no-default-table [data-radix-scroll-area-viewport] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  .no-default-table [data-radix-scroll-area-viewport] > div {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
   .glass {
     @apply bg-black/40 backdrop-blur-md border border-white/10;
   }
