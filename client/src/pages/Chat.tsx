@@ -122,11 +122,19 @@ export default function ChatPage() {
   );
 
   const filteredChats = useMemo(() => 
-    MOCK_CHATS.filter(c => 
+    MOCK_CHATS.map(chat => {
+      const chatMessages = allMessages[chat.id] || [];
+      const lastMsg = chatMessages[chatMessages.length - 1];
+      return {
+        ...chat,
+        lastMessage: lastMsg ? lastMsg.text : chat.lastMessage,
+        time: lastMsg ? lastMsg.timestamp : chat.time
+      };
+    }).filter(c => 
       c.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.context?.title.toLowerCase().includes(searchQuery.toLowerCase())
     ),
-    [searchQuery]
+    [searchQuery, allMessages]
   );
 
   const handleSendMessage = () => {
@@ -219,7 +227,12 @@ export default function ChatPage() {
                 </div>
                 <div className="flex-1 text-left min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
-                    <span className="font-bold text-sm text-white truncate">{chat.user.name}</span>
+                    <span className={cn(
+                      "font-bold text-sm truncate transition-colors",
+                      chat.unreadCount > 0 ? "text-primary" : "text-white"
+                    )}>
+                      {chat.user.name}
+                    </span>
                     <span className="text-[10px] text-muted-foreground font-medium">{chat.time}</span>
                   </div>
                   {chat.context && (
@@ -230,13 +243,16 @@ export default function ChatPage() {
                       </Badge>
                     </div>
                   )}
-                  <p className="text-xs text-muted-foreground truncate group-hover:text-white/70 transition-colors">
+                  <p className={cn(
+                    "text-xs truncate transition-colors",
+                    chat.unreadCount > 0 ? "text-white font-medium" : "text-muted-foreground group-hover:text-white/70"
+                  )}>
                     {chat.lastMessage}
                   </p>
                 </div>
                 {chat.unreadCount > 0 && (
-                  <div className="absolute right-3 bottom-3 h-5 min-w-[20px] px-1.5 bg-primary rounded-full flex items-center justify-center">
-                    <span className="text-[10px] font-bold text-white">{chat.unreadCount}</span>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_rgba(168,85,247,0.6)] animate-pulse" />
                   </div>
                 )}
               </button>
