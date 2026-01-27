@@ -661,13 +661,14 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
               </Badge>
             </div>
             <h3 className="text-lg font-bold font-display leading-tight">{post.title}</h3>
-            <div className="relative group/content flex flex-col">
-              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+            <div className="relative group/content flex flex-col items-center">
+              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap max-h-[120px] overflow-hidden relative w-full">
                 {post.content}
+                <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background to-transparent pointer-events-none" />
               </p>
               <Button 
                 variant="ghost" 
-                className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-4 bg-transparent border-0 hover:bg-transparent shadow-none w-fit group-hover:translate-x-1 transition-transform"
+                className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2 bg-transparent border-0 hover:bg-transparent shadow-none w-fit transition-transform"
                 onClick={() => setShowDetailsDialog(true)}
               >
                 View full {String(post.type) === "investment" ? "investment" : String(post.type) === "project" ? "project" : "idea"} →
