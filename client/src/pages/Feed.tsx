@@ -1400,6 +1400,20 @@ export default function Feed() {
     return () => clearTimeout(timer);
   }, []);
 
+  const [savedPosts, setSavedPosts] = useState<any[]>(() => {
+    const saved = localStorage.getItem('saved_posts');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    const handleSavedChange = (e: any) => {
+      const saved = localStorage.getItem('saved_posts');
+      setSavedPosts(saved ? JSON.parse(saved) : []);
+    };
+    window.addEventListener('post-saved-change', handleSavedChange);
+    return () => window.removeEventListener('post-saved-change', handleSavedChange);
+  }, []);
+
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto p-4 md:p-6 flex flex-col lg:flex-row gap-8 items-start relative">
@@ -1423,6 +1437,14 @@ export default function Feed() {
               >
                 Following
               </Button>
+              <Button 
+                variant={feedFilter === 'saved' ? "outline" : "ghost"} 
+                size="sm" 
+                className={cn("h-8 text-xs font-bold", feedFilter !== 'saved' && "text-muted-foreground")}
+                onClick={() => setFeedFilter('saved')}
+              >
+                Saved
+              </Button>
             </div>
           </div>
           
@@ -1430,6 +1452,9 @@ export default function Feed() {
             <FeedSkeleton />
           ) : (
             MOCK_POSTS.filter(post => {
+              if (feedFilter === 'saved') {
+                return savedPosts.some(sp => String(sp.id) === String(post.id));
+              }
               if (feedFilter === 'latest') return true;
               const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
               return authorName?.includes?.("Sarah") || authorName?.includes?.("Alex");
