@@ -17,7 +17,8 @@ import {
   Briefcase,
   Target,
   PieChart,
-  Rocket
+  Rocket,
+  X
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -139,67 +140,73 @@ export function Navbar() {
               <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-80 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200" align="end" forceMount>
-            <DropdownMenuLabel className="font-normal px-4 py-3 flex items-center justify-between">
-              <span className="text-sm font-bold text-gradient-primary">Notifications</span>
-              <span className="text-xs text-muted-foreground">3 new</span>
+          <DropdownMenuContent className="w-72 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal px-3 py-2 flex items-center justify-between">
+              <span className="text-xs font-bold text-gradient-primary">Notifications</span>
+              <span className="text-[10px] text-muted-foreground">3 new</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-white/5" />
-            <div className="max-h-80 overflow-y-auto">
-              <DropdownMenuItem className="px-4 py-3 focus:bg-primary/10 cursor-pointer">
-                <div className="flex gap-3 w-full">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                    <Lightbulb className="w-4 h-4 text-primary" />
+            <div className="max-h-64 overflow-y-auto custom-scrollbar">
+              <div className="px-2 py-1.5 hover:bg-primary/10 cursor-pointer rounded-md mx-1 my-0.5 group">
+                <div className="flex gap-2 w-full items-start">
+                  <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <Lightbulb className="w-3.5 h-3.5 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">New collaboration request</p>
-                    <p className="text-xs text-muted-foreground truncate">Sarah wants to join your project</p>
-                    <p className="text-[10px] text-muted-foreground/60 mt-1">2 minutes ago</p>
+                    <p className="text-xs font-medium truncate">New collaboration request</p>
+                    <p className="text-[10px] text-muted-foreground truncate">Sarah wants to join your project</p>
+                    <p className="text-[9px] text-muted-foreground/60 mt-0.5">2 min ago</p>
                   </div>
+                  <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded" data-testid="button-dismiss-notification-1">
+                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
+                  </button>
                 </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="px-4 py-3 focus:bg-primary/10 cursor-pointer">
-                <div className="flex gap-3 w-full">
-                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                    <Coins className="w-4 h-4 text-green-500" />
+              </div>
+              <div className="px-2 py-1.5 hover:bg-primary/10 cursor-pointer rounded-md mx-1 my-0.5 group">
+                <div className="flex gap-2 w-full items-start">
+                  <div className="w-7 h-7 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                    <Coins className="w-3.5 h-3.5 text-green-500" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">Investment received</p>
-                    <p className="text-xs text-muted-foreground truncate">You received $5,000 for AI Tutor</p>
-                    <p className="text-[10px] text-muted-foreground/60 mt-1">1 hour ago</p>
+                    <p className="text-xs font-medium truncate">Investment received</p>
+                    <p className="text-[10px] text-muted-foreground truncate">You received $5,000 for AI Tutor</p>
+                    <p className="text-[9px] text-muted-foreground/60 mt-0.5">1 hour ago</p>
                   </div>
+                  <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded" data-testid="button-dismiss-notification-2">
+                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
+                  </button>
                 </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="px-4 py-3 focus:bg-primary/10 cursor-pointer">
-                <div className="flex gap-3 w-full">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="w-4 h-4 text-blue-500" />
+              </div>
+              <div className="px-2 py-1.5 hover:bg-primary/10 cursor-pointer rounded-md mx-1 my-0.5 group">
+                <div className="flex gap-2 w-full items-start">
+                  <div className="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                    <MessageSquare className="w-3.5 h-3.5 text-blue-500" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">New message from Alex</p>
-                    <p className="text-xs text-muted-foreground truncate">Hey, I loved your idea about...</p>
-                    <p className="text-[10px] text-muted-foreground/60 mt-1">3 hours ago</p>
+                    <p className="text-xs font-medium truncate">New message from Alex</p>
+                    <p className="text-[10px] text-muted-foreground truncate">Hey, I loved your idea about...</p>
+                    <p className="text-[9px] text-muted-foreground/60 mt-0.5">3 hours ago</p>
                   </div>
+                  <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded" data-testid="button-dismiss-notification-3">
+                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
+                  </button>
                 </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="px-4 py-3 focus:bg-primary/10 cursor-pointer bg-muted/30">
-                <div className="flex gap-3 w-full">
-                  <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
-                    <Target className="w-4 h-4 text-orange-500" />
+              </div>
+              <div className="px-2 py-1.5 hover:bg-primary/10 cursor-pointer rounded-md mx-1 my-0.5 bg-muted/20 group">
+                <div className="flex gap-2 w-full items-start">
+                  <div className="w-7 h-7 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+                    <Target className="w-3.5 h-3.5 text-orange-500" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">Milestone achieved</p>
-                    <p className="text-xs text-muted-foreground truncate">Your project reached 100 views</p>
-                    <p className="text-[10px] text-muted-foreground/60 mt-1">Yesterday</p>
+                    <p className="text-xs font-medium truncate">Milestone achieved</p>
+                    <p className="text-[10px] text-muted-foreground truncate">Your project reached 100 views</p>
+                    <p className="text-[9px] text-muted-foreground/60 mt-0.5">Yesterday</p>
                   </div>
+                  <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded" data-testid="button-dismiss-notification-4">
+                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
+                  </button>
                 </div>
-              </DropdownMenuItem>
-            </div>
-            <DropdownMenuSeparator className="bg-white/5" />
-            <div className="p-2">
-              <Button variant="ghost" className="w-full text-sm text-primary hover:text-primary hover:bg-primary/10">
-                View all notifications
-              </Button>
+              </div>
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
