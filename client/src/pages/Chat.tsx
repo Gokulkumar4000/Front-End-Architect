@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { 
   Search, 
@@ -8,11 +8,8 @@ import {
   MessageSquare,
   Check,
   CheckCheck,
-  Phone,
-  Video,
   Plus,
   ArrowLeft,
-  Filter,
   ExternalLink,
   Target,
   Zap
@@ -23,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   id: string;
@@ -106,6 +104,7 @@ const MOCK_MESSAGES: Record<string, Message[]> = {
 
 export default function ChatPage() {
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [showProfileSidebar, setShowProfileSidebar] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
