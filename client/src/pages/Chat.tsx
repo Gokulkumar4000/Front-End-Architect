@@ -30,6 +30,7 @@ interface Message {
   text: string;
   timestamp: string;
   status: 'sent' | 'delivered' | 'read';
+  image?: string;
 }
 
 interface Chat {
@@ -136,6 +137,55 @@ export default function ChatPage() {
     ),
     [searchQuery, allMessages]
   );
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Simulate file upload/sending
+    const isImage = file.type.startsWith('image/');
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        senderId: "me",
+        text: isImage ? "" : `Attached file: ${file.name}`,
+        image: isImage ? content : undefined,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: 'sent'
+      };
+      setMessages([...messages, newMessage]);
+      
+      toast({
+        title: isImage ? "Image sent" : "File attached",
+        description: `${file.name} has been sent.`,
+      });
+    };
+    
+    if (isImage) {
+      reader.readAsDataURL(file);
+    } else {
+      // For non-images, we just send the name for now in this mock
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        senderId: "me",
+        text: `Attached file: ${file.name}`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: 'sent'
+      };
+      setMessages([...messages, newMessage]);
+      toast({
+        title: "File attached",
+        description: `${file.name} has been sent.`,
+      });
+    }
+    
+    // Reset input
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleSendMessage = () => {
     if (!messageInput.trim() || !selectedChatId) return;
@@ -335,7 +385,12 @@ export default function ChatPage() {
                             ? "bg-primary text-white rounded-tr-none shadow-lg shadow-primary/10" 
                             : "bg-white/5 text-white/90 rounded-tl-none border border-white/5"
                         )}>
-                          <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                          {msg.image && (
+                            <div className="mb-2 rounded-lg overflow-hidden border border-white/10">
+                              <img src={msg.image} alt="Sent" className="max-w-full h-auto object-cover max-h-60" />
+                            </div>
+                          )}
+                          {msg.text && <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>}
                           <div className={cn(
                             "flex items-center gap-1 mt-1.5",
                             msg.senderId === "me" ? "justify-end" : "justify-start"
@@ -362,10 +417,22 @@ export default function ChatPage() {
             {/* Input Area */}
             <div className="p-4 border-t border-white/5 bg-background/60 backdrop-blur-md sticky bottom-0 z-20">
               <div className="max-w-4xl mx-auto flex items-end gap-2">
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-white shrink-0 mb-1">
-                  <Plus className="w-5 h-5" />
-                </Button>
                 <div className="flex-1 relative group">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    onChange={handleFileChange}
+                    accept="image/*,.pdf,.doc,.docx,.txt"
+                  />
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="text-muted-foreground hover:text-white shrink-0 mb-1"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Plus className="w-5 h-5" />
+                  </Button>
                   <Input 
                     placeholder="Type a message..." 
                     className="bg-white/5 border-white/10 focus:border-primary/50 transition-all rounded-2xl min-h-12 py-3 px-4 resize-none pr-12"
