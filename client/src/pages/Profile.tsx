@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import {
   Edit2
 } from "lucide-react";
 import { useLocation } from "wouter";
+import { MOCK_USERS } from "@/mocks/users";
 
 const ProfileSkeleton = () => (
   <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
@@ -55,27 +56,44 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   
+  const username = localStorage.getItem("username");
+  const currentUser = useMemo(() => {
+    return MOCK_USERS.find(u => u.username === username) || MOCK_USERS[0];
+  }, [username]);
+
+  const initials = useMemo(() => {
+    return currentUser.name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  }, [currentUser]);
+
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 300);
     return () => clearTimeout(timer);
   }, []);
 
-  const userRole = (localStorage.getItem("userRole") as any) || "Idea Holder";
+  const userRoleDisplay = currentUser.role.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   
   // Mock User Data
   const [profile, setProfile] = useState({
-    name: "John Doe",
-    role: userRole.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-    email: "john@example.com",
+    name: currentUser.name,
+    role: userRoleDisplay,
+    email: `${currentUser.username}@example.com`,
     location: "San Francisco, CA",
-    website: "https://johndoe.dev",
-    bio: "Visionary entrepreneur focused on AI and sustainable urban farming. Currently building automated sensor networks for small-scale urban farmers to optimize water usage and crop yield.",
-    focus: "AI & Sustainability",
+    website: `https://${currentUser.username}.dev`,
+    bio: currentUser.role === "idea-holder" 
+      ? "Visionary entrepreneur focused on AI and sustainable urban farming. Currently building automated sensor networks for small-scale urban farmers to optimize water usage and crop yield."
+      : currentUser.role === "developer"
+      ? "Full-stack developer with a passion for open-source and building high-performance web applications. Specialized in React, TypeScript, and Node.js."
+      : "Venture capitalist and angel investor looking for the next big thing in GreenTech and AI.",
+    focus: currentUser.role === "idea-holder" ? "AI & Sustainability" : currentUser.role === "developer" ? "Full-stack Web" : "Early Stage Startups",
     teamSize: "1-5",
     socials: {
-      github: "johndoe",
-      linkedin: "johndoe",
-      twitter: "johndoe"
+      github: currentUser.username,
+      linkedin: currentUser.username,
+      twitter: currentUser.username
     }
   });
 
@@ -113,8 +131,8 @@ export default function Profile() {
             <div className="flex flex-col md:flex-row items-end gap-6 -mt-12">
               <div className="relative group">
                 <Avatar className="h-32 w-32 border-4 border-background shadow-xl">
-                  <AvatarImage src="" />
-                  <AvatarFallback className="text-4xl bg-primary/5 text-primary font-bold">JD</AvatarFallback>
+                  <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                  <AvatarFallback className="text-4xl bg-primary/5 text-primary font-bold">{initials}</AvatarFallback>
                 </Avatar>
                 {isEditing && (
                   <button className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
