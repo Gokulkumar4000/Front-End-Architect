@@ -283,7 +283,7 @@ export default function ChatPage() {
                     <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
                   )}
                 </div>
-                <div className="flex-1 min-w-0 pr-4">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5 gap-2">
                     <span className={cn(
                       "font-bold text-sm truncate transition-colors",
@@ -294,8 +294,8 @@ export default function ChatPage() {
                     <span className="text-[10px] text-muted-foreground font-medium shrink-0">{chat.time}</span>
                   </div>
                   <p className={cn(
-                    "text-xs truncate transition-colors pr-2",
-                    chat.unreadCount > 0 ? "text-white font-medium" : "text-muted-foreground group-hover:text-white/70"
+                    "text-xs truncate transition-colors",
+                    chat.unreadCount > 0 ? "text-white font-medium pr-6" : "text-muted-foreground group-hover:text-white/70"
                   )}>
                     {chat.lastMessage}
                   </p>
