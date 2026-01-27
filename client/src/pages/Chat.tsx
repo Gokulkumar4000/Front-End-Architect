@@ -261,8 +261,8 @@ export default function ChatPage() {
           </div>
         </div>
 
-        <ScrollArea className="flex-1 w-full">
-          <div className="w-full">
+        <ScrollArea className="flex-1 w-full overflow-hidden">
+          <div className="w-full flex flex-col">
             {filteredChats.map((chat) => (
               <button
                 key={chat.id}
