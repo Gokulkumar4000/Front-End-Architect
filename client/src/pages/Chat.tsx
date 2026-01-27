@@ -262,7 +262,7 @@ export default function ChatPage() {
         </div>
 
         <ScrollArea className="flex-1">
-          <div className="p-2 space-y-1">
+          <div className="p-4 space-y-2">
             {filteredChats.map((chat) => (
               <button
                 key={chat.id}
@@ -270,7 +270,7 @@ export default function ChatPage() {
                 className={cn(
                   "w-full p-3 flex gap-3 rounded-xl transition-all duration-200 group relative overflow-hidden text-left",
                   selectedChatId === chat.id 
-                    ? "bg-primary/10 border border-primary/20" 
+                    ? "bg-primary/10 border border-primary/20 shadow-sm" 
                     : "hover:bg-white/5 border border-transparent active-elevate-2"
                 )}
               >
