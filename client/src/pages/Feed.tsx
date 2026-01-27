@@ -103,6 +103,7 @@ interface Post {
     comments: number;
   };
   comments?: Comment[];
+  domains?: string[];
 }
 
 import { MOCK_POSTS } from "@/mocks/posts";
@@ -1384,7 +1385,7 @@ export default function Feed() {
   const connectionsToShow = showAllConnections ? allConnections : allConnections.slice(0, 5);
 
   const [loading, setLoading] = useState(true);
-  const [feedFilter, setFeedFilter] = useState<'latest' | 'following'>('latest');
+  const [feedFilter, setFeedFilter] = useState<'latest' | 'following' | 'saved'>('latest');
   const [showTrendingDialog, setShowTrendingDialog] = useState(false);
   const [trendingPage, setTrendingPage] = useState(1);
   const postsPerPage = 10;
@@ -1493,9 +1494,16 @@ export default function Feed() {
                 <div 
                   key={post.id} 
                   onClick={() => {
-                    const basePost = MOCK_POSTS.find(p => p.type === "idea") || MOCK_POSTS[0];
-                    setSelectedTrendingPost({ ...basePost, title: post.title, id: `trending-${post.id}` });
-                  }}
+                  const basePost = MOCK_POSTS.find(p => p.type === "idea") || MOCK_POSTS[0];
+                  const typedPost: Post = { 
+                    ...basePost, 
+                    title: post.title, 
+                    id: `trending-${post.id}`,
+                    type: basePost.type as PostType,
+                    domains: (basePost as any).domains || ["General"]
+                  };
+                  setSelectedTrendingPost(typedPost);
+                }}
                   className={cn(
                     "group cursor-pointer p-2 rounded-lg transition-all",
                     i === 0 && "bg-gradient-to-r from-primary/20 to-primary/5 shadow-[0_0_20px_rgba(168,85,247,0.4)]",
@@ -1549,7 +1557,8 @@ export default function Feed() {
                         ...basePost, 
                         title: post.title, 
                         id: `trending-${post.id}`,
-                        type: basePost.type
+                        type: basePost.type as PostType,
+                        domains: (basePost as any).domains || ["General"]
                       };
                       setSelectedTrendingPost(typedPost);
                       setShowTrendingDialog(false);
