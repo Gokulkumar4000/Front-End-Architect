@@ -1,0 +1,264 @@
+💬 CHAT PAGE UI — WHATSAPP-STYLE (FINAL)
+🎯 Core Principle
+
+Chat should be distraction-free and full screen.
+
+No cards, no widgets, no analytics here.
+Just conversations.
+
+🧱 OVERALL LAYOUT (DESKTOP)
+┌──────────────────────────────────────────────┐
+│                TOP BAR (optional)            │
+├───────────────┬──────────────────────────────┤
+│  CHAT LIST    │        CHAT WINDOW           │
+│  (Left)       │        (Right)               │
+│               │                              │
+│               │                              │
+└───────────────┴──────────────────────────────┘
+
+
+Full screen page
+
+Only 2 main divisions by default
+
+No sidebar clutter
+
+1️⃣ LEFT SIDE — CHAT LIST (LIKE WHATSAPP)
+📌 Purpose
+
+Show all conversations and let user quickly switch chats.
+
+🔹 Top Section (Sticky)
+
+Title: Chats
+
+Search bar:
+
+Search by user name
+
+Search by idea / project name (optional)
+
+Optional filter icon:
+
+All
+
+Unread
+
+🔹 Chat Item (Each Row)
+
+Each chat row shows:
+
+User avatar
+
+User name
+
+Small role label (optional, subtle)
+
+Last message preview (1 line, ellipsis)
+
+Time of last message
+
+Unread message dot (if any)
+
+💡 If chat is related to something:
+
+Show a small tag below name:
+
+Idea
+
+Project
+
+Funding
+
+Example:
+
+👤 John Doe
+💡 Smart Farming Idea
+Last message preview…
+
+🔹 Behavior
+
+Clicking a chat:
+
+Highlights it
+
+Loads chat on right side
+
+No page navigation
+
+Smooth transition
+
+2️⃣ RIGHT SIDE — CHAT WINDOW
+
+This is the main area.
+
+🔹 HEADER (STICKY)
+
+Shows:
+
+User avatar
+
+User name
+
+Online / offline status
+
+Info icon (ℹ️) on right
+
+👉 Clicking the info icon opens profile sidebar (explained below)
+
+🔹 MESSAGE AREA (SCROLLABLE)
+Message bubbles:
+
+Incoming messages
+
+Left aligned
+
+Softer background
+
+Avatar shown at group start
+
+Outgoing messages
+
+Right aligned
+
+Primary accent color
+
+No avatar
+
+🔹 Message grouping
+
+Group by date:
+
+Today
+
+Yesterday
+
+Smooth spacing
+
+No clutter
+
+🔹 Supported message types (UI only)
+
+Text
+
+Links (simple preview)
+
+Shared idea/project reference (small card)
+
+Example:
+
+[Idea Card]
+AI Smart Farming
+View →
+
+🔹 INPUT AREA (STICKY BOTTOM)
+
+Multiline text input
+
+Placeholder:
+
+Type a message…
+
+Send button ➤
+
+Very WhatsApp-like:
+
+Simple
+
+Fast
+
+No noise
+
+3️⃣ PROFILE INFO SIDEBAR (RIGHT SIDE PANEL)
+
+This appears only when user clicks profile / info icon.
+
+Just like WhatsApp Web.
+
+📐 Layout when open
+┌───────────────┬──────────────────┬──────────┐
+│  CHAT LIST    │   CHAT WINDOW    │ PROFILE  │
+│               │                  │ SIDEBAR  │
+└───────────────┴──────────────────┴──────────┘
+
+🔹 Profile Sidebar Content
+A. User Info
+
+Avatar (large)
+
+Name
+
+Role
+
+Short bio / tagline
+
+B. Context Info
+
+If chat is related to something:
+
+Linked Idea / Project / Funding
+
+Button:
+
+View full details
+
+C. Shared Activity
+
+Mutual connections (count)
+
+Shared domains / interests
+
+D. Private Notes (Optional)
+
+Personal notes about this chat
+
+Editable
+
+Only visible to current user
+
+Example:
+
+“Investor — interested but cautious”
+
+E. Actions
+
+View full profile
+
+Mute chat
+
+Block user (optional)
+
+🔹 Behavior Rules
+
+Sidebar slides in from right
+
+Clicking ✕ closes it
+
+On mobile → opens as full screen overlay
+
+📱 MOBILE BEHAVIOR (IMPORTANT)
+Mobile view:
+
+First screen → Chat list
+
+Tap chat → Chat window
+
+Tap profile → Profile overlay
+
+Back button → Previous screen
+
+Exactly like WhatsApp.
+
+🎨 STYLE RULES
+
+Same theme as app (dark / glass)
+
+Rounded message bubbles
+
+Soft separators
+
+No horizontal scrolling
+
+No analytics here
+
+No distractions

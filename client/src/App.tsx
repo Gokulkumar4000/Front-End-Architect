@@ -7,6 +7,7 @@ import Landing from "@/pages/Landing";
 import Auth from "@/pages/Auth";
 import Feed from "@/pages/Feed";
 import Saved from "@/pages/Saved";
+import Chat from "@/pages/Chat";
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
@@ -33,6 +34,9 @@ function Router() {
       <Route path="/register" component={Auth} />
       <Route path="/feed">
         <ProtectedRoute component={Feed} path="/feed" />
+      </Route>
+      <Route path="/chat">
+        <ProtectedRoute component={Chat} path="/chat" />
       </Route>
       <Route path="/saved">
         <ProtectedRoute component={Saved} path="/saved" />
