@@ -277,25 +277,19 @@ export default function ChatPage() {
                   <p className="text-[10px] text-muted-foreground mt-1 capitalize font-medium">{selectedChat.user.status}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                  <Phone className="w-4 h-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                  <Video className="w-4 h-4" />
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className={cn(
-                    "text-muted-foreground hover:text-primary transition-colors",
-                    showProfileSidebar && "text-primary bg-primary/10"
-                  )}
-                  onClick={() => setShowProfileSidebar(!showProfileSidebar)}
-                >
-                  <Info className="w-4 h-4" />
-                </Button>
-              </div>
+                <div className="flex items-center gap-1">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={cn(
+                      "text-muted-foreground hover:text-primary transition-colors",
+                      showProfileSidebar && "text-primary bg-primary/10"
+                    )}
+                    onClick={() => setShowProfileSidebar(!showProfileSidebar)}
+                  >
+                    <Info className="w-4 h-4" />
+                  </Button>
+                </div>
             </div>
 
             {/* Message Area */}
