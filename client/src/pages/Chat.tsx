@@ -13,7 +13,9 @@ import {
   Filter,
   ExternalLink,
   Target,
-  Zap
+  Zap,
+  Image as ImageIcon,
+  FileText
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -22,6 +24,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Message {
   id: string;
@@ -423,16 +431,44 @@ export default function ChatPage() {
                     ref={fileInputRef}
                     className="hidden"
                     onChange={handleFileChange}
-                    accept="image/*,.pdf,.doc,.docx,.txt"
                   />
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="text-muted-foreground hover:text-white shrink-0 mb-1"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Plus className="w-5 h-5" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-muted-foreground hover:text-white shrink-0 mb-1"
+                      >
+                        <Plus className="w-5 h-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-48 bg-background/95 backdrop-blur-xl border-white/10">
+                      <DropdownMenuItem 
+                        className="flex items-center gap-2 cursor-pointer focus:bg-white/5"
+                        onClick={() => {
+                          if (fileInputRef.current) {
+                            fileInputRef.current.accept = "image/*";
+                            fileInputRef.current.click();
+                          }
+                        }}
+                      >
+                        <ImageIcon className="w-4 h-4 text-primary" />
+                        <span className="text-xs font-medium">Photos & Videos</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="flex items-center gap-2 cursor-pointer focus:bg-white/5"
+                        onClick={() => {
+                          if (fileInputRef.current) {
+                            fileInputRef.current.accept = ".pdf,.doc,.docx,.txt";
+                            fileInputRef.current.click();
+                          }
+                        }}
+                      >
+                        <FileText className="w-4 h-4 text-blue-400" />
+                        <span className="text-xs font-medium">Document</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   <Input 
                     placeholder="Type a message..." 
                     className="bg-white/5 border-white/10 focus:border-primary/50 transition-all rounded-2xl min-h-12 py-3 px-4 resize-none pr-12"
