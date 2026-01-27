@@ -1519,11 +1519,12 @@ export default function Feed() {
                   <div 
                     key={post.id} 
                     onClick={() => {
+                      const basePost = MOCK_POSTS.find(p => p.type === "idea") || MOCK_POSTS[0];
                       const typedPost: Post = { 
                         ...basePost, 
                         title: post.title, 
                         id: `trending-${post.id}`,
-                        type: basePost.type as PostType
+                        type: basePost.type
                       };
                       setSelectedTrendingPost(typedPost);
                       setShowTrendingDialog(false);
