@@ -667,10 +667,10 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
                 <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background via-background/80 to-transparent flex items-end justify-center pb-1">
                   <Button 
                     variant="ghost" 
-                    className="h-auto p-0 text-[10px] text-primary font-bold hover:no-underline bg-transparent border-0 hover:bg-transparent shadow-none w-fit transition-transform uppercase tracking-tighter"
+                    className="h-auto p-0 text-[10px] text-primary font-bold hover:no-underline bg-transparent border-0 hover:bg-transparent shadow-none w-fit transition-transform uppercase tracking-[0.2em]"
                     onClick={() => setShowDetailsDialog(true)}
                   >
-                    View full {String(post.type) === "fund" ? "funding" : String(post.type)} →
+                    VIEW FULL {String(post.type) === "fund" ? "FUNDING" : String(post.type).toUpperCase()} →
                   </Button>
                 </div>
               </p>
