@@ -1,4 +1,5 @@
 import { memo, useMemo, useState, useEffect, useRef } from "react";
+import { useLocation } from "wouter";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -301,6 +302,7 @@ const CommentItem = ({ comment, isReply = false, onReply, parentId }: { comment:
 };
 
 export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { post: Post; forceShowDetails?: boolean; onClose?: () => void }) => {
+  const [, setLocation] = useLocation();
   const userRole = localStorage.getItem("userRole") as string;
   const [following, setFollowing] = useState<string[]>(() => {
     const saved = localStorage.getItem('following_users');
@@ -524,6 +526,25 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
       "Get priority response in collaboration requests",
       "Access exclusive community networking events"
     ];
+  };
+
+  const handleConnect = () => {
+    const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
+    const authorAvatar = typeof post.author === 'string' ? '' : (post.author as any)?.avatar || '';
+    const authorRole = typeof post.author === 'string' ? '' : (post.author as any)?.role || '';
+    
+    const connectData = {
+      userId: post.id,
+      userName: authorName,
+      userAvatar: authorAvatar,
+      userRole: authorRole,
+      postType: post.type,
+      postTitle: post.title,
+      postContent: post.content?.substring(0, 100) || ''
+    };
+    
+    localStorage.setItem('pendingConnectRequest', JSON.stringify(connectData));
+    setLocation('/chat');
   };
 
   const handleFollowClick = () => {
@@ -771,7 +792,12 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
             </div>
             
             {actionText && (
-              <Button size="sm" className="font-bold relative group overflow-hidden">
+              <Button 
+                size="sm" 
+                className="font-bold relative group overflow-hidden"
+                onClick={actionText === "Connect" ? handleConnect : undefined}
+                data-testid="button-connect"
+              >
                  <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
                   <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
                 </div>
