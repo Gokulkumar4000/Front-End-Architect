@@ -1460,7 +1460,7 @@ export default function Feed() {
               const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
               return authorName?.includes?.("Sarah") || authorName?.includes?.("Alex");
             }).map(post => (
-              <FeedCard key={post.id} post={post} />
+              <FeedCard key={post.id} post={{...post, type: post.type as PostType}} />
             ))
           )}
         </div>
