@@ -268,7 +268,7 @@ export default function ChatPage() {
                 key={chat.id}
                 onClick={() => setSelectedChatId(chat.id)}
                 className={cn(
-                  "w-full p-3 flex gap-3 rounded-xl transition-all duration-200 group relative overflow-hidden",
+                  "w-full p-3 flex gap-3 rounded-xl transition-all duration-200 group relative overflow-hidden text-left",
                   selectedChatId === chat.id 
                     ? "bg-primary/10 border border-primary/20" 
                     : "hover:bg-white/5 border border-transparent active-elevate-2"
@@ -283,25 +283,25 @@ export default function ChatPage() {
                     <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
                   )}
                 </div>
-                <div className="flex-1 text-left min-w-0">
-                  <div className="flex items-center justify-between mb-0.5">
+                <div className="flex-1 min-w-0 pr-4">
+                  <div className="flex items-center justify-between mb-0.5 gap-2">
                     <span className={cn(
                       "font-bold text-sm truncate transition-colors",
                       chat.unreadCount > 0 ? "text-primary" : "text-white"
                     )}>
                       {chat.user.name}
                     </span>
-                    <span className="text-[10px] text-muted-foreground font-medium">{chat.time}</span>
+                    <span className="text-[10px] text-muted-foreground font-medium shrink-0">{chat.time}</span>
                   </div>
                   <p className={cn(
-                    "text-xs truncate transition-colors",
+                    "text-xs truncate transition-colors pr-2",
                     chat.unreadCount > 0 ? "text-white font-medium" : "text-muted-foreground group-hover:text-white/70"
                   )}>
                     {chat.lastMessage}
                   </p>
                 </div>
                 {chat.unreadCount > 0 && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
                     <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_rgba(168,85,247,0.6)] animate-pulse" />
                   </div>
                 )}
