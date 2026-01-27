@@ -232,8 +232,8 @@ export default function ChatPage() {
     <div className="flex h-screen w-full overflow-hidden bg-background">
       {/* Left Side - Chat List */}
       <div className={cn(
-        "flex flex-col border-r border-white/5 bg-background/40 backdrop-blur-xl transition-all duration-300",
-        selectedChatId ? "hidden md:flex md:w-[320px]" : "w-full md:w-[320px]"
+        "flex flex-col border-r border-white/5 bg-background/40 backdrop-blur-xl transition-all duration-300 shrink-0",
+        selectedChatId ? "hidden md:flex md:w-[280px]" : "w-full md:w-[280px]"
       )}>
         <div className="sticky top-0 z-10 p-4 space-y-4 bg-background/60 backdrop-blur-md">
           <div className="flex items-center gap-4">
