@@ -424,8 +424,8 @@ export default function ChatPage() {
 
             {/* Input Area */}
             <div className="p-4 border-t border-white/5 bg-background/60 backdrop-blur-md sticky bottom-0 z-20">
-              <div className="max-w-4xl mx-auto flex items-end gap-2">
-                <div className="flex-1 relative group">
+              <div className="max-w-4xl mx-auto">
+                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl px-2 py-1.5 focus-within:border-primary/50 transition-all">
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -437,12 +437,12 @@ export default function ChatPage() {
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="text-muted-foreground hover:text-white shrink-0 mb-1"
+                        className="text-muted-foreground hover:text-white shrink-0"
                       >
                         <Plus className="w-5 h-5" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-48 bg-background/95 backdrop-blur-xl border-white/10">
+                    <DropdownMenuContent align="start" side="top" className="w-48 bg-background/95 backdrop-blur-xl border-white/10 mb-2">
                       <DropdownMenuItem 
                         className="flex items-center gap-2 cursor-pointer focus:bg-white/5"
                         onClick={() => {
@@ -469,9 +469,10 @@ export default function ChatPage() {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
+                  
                   <Input 
                     placeholder="Type a message..." 
-                    className="bg-white/5 border-white/10 focus:border-primary/50 transition-all rounded-2xl min-h-12 py-3 px-4 resize-none pr-12"
+                    className="flex-1 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm py-2 px-1 h-auto"
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
                     onKeyPress={(e) => {
@@ -480,12 +481,13 @@ export default function ChatPage() {
                       }
                     }}
                   />
+
                   <Button 
                     size="icon" 
                     onClick={handleSendMessage}
                     className={cn(
-                      "absolute right-2 bottom-1.5 h-9 w-9 rounded-xl transition-all duration-300",
-                      messageInput.trim() ? "bg-primary scale-100 shadow-lg shadow-primary/20" : "bg-white/10 scale-90 pointer-events-none"
+                      "h-9 w-9 rounded-xl transition-all duration-300",
+                      messageInput.trim() ? "bg-primary scale-100 shadow-lg shadow-primary/20" : "bg-white/10 scale-90 pointer-events-none opacity-50"
                     )}
                   >
                     <Send className="w-4 h-4 text-white" />
