@@ -261,50 +261,55 @@ export default function ChatPage() {
           </div>
         </div>
 
-        <ScrollArea className="flex-1">
-          <div className="p-2 space-y-1">
+        <ScrollArea className="flex-1 w-full">
+          <div className="w-full">
             {filteredChats.map((chat) => (
               <button
                 key={chat.id}
                 onClick={() => setSelectedChatId(chat.id)}
                 className={cn(
-                  "w-full p-2 flex gap-2 rounded-lg transition-all duration-200 group relative text-left box-border",
+                  "w-full px-4 py-3 flex items-center gap-3 transition-all duration-200 group relative text-left border-b border-white/5",
                   selectedChatId === chat.id 
-                    ? "bg-primary/10 border border-primary/20 shadow-sm" 
-                    : "hover:bg-white/5 border border-transparent active-elevate-2"
+                    ? "bg-white/10" 
+                    : "hover:bg-white/5 active:bg-white/10"
                 )}
               >
                 <div className="relative shrink-0">
-                  <Avatar className="h-9 w-9 border border-white/10">
+                  <Avatar className="h-12 w-12 border border-white/10">
                     <AvatarImage src={chat.user.avatar} />
                     <AvatarFallback>{chat.user.name[0]}</AvatarFallback>
                   </Avatar>
                   {chat.user.status === "online" && (
-                    <span className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-500 rounded-full border-2 border-background" />
+                    <span className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
                   )}
                 </div>
-                <div className="flex-1 min-w-0 flex flex-col justify-center">
-                  <div className="flex items-center justify-between mb-0 gap-2">
+                <div className="flex-1 min-w-0 py-1">
+                  <div className="flex items-center justify-between mb-1 gap-2">
                     <span className={cn(
-                      "font-bold text-[12px] truncate transition-colors leading-tight",
+                      "font-semibold text-base truncate transition-colors",
                       chat.unreadCount > 0 ? "text-primary" : "text-white"
                     )}>
                       {chat.user.name}
                     </span>
-                    <span className="text-[9px] text-muted-foreground font-medium shrink-0 leading-tight">{chat.time}</span>
+                    <span className={cn(
+                      "text-[11px] font-medium shrink-0",
+                      chat.unreadCount > 0 ? "text-primary" : "text-muted-foreground"
+                    )}>{chat.time}</span>
                   </div>
-                  <p className={cn(
-                    "text-[10px] truncate transition-colors leading-tight",
-                    chat.unreadCount > 0 ? "text-white font-medium pr-4" : "text-muted-foreground group-hover:text-white/70"
-                  )}>
-                    {chat.lastMessage}
-                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className={cn(
+                      "text-[13px] truncate transition-colors flex-1",
+                      chat.unreadCount > 0 ? "text-white font-medium" : "text-muted-foreground"
+                    )}>
+                      {chat.lastMessage}
+                    </p>
+                    {chat.unreadCount > 0 && (
+                      <div className="shrink-0 flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-primary rounded-full">
+                        <span className="text-[10px] font-bold text-white leading-none">{chat.unreadCount}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                {chat.unreadCount > 0 && (
-                  <div className="shrink-0 ml-1">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_rgba(168,85,247,0.6)] animate-pulse" />
-                  </div>
-                )}
               </button>
             ))}
           </div>
