@@ -1421,6 +1421,7 @@ export default function Feed() {
   ];
   const connectionsToShow = showAllConnections ? allConnections : allConnections.slice(0, 5);
 
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [feedFilter, setFeedFilter] = useState<'latest' | 'following' | 'saved'>('latest');
   const [following, setFollowing] = useState<string[]>(() => {
