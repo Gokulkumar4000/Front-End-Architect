@@ -435,29 +435,6 @@ export default function ChatPage() {
                   </p>
                 </div>
 
-                {/* Context Info */}
-                {selectedChat.context && (
-                  <div className="space-y-3">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Shared Context</p>
-                    <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 group hover:border-primary/30 transition-colors">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
-                          {selectedChat.context.type === 'idea' && <Zap className="w-4 h-4 text-primary" />}
-                          {selectedChat.context.type === 'project' && <MessageSquare className="w-4 h-4 text-primary" />}
-                          {selectedChat.context.type === 'funding' && <Target className="w-4 h-4 text-primary" />}
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-white leading-none">{selectedChat.context.title}</p>
-                          <p className="text-[9px] text-muted-foreground mt-1 capitalize">{selectedChat.context.type}</p>
-                        </div>
-                      </div>
-                      <Button variant="outline" className="w-full text-[10px] h-8 font-bold border-white/10 hover:bg-primary/10 transition-colors">
-                        View Details <ExternalLink className="w-3 h-3 ml-2" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
                 {/* Shared Activity */}
                 <div className="space-y-4">
                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Shared Activity</p>
