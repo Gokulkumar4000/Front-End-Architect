@@ -662,17 +662,18 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
             </div>
             <h3 className="text-lg font-bold font-display leading-tight">{post.title}</h3>
             <div className="relative group/content flex flex-col items-center">
-              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap max-h-[120px] overflow-hidden relative w-full">
+              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap max-h-[120px] overflow-hidden relative w-full mb-0">
                 {post.content}
-                <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background via-background/80 to-transparent flex items-end justify-center pb-1">
+                  <Button 
+                    variant="ghost" 
+                    className="h-auto p-0 text-[10px] text-primary font-bold hover:no-underline bg-transparent border-0 hover:bg-transparent shadow-none w-fit transition-transform uppercase tracking-tighter"
+                    onClick={() => setShowDetailsDialog(true)}
+                  >
+                    View full {String(post.type) === "fund" ? "funding" : String(post.type)} →
+                  </Button>
+                </div>
               </p>
-              <Button 
-                variant="ghost" 
-                className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2 bg-transparent border-0 hover:bg-transparent shadow-none w-fit transition-transform"
-                onClick={() => setShowDetailsDialog(true)}
-              >
-                View full {String(post.type) === "investment" ? "investment" : String(post.type) === "project" ? "project" : "idea"} →
-              </Button>
             </div>
           </div>
         </CardContent>
