@@ -159,25 +159,11 @@ export default function Saved() {
         )}
 
         {detailedPost && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-            <div className="w-full max-w-[95vw] h-[90vh] glass-card border-white/10 relative shadow-2xl overflow-hidden rounded-2xl">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="absolute top-4 right-4 z-[110] hover:bg-white/10 text-white"
-                onClick={() => setDetailedPost(null)}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-              <div className="h-full w-full">
-                <FeedCard 
-                  post={detailedPost} 
-                  forceShowDetails={true} 
-                  onClose={() => setDetailedPost(null)}
-                />
-              </div>
-            </div>
-          </div>
+          <FeedCard 
+            post={detailedPost} 
+            forceShowDetails={true} 
+            onClose={() => setDetailedPost(null)}
+          />
         )}
 
         <NoteModal
