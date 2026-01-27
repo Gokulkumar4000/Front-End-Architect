@@ -262,39 +262,39 @@ export default function ChatPage() {
         </div>
 
         <ScrollArea className="flex-1">
-          <div className="p-4 space-y-2">
+          <div className="p-2 space-y-1">
             {filteredChats.map((chat) => (
               <button
                 key={chat.id}
                 onClick={() => setSelectedChatId(chat.id)}
                 className={cn(
-                  "w-full p-3 flex gap-3 rounded-xl transition-all duration-200 group relative overflow-hidden text-left",
+                  "w-full p-2 flex gap-2 rounded-lg transition-all duration-200 group relative overflow-hidden text-left",
                   selectedChatId === chat.id 
                     ? "bg-primary/10 border border-primary/20 shadow-sm" 
                     : "hover:bg-white/5 border border-transparent active-elevate-2"
                 )}
               >
                 <div className="relative shrink-0">
-                  <Avatar className="h-12 w-12 border border-white/10">
+                  <Avatar className="h-10 w-10 border border-white/10">
                     <AvatarImage src={chat.user.avatar} />
                     <AvatarFallback>{chat.user.name[0]}</AvatarFallback>
                   </Avatar>
                   {chat.user.status === "online" && (
-                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-background" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-0.5 gap-2">
+                  <div className="flex items-center justify-between mb-0 gap-2">
                     <span className={cn(
-                      "font-bold text-sm truncate transition-colors",
+                      "font-bold text-[13px] truncate transition-colors",
                       chat.unreadCount > 0 ? "text-primary" : "text-white"
                     )}>
                       {chat.user.name}
                     </span>
-                    <span className="text-[10px] text-muted-foreground font-medium shrink-0">{chat.time}</span>
+                    <span className="text-[9px] text-muted-foreground font-medium shrink-0">{chat.time}</span>
                   </div>
                   <p className={cn(
-                    "text-xs truncate transition-colors",
+                    "text-[11px] truncate transition-colors",
                     chat.unreadCount > 0 ? "text-white font-medium pr-6" : "text-muted-foreground group-hover:text-white/70"
                   )}>
                     {chat.lastMessage}
