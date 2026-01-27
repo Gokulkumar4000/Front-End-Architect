@@ -15,7 +15,8 @@ import {
   Target,
   Zap,
   Image as ImageIcon,
-  FileText
+  FileText,
+  Reply
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,11 @@ interface Message {
   timestamp: string;
   status: 'sent' | 'delivered' | 'read';
   image?: string;
+  replyTo?: {
+    id: string;
+    senderId: string;
+    text: string;
+  };
 }
 
 interface Chat {
@@ -119,10 +125,45 @@ export default function ChatPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [messageInput, setMessageInput] = useState("");
   const [allMessages, setAllMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
+  const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
+  const [chats, setChats] = useState<Chat[]>(MOCK_CHATS);
+
+  useEffect(() => {
+    const pendingRequest = localStorage.getItem('pendingConnectRequest');
+    if (pendingRequest) {
+      const data = JSON.parse(pendingRequest);
+      localStorage.removeItem('pendingConnectRequest');
+      
+      const newChatId = `connect-${Date.now()}`;
+      const newChat: Chat = {
+        id: newChatId,
+        user: {
+          name: data.userName,
+          avatar: data.userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.userName}`,
+          role: data.userRole || "Member",
+          status: "online",
+          bio: ""
+        },
+        lastMessage: "",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        unreadCount: 0,
+        context: data.postType ? { 
+          type: data.postType as 'idea' | 'project' | 'funding', 
+          title: data.postTitle 
+        } : undefined
+      };
+      
+      setChats(prev => [newChat, ...prev]);
+      setSelectedChatId(newChatId);
+      
+      const connectMessage = `Hi ${data.userName}! I'm interested in connecting with you regarding your ${data.postType || 'post'}: "${data.postTitle}".\n\nI'd love to discuss potential collaboration opportunities. Looking forward to hearing from you!`;
+      setMessageInput(connectMessage);
+    }
+  }, []);
 
   const selectedChat = useMemo(() => 
-    MOCK_CHATS.find(c => c.id === selectedChatId), 
-    [selectedChatId]
+    chats.find(c => c.id === selectedChatId), 
+    [selectedChatId, chats]
   );
 
   const messages = useMemo(() => 
@@ -131,7 +172,7 @@ export default function ChatPage() {
   );
 
   const filteredChats = useMemo(() => 
-    MOCK_CHATS.map(chat => {
+    chats.map(chat => {
       const chatMessages = allMessages[chat.id] || [];
       const lastMsg = chatMessages[chatMessages.length - 1];
       return {
@@ -143,7 +184,7 @@ export default function ChatPage() {
       c.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.context?.title.toLowerCase().includes(searchQuery.toLowerCase())
     ),
-    [searchQuery, allMessages]
+    [searchQuery, allMessages, chats]
   );
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -203,7 +244,12 @@ export default function ChatPage() {
       senderId: "me",
       text: messageInput.trim(),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      status: 'sent'
+      status: 'sent',
+      replyTo: replyToMessage ? {
+        id: replyToMessage.id,
+        senderId: replyToMessage.senderId,
+        text: replyToMessage.text
+      } : undefined
     };
 
     setAllMessages(prev => ({
@@ -211,6 +257,7 @@ export default function ChatPage() {
       [selectedChatId]: [...(prev[selectedChatId] || []), newMessage]
     }));
     setMessageInput("");
+    setReplyToMessage(null);
 
     // Mock auto-reply
     setTimeout(() => {
@@ -378,12 +425,12 @@ export default function ChatPage() {
                   <div 
                     key={msg.id}
                     className={cn(
-                      "flex w-full mb-4",
+                      "flex w-full mb-4 group/message",
                       msg.senderId === "me" ? "justify-end" : "justify-start"
                     )}
                   >
                     <div className={cn(
-                      "flex gap-3 max-w-[85%] md:max-w-[70%]",
+                      "flex gap-3 max-w-[85%] md:max-w-[70%] items-end",
                       msg.senderId === "me" ? "flex-row-reverse" : "flex-row"
                     )}>
                       {msg.senderId !== "me" && (
@@ -392,7 +439,20 @@ export default function ChatPage() {
                           <AvatarFallback>{selectedChat.user.name[0]}</AvatarFallback>
                         </Avatar>
                       )}
-                      <div className="space-y-1">
+                      <div className="space-y-1 flex-1">
+                        {msg.replyTo && (
+                          <div className={cn(
+                            "px-3 py-2 rounded-lg mb-1 border-l-2",
+                            msg.senderId === "me" 
+                              ? "bg-white/10 border-white/30" 
+                              : "bg-white/5 border-primary/50"
+                          )}>
+                            <p className="text-[10px] font-medium text-primary/80 mb-0.5">
+                              {msg.replyTo.senderId === "me" ? "You" : selectedChat.user.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground line-clamp-2">{msg.replyTo.text}</p>
+                          </div>
+                        )}
                         <div className={cn(
                           "p-3.5 rounded-2xl relative group",
                           msg.senderId === "me" 
@@ -422,6 +482,16 @@ export default function ChatPage() {
                           </div>
                         </div>
                       </div>
+                      <button
+                        onClick={() => setReplyToMessage(msg)}
+                        className={cn(
+                          "p-1.5 rounded-full opacity-0 group-hover/message:opacity-100 transition-opacity hover:bg-white/10",
+                          msg.senderId === "me" ? "order-first" : "order-last"
+                        )}
+                        data-testid={`button-reply-${msg.id}`}
+                      >
+                        <Reply className="w-4 h-4 text-muted-foreground" />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -429,15 +499,41 @@ export default function ChatPage() {
             </ScrollArea>
 
             {/* Input Area */}
-            <div className="p-4 border-t border-white/5 bg-background/60 backdrop-blur-md sticky bottom-0 z-20">
-              <div className="max-w-4xl mx-auto">
-                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl px-2 py-1.5 focus-within:border-primary/50 transition-all">
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    className="hidden"
-                    onChange={handleFileChange}
-                  />
+            <div className="border-t border-white/5 bg-background/60 backdrop-blur-md sticky bottom-0 z-20">
+              {replyToMessage && (
+                <div className="px-4 pt-3 pb-0">
+                  <div className="max-w-4xl mx-auto">
+                    <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-t-xl px-3 py-2">
+                      <Reply className="w-4 h-4 text-primary shrink-0" />
+                      <div className="flex-1 min-w-0 border-l-2 border-primary pl-2">
+                        <p className="text-xs font-medium text-primary">
+                          Replying to {replyToMessage.senderId === "me" ? "yourself" : selectedChat?.user.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">{replyToMessage.text}</p>
+                      </div>
+                      <button 
+                        onClick={() => setReplyToMessage(null)}
+                        className="p-1 rounded-full hover:bg-white/10 transition-colors"
+                        data-testid="button-cancel-reply"
+                      >
+                        <X className="w-4 h-4 text-muted-foreground" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className={cn("px-4 pb-4", replyToMessage ? "pt-0" : "pt-4")}>
+                <div className="max-w-4xl mx-auto">
+                  <div className={cn(
+                    "flex items-center gap-2 bg-white/5 border border-white/10 px-2 py-1.5 focus-within:border-primary/50 transition-all",
+                    replyToMessage ? "rounded-b-2xl rounded-t-none border-t-0" : "rounded-2xl"
+                  )}>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button 
@@ -498,6 +594,7 @@ export default function ChatPage() {
                   >
                     <Send className="w-4 h-4 text-white" />
                   </Button>
+                  </div>
                 </div>
               </div>
             </div>
