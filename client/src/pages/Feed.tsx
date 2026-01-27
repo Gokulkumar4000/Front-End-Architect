@@ -589,7 +589,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
           </DropdownMenu>
         </CardHeader>
 
-        <CardContent className="px-4 pb-4 pt-0 space-y-3 h-[320px] relative overflow-hidden">
+        <CardContent className="px-4 pb-4 pt-0 space-y-3 relative overflow-hidden transition-all duration-500 ease-in-out">
           <div className={cn(
             "absolute inset-0 z-20 bg-background/98 backdrop-blur-md p-4 flex flex-col h-full transition-all duration-300 ease-in-out",
             showComments ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full pointer-events-none"
@@ -609,7 +609,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
               </Button>
             </div>
             
-            <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar transition-colors py-2">
+            <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar transition-colors py-2 max-h-[400px]">
               {comments.map((comment) => (
                 <CommentItem key={comment.id} comment={comment} onReply={handleReply} />
               ))}
@@ -651,7 +651,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
           </div>
 
           <div className={cn(
-            "space-y-3 transition-all duration-300 h-full flex flex-col justify-center",
+            "space-y-3 transition-all duration-300 flex flex-col pt-4",
             showComments ? "opacity-0 scale-95 pointer-events-none" : "opacity-100 scale-100"
           )}>
             <div className="flex items-center gap-2">
@@ -661,19 +661,16 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
               </Badge>
             </div>
             <h3 className="text-lg font-bold font-display leading-tight">{post.title}</h3>
-            <div className="relative group/content overflow-hidden flex flex-col items-center flex-1 justify-center">
-              <div className="relative w-full">
-                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-[8]">
-                  {post.content}
-                </p>
-                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card via-card/80 to-transparent pointer-events-none" />
-              </div>
+            <div className="relative group/content flex flex-col">
+              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                {post.content}
+              </p>
               <Button 
                 variant="ghost" 
-                className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-2 bg-transparent border-0 hover:bg-transparent shadow-none relative z-10 mx-auto"
+                className="h-auto p-0 text-xs text-primary font-bold hover:no-underline mt-4 bg-transparent border-0 hover:bg-transparent shadow-none w-fit group-hover:translate-x-1 transition-transform"
                 onClick={() => setShowDetailsDialog(true)}
               >
-                View full {String(post.type) === "investment" ? "investment" : String(post.type) === "project" ? "project" : "idea"}
+                View full {String(post.type) === "investment" ? "investment" : String(post.type) === "project" ? "project" : "idea"} →
               </Button>
             </div>
           </div>
@@ -1500,8 +1497,13 @@ export default function Feed() {
                   <div 
                     key={post.id} 
                     onClick={() => {
-                      const basePost = MOCK_POSTS.find(p => p.type === "idea") || MOCK_POSTS[0];
-                      setSelectedTrendingPost({ ...basePost, title: post.title, id: `trending-${post.id}` });
+                      const typedPost: Post = { 
+                        ...basePost, 
+                        title: post.title, 
+                        id: `trending-${post.id}`,
+                        type: basePost.type as PostType
+                      };
+                      setSelectedTrendingPost(typedPost);
                       setShowTrendingDialog(false);
                     }}
                     className={cn(
