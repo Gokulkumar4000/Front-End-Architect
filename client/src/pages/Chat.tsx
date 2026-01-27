@@ -109,6 +109,7 @@ export default function ChatPage() {
   const [showProfileSidebar, setShowProfileSidebar] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [messageInput, setMessageInput] = useState("");
+  const [allMessages, setAllMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
 
   const selectedChat = useMemo(() => 
     MOCK_CHATS.find(c => c.id === selectedChatId), 
@@ -116,8 +117,8 @@ export default function ChatPage() {
   );
 
   const messages = useMemo(() => 
-    selectedChatId ? (MOCK_MESSAGES[selectedChatId] || []) : [],
-    [selectedChatId]
+    selectedChatId ? (allMessages[selectedChatId] || []) : [],
+    [selectedChatId, allMessages]
   );
 
   const filteredChats = useMemo(() => 
@@ -127,6 +128,39 @@ export default function ChatPage() {
     ),
     [searchQuery]
   );
+
+  const handleSendMessage = () => {
+    if (!messageInput.trim() || !selectedChatId) return;
+
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      senderId: "me",
+      text: messageInput.trim(),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      status: 'sent'
+    };
+
+    setAllMessages(prev => ({
+      ...prev,
+      [selectedChatId]: [...(prev[selectedChatId] || []), newMessage]
+    }));
+    setMessageInput("");
+
+    // Mock auto-reply
+    setTimeout(() => {
+      const replyMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        senderId: selectedChatId,
+        text: "Thanks for your message! I'll get back to you soon.",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: 'delivered'
+      };
+      setAllMessages(prev => ({
+        ...prev,
+        [selectedChatId]: [...(prev[selectedChatId] || []), replyMessage]
+      }));
+    }, 1500);
+  };
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
@@ -337,13 +371,13 @@ export default function ChatPage() {
                     onChange={(e) => setMessageInput(e.target.value)}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
-                        // Handle send logic
-                        setMessageInput("");
+                        handleSendMessage();
                       }
                     }}
                   />
                   <Button 
                     size="icon" 
+                    onClick={handleSendMessage}
                     className={cn(
                       "absolute right-2 bottom-1.5 h-9 w-9 rounded-xl transition-all duration-300",
                       messageInput.trim() ? "bg-primary scale-100 shadow-lg shadow-primary/20" : "bg-white/10 scale-90 pointer-events-none"
