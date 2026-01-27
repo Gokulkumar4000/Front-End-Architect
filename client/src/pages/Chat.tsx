@@ -235,14 +235,6 @@ export default function ChatPage() {
                     </span>
                     <span className="text-[10px] text-muted-foreground font-medium">{chat.time}</span>
                   </div>
-                  {chat.context && (
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-primary/20 bg-primary/5 text-primary">
-                        {chat.context.type === 'idea' && <Zap className="w-2.5 h-2.5 mr-1" />}
-                        {chat.context.title}
-                      </Badge>
-                    </div>
-                  )}
                   <p className={cn(
                     "text-xs truncate transition-colors",
                     chat.unreadCount > 0 ? "text-white font-medium" : "text-muted-foreground group-hover:text-white/70"
