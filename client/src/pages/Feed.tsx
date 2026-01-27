@@ -312,6 +312,220 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
     return following.includes(authorName);
   }, [following, post.author]);
 
+  const [showFollowDialog, setShowFollowDialog] = useState(false);
+  const [showUnfollowDialog, setShowUnfollowDialog] = useState(false);
+  const [isLiked, setIsLiked] = useState(() => {
+    const liked = localStorage.getItem(`liked_${post.id}`);
+    return liked === 'true';
+  });
+  const [isSaved, setIsSaved] = useState(() => {
+    const saved = localStorage.getItem('saved_posts');
+    if (!saved) return false;
+    const posts = JSON.parse(saved);
+    return posts.some((p: any) => String(p.id) === String(post.id));
+  });
+  const [likesCount, setLikesCount] = useState(post.stats.likes);
+
+  useEffect(() => {
+    localStorage.setItem(`liked_${post.id}`, String(isLiked));
+  }, [isLiked, post.id]);
+
+  useEffect(() => {
+    const handleSavedChange = (e: any) => {
+      const { post: updatedPost, isSaved: newStatus } = e.detail;
+      if (String(updatedPost.id) === String(post.id)) {
+        setIsSaved(newStatus);
+      }
+    };
+    window.addEventListener('post-saved-change', handleSavedChange);
+    return () => window.removeEventListener('post-saved-change', handleSavedChange);
+  }, [post.id]);
+
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<Comment[]>(post.comments || []);
+  const [commentInput, setCommentInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(forceShowDetails);
+  const [activeSection, setActiveSection] = useState("overview");
+
+  useEffect(() => {
+    if (forceShowDetails) {
+      setShowDetailsDialog(true);
+    }
+  }, [forceShowDetails]);
+
+  const handleDetailsClose = (open: boolean) => {
+    setShowDetailsDialog(open);
+    if (!open && onClose) {
+      onClose();
+    }
+  };
+
+  const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
+
+  const postUrl = `${window.location.origin}/post/${post.id}`;
+
+  const isIdea = post.type === "idea";
+  const isOwner = false; // Mock owner check
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(postUrl);
+      setCopied(true);
+      toast({
+        title: "Link copied!",
+        description: "Post URL has been copied to your clipboard.",
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      toast({
+        title: "Failed to copy",
+        description: "Please try manually copying the link.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+  };
+
+  const handleSave = () => {
+    const newSavedStatus = !isSaved;
+    setIsSaved(newSavedStatus);
+    
+    // Update local storage directly to ensure consistency
+    const saved = localStorage.getItem('saved_posts');
+    let savedPosts = saved ? JSON.parse(saved) : [];
+    
+    if (newSavedStatus) {
+      const newPost = {
+        id: String(post.id),
+        title: post.title,
+        description: post.content,
+        author: post.author,
+        type: post.type === "fund" ? "funding" : post.type,
+        likes: likesCount,
+        domains: post.domains || ["General"]
+      };
+      savedPosts.push(newPost);
+    } else {
+      savedPosts = savedPosts.filter((p: any) => String(p.id) !== String(post.id));
+    }
+    localStorage.setItem('saved_posts', JSON.stringify(savedPosts));
+
+    // Dispatch custom event for Saved page and other FeedCard instances to listen to
+    const event = new CustomEvent('post-saved-change', {
+      detail: {
+        post: {
+          ...post,
+          id: post.id,
+          title: post.title,
+          content: post.content,
+          author: post.author,
+          type: post.type === "fund" ? "funding" : post.type,
+          likes: likesCount,
+          domains: post.domains || ["General"]
+        },
+        isSaved: newSavedStatus
+      }
+    });
+    window.dispatchEvent(event);
+
+    toast({
+      title: newSavedStatus ? "Post saved" : "Post removed",
+      description: newSavedStatus ? "You can find this post in your saved collection." : "Post has been removed from your saved collection.",
+    });
+  };
+
+  const handleReply = (username: string, commentId: string) => {
+    setReplyTo({ id: commentId, name: username });
+    const mention = `@${username.replace(/\s+/g, '').toLowerCase()} `;
+    setCommentInput(mention);
+    
+    // Use requestAnimationFrame to ensure the cursor is placed after the state update
+    requestAnimationFrame(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        const length = mention.length;
+        inputRef.current.setSelectionRange(length, length);
+      }
+    });
+  };
+
+  const handleAddComment = () => {
+    if (!commentInput.trim()) return;
+    
+    const newComment: Comment = {
+      id: Date.now().toString(),
+      author: {
+        name: "Visionary Builder",
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=Me`,
+        role: userRole || "Member"
+      },
+      content: commentInput,
+      timestamp: "Just now",
+      likes: 0
+    };
+
+    if (replyTo) {
+      setComments(prev => (Array.isArray(prev) ? prev : []).map(c => {
+        if (c.id === replyTo.id) {
+          return { ...c, replies: [...(c.replies || []), newComment] };
+        }
+        // Also check nested replies to allow replying to a reply
+        if (c.replies?.some(r => r.id === replyTo.id)) {
+          return { ...c, replies: [...(c.replies || []), newComment] };
+        }
+        return c;
+      }));
+      setReplyTo(null);
+    } else {
+      setComments(prev => [...(Array.isArray(prev) ? prev : []), newComment]);
+    }
+    setCommentInput("");
+  };
+
+  const totalComments = useMemo(() => {
+    const countNested = (cms: any): number => {
+      if (!Array.isArray(cms)) return 0;
+      return cms.reduce((acc, curr) => acc + 1 + (curr.replies ? countNested(curr.replies) : 0), 0);
+    };
+    return countNested(comments);
+  }, [comments]);
+
+  const actionText = useMemo(() => {
+    switch (post.type) {
+      case "idea": return userRole === "idea-holder" ? null : "Buy Idea";
+      case "fund": return "Invest";
+      case "project":
+      case "recruitment": return "Connect";
+      default: return "Connect";
+    }
+  }, [post.type, userRole]);
+
+  const typeIcon = useMemo(() => {
+    switch (post.type) {
+      case "idea": return <Lightbulb className="w-4 h-4 text-amber-500" />;
+      case "fund": return <Coins className="w-4 h-4 text-emerald-500" />;
+      case "project": return <Briefcase className="w-4 h-4 text-blue-500" />;
+      case "recruitment": return <Users className="w-4 h-4 text-purple-500" />;
+    }
+  }, [post.type]);
+
+  const getFollowBenefits = (role: string) => {
+    return [
+      "Receive real-time notifications for new insights and posts",
+      "Get priority response in collaboration requests",
+      "Access exclusive community networking events"
+    ];
+  };
+
   const handleFollowClick = () => {
     const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
     const newFollowing = [...following, authorName];
@@ -341,6 +555,11 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
       description: `You are no longer following ${authorName}.`,
     });
     setShowUnfollowDialog(false);
+  };
+
+  const confirmFollow = () => {
+    handleFollowClick();
+    setShowFollowDialog(false);
   };
 
   useEffect(() => {
