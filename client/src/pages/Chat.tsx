@@ -232,8 +232,8 @@ export default function ChatPage() {
     <div className="flex h-screen w-full overflow-hidden bg-background">
       {/* Left Side - Chat List */}
       <div className={cn(
-        "flex flex-col border-r border-white/5 bg-background/40 backdrop-blur-xl transition-all duration-300 shrink-0",
-        selectedChatId ? "hidden md:flex md:w-[280px]" : "w-full md:w-[280px]"
+        "flex flex-col border-r border-white/5 bg-background/40 backdrop-blur-xl transition-all duration-300",
+        selectedChatId ? "hidden md:flex md:w-[350px]" : "w-full md:w-[350px]"
       )}>
         <div className="sticky top-0 z-10 p-4 space-y-4 bg-background/60 backdrop-blur-md">
           <div className="flex items-center gap-4">
@@ -283,15 +283,15 @@ export default function ChatPage() {
                     <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
                   )}
                 </div>
-                <div className="flex-1 text-left min-w-0 pr-2">
-                  <div className="flex items-center justify-between mb-0.5 gap-2">
+                <div className="flex-1 text-left min-w-0">
+                  <div className="flex items-center justify-between mb-0.5">
                     <span className={cn(
-                      "font-bold text-sm truncate shrink transition-colors",
+                      "font-bold text-sm truncate transition-colors",
                       chat.unreadCount > 0 ? "text-primary" : "text-white"
                     )}>
                       {chat.user.name}
                     </span>
-                    <span className="text-[10px] text-muted-foreground font-medium shrink-0">{chat.time}</span>
+                    <span className="text-[10px] text-muted-foreground font-medium">{chat.time}</span>
                   </div>
                   <p className={cn(
                     "text-xs truncate transition-colors",
