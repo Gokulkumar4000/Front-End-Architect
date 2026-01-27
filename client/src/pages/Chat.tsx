@@ -268,41 +268,41 @@ export default function ChatPage() {
                 key={chat.id}
                 onClick={() => setSelectedChatId(chat.id)}
                 className={cn(
-                  "w-full p-2 flex gap-2 rounded-lg transition-all duration-200 group relative overflow-hidden text-left",
+                  "w-full p-2 flex gap-2 rounded-lg transition-all duration-200 group relative text-left box-border",
                   selectedChatId === chat.id 
                     ? "bg-primary/10 border border-primary/20 shadow-sm" 
                     : "hover:bg-white/5 border border-transparent active-elevate-2"
                 )}
               >
                 <div className="relative shrink-0">
-                  <Avatar className="h-10 w-10 border border-white/10">
+                  <Avatar className="h-9 w-9 border border-white/10">
                     <AvatarImage src={chat.user.avatar} />
                     <AvatarFallback>{chat.user.name[0]}</AvatarFallback>
                   </Avatar>
                   {chat.user.status === "online" && (
-                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-background" />
+                    <span className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-500 rounded-full border-2 border-background" />
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
                   <div className="flex items-center justify-between mb-0 gap-2">
                     <span className={cn(
-                      "font-bold text-[13px] truncate transition-colors",
+                      "font-bold text-[12px] truncate transition-colors leading-tight",
                       chat.unreadCount > 0 ? "text-primary" : "text-white"
                     )}>
                       {chat.user.name}
                     </span>
-                    <span className="text-[9px] text-muted-foreground font-medium shrink-0">{chat.time}</span>
+                    <span className="text-[9px] text-muted-foreground font-medium shrink-0 leading-tight">{chat.time}</span>
                   </div>
                   <p className={cn(
-                    "text-[11px] truncate transition-colors",
-                    chat.unreadCount > 0 ? "text-white font-medium pr-6" : "text-muted-foreground group-hover:text-white/70"
+                    "text-[10px] truncate transition-colors leading-tight",
+                    chat.unreadCount > 0 ? "text-white font-medium pr-4" : "text-muted-foreground group-hover:text-white/70"
                   )}>
                     {chat.lastMessage}
                   </p>
                 </div>
                 {chat.unreadCount > 0 && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_rgba(168,85,247,0.6)] animate-pulse" />
+                  <div className="shrink-0 ml-1">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_rgba(168,85,247,0.6)] animate-pulse" />
                   </div>
                 )}
               </button>
