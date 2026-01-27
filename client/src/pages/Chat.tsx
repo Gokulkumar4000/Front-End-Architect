@@ -283,28 +283,28 @@ export default function ChatPage() {
                     <span className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
                   )}
                 </div>
-                <div className="flex-1 min-w-0 py-1">
-                  <div className="flex items-center justify-between mb-1 gap-2">
+                <div className="flex-1 min-w-0 py-1 flex flex-col overflow-hidden">
+                  <div className="flex items-center justify-between mb-1 gap-2 w-full overflow-hidden">
                     <span className={cn(
-                      "font-semibold text-base truncate transition-colors",
+                      "font-semibold text-base truncate transition-colors min-w-0 flex-1",
                       chat.unreadCount > 0 ? "text-primary" : "text-white"
                     )}>
                       {chat.user.name}
                     </span>
                     <span className={cn(
-                      "text-[11px] font-medium shrink-0",
+                      "text-[11px] font-medium shrink-0 whitespace-nowrap ml-auto",
                       chat.unreadCount > 0 ? "text-primary" : "text-muted-foreground"
                     )}>{chat.time}</span>
                   </div>
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between gap-2 w-full overflow-hidden">
                     <p className={cn(
-                      "text-[13px] truncate transition-colors flex-1",
+                      "text-[13px] truncate transition-colors flex-1 min-w-0",
                       chat.unreadCount > 0 ? "text-white font-medium" : "text-muted-foreground"
                     )}>
                       {chat.lastMessage}
                     </p>
                     {chat.unreadCount > 0 && (
-                      <div className="shrink-0 flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-primary rounded-full">
+                      <div className="shrink-0 flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-primary rounded-full ml-auto">
                         <span className="text-[10px] font-bold text-white leading-none">{chat.unreadCount}</span>
                       </div>
                     )}
