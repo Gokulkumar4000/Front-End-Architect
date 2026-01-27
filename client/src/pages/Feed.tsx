@@ -388,7 +388,27 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
     const newSavedStatus = !isSaved;
     setIsSaved(newSavedStatus);
     
-    // Dispatch custom event for Saved page to listen to
+    // Update local storage directly to ensure consistency
+    const saved = localStorage.getItem('saved_posts');
+    let savedPosts = saved ? JSON.parse(saved) : [];
+    
+    if (newSavedStatus) {
+      const newPost = {
+        id: String(post.id),
+        title: post.title,
+        description: post.content,
+        author: post.author,
+        type: post.type === "fund" ? "funding" : post.type,
+        likes: likesCount,
+        domains: post.domains || ["General"]
+      };
+      savedPosts.push(newPost);
+    } else {
+      savedPosts = savedPosts.filter((p: any) => String(p.id) !== String(post.id));
+    }
+    localStorage.setItem('saved_posts', JSON.stringify(savedPosts));
+
+    // Dispatch custom event for Saved page and other FeedCard instances to listen to
     const event = new CustomEvent('post-saved-change', {
       detail: {
         post: {
@@ -397,9 +417,9 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
           title: post.title,
           content: post.content,
           author: post.author,
-          type: post.type === "fund" ? "funding" : post.type, // Map "fund" to "funding" for SavedPost compatibility
+          type: post.type === "fund" ? "funding" : post.type,
           likes: likesCount,
-          domains: ["General"] // Ensure domains is present
+          domains: post.domains || ["General"]
         },
         isSaved: newSavedStatus
       }

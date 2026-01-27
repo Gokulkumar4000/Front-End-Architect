@@ -25,15 +25,7 @@ export default function Saved() {
   const [posts, setPosts] = useState<SavedPost[]>(() => {
     const saved = localStorage.getItem('saved_posts');
     if (saved) return JSON.parse(saved);
-    return MOCK_POSTS.map(p => ({
-      id: p.id,
-      type: (p.type === "fund" ? "funding" : p.type) as any,
-      title: p.title,
-      description: p.content,
-      author: p.author,
-      domains: p.domains || ["General"],
-      likes: p.stats.likes
-    }));
+    return [];
   });
 
   useEffect(() => {
