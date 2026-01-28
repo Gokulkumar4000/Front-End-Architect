@@ -463,42 +463,71 @@ export default function ChatPage() {
                           </div>
                         )}
                         <div className={cn(
-                          "p-3.5 rounded-2xl relative group overflow-hidden transition-all duration-500",
+                          "p-0 rounded-2xl relative group overflow-hidden transition-all duration-500",
                           msg.senderId === "me" 
                             ? "bg-primary text-white rounded-tr-none shadow-lg shadow-primary/10" 
                             : "bg-white/5 text-white/90 rounded-tl-none border border-white/5",
-                          msg.text?.toLowerCase().includes("interested in connecting") && "border-2 border-primary/40 shadow-[0_0_20px_rgba(168,85,247,0.4)] bg-primary/10"
+                          msg.text?.toLowerCase().includes("interested in connecting") && "border-none shadow-[0_0_40px_rgba(168,85,247,0.4)]"
                         )}>
                           {msg.text?.toLowerCase().includes("interested in connecting") && (
-                            <div className="absolute inset-0 pointer-events-none rounded-2xl animate-flow-border opacity-30 z-10" />
-                          )}
-                          {msg.image && (
-                            <div className="mb-2 rounded-lg overflow-hidden border border-white/10 relative z-20">
-                              <img src={msg.image} alt="Sent" className="max-w-full h-auto object-cover max-h-60" />
-                            </div>
-                          )}
-                          {msg.text && (
-                            <p className={cn(
-                              "text-sm leading-relaxed whitespace-pre-wrap relative z-20",
-                              msg.text.toLowerCase().includes("interested in connecting") && "font-medium text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
-                            )}>
-                              {msg.text}
-                            </p>
+                            <div className="absolute inset-[-500%] animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)] z-0" />
                           )}
                           <div className={cn(
-                            "flex items-center gap-1 mt-1.5 relative z-20",
-                            msg.senderId === "me" ? "justify-end" : "justify-start"
+                            "relative z-20 h-full w-full p-4",
+                            msg.text?.toLowerCase().includes("interested in connecting") && "bg-[#020617]/95 backdrop-blur-3xl m-[1.5px] rounded-[calc(1rem-1.5px)] w-[calc(100%-3px)]"
                           )}>
-                            <span className="text-[9px] opacity-60 font-medium">{msg.timestamp}</span>
-                            {msg.senderId === "me" && (
-                              <span className="opacity-60">
-                                {msg.status === 'read' ? (
-                                  <CheckCheck className="w-3 h-3 text-white" />
-                                ) : (
-                                  <Check className="w-3 h-3" />
-                                )}
-                              </span>
+                            {msg.text?.toLowerCase().includes("interested in connecting") && (
+                              <div className="mb-4 space-y-2 border-b border-white/10 pb-4">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                                    <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Connection Request</span>
+                                  </div>
+                                  <Badge variant="outline" className="text-[9px] h-4 border-primary/40 bg-primary/5 text-primary font-bold">
+                                    {selectedChat.context?.type?.toUpperCase() || "PROJECT"}
+                                  </Badge>
+                                </div>
+                                <h4 className="text-base font-black text-white leading-tight tracking-tight">
+                                  {msg.text.match(/"([^"]+)"/)?.[1] || selectedChat.context?.title || "Platform Collaboration"}
+                                </h4>
+                              </div>
                             )}
+                            
+                            {msg.image && (
+                              <div className="mb-2 rounded-lg overflow-hidden border border-white/10 relative z-20">
+                                <img src={msg.image} alt="Sent" className="max-w-full h-auto object-cover max-h-60" />
+                              </div>
+                            )}
+                            
+                            {msg.text && (
+                              <div className={cn(
+                                "relative z-20",
+                                msg.text.toLowerCase().includes("interested in connecting") && "bg-white/[0.03] p-3 rounded-xl border border-white/5"
+                              )}>
+                                <p className={cn(
+                                  "text-sm leading-relaxed whitespace-pre-wrap",
+                                  msg.text.toLowerCase().includes("interested in connecting") && "text-white/70 font-medium italic italic-shadow"
+                                )}>
+                                  {msg.text}
+                                </p>
+                              </div>
+                            )}
+                            
+                            <div className={cn(
+                              "flex items-center gap-1 mt-3 relative z-20",
+                              msg.senderId === "me" ? "justify-end" : "justify-start"
+                            )}>
+                              <span className="text-[9px] opacity-60 font-medium">{msg.timestamp}</span>
+                              {msg.senderId === "me" && (
+                                <span className="opacity-60">
+                                  {msg.status === 'read' ? (
+                                    <CheckCheck className="w-3 h-3 text-white" />
+                                  ) : (
+                                    <Check className="w-3 h-3" />
+                                  )}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
