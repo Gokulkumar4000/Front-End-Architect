@@ -130,6 +130,27 @@ export default function ChatPage() {
   const [pendingAttachments, setPendingAttachments] = useState<{file: File, preview: string, type: 'image' | 'file'}[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const selectedChat = useMemo(() => 
+    chats.find(c => c.id === selectedChatId), 
+    [selectedChatId, chats]
+  );
+
+  const filteredChats = useMemo(() => 
+    chats.map(chat => {
+      const chatMessages = allMessages[chat.id] || [];
+      const lastMsg = chatMessages[chatMessages.length - 1];
+      return {
+        ...chat,
+        lastMessage: lastMsg ? lastMsg.text : chat.lastMessage,
+        time: lastMsg ? lastMsg.timestamp : chat.time
+      };
+    }).filter(c => 
+      c.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.context?.title.toLowerCase().includes(searchQuery.toLowerCase())
+    ),
+    [searchQuery, allMessages, chats]
+  );
+
   const messages = useMemo(() => 
     selectedChatId ? (allMessages[selectedChatId] || []) : [],
     [selectedChatId, allMessages]
@@ -167,29 +188,6 @@ export default function ChatPage() {
       setMessageInput(connectMessage);
     }
   }, []);
-
-  const selectedChat = useMemo(() => 
-    chats.find(c => c.id === selectedChatId), 
-    [selectedChatId, chats]
-  );
-
-  const filteredChats = useMemo(() => 
-    chats.map(chat => {
-      const chatMessages = allMessages[chat.id] || [];
-      const lastMsg = chatMessages[chatMessages.length - 1];
-      return {
-        ...chat,
-        lastMessage: lastMsg ? lastMsg.text : chat.lastMessage,
-        time: lastMsg ? lastMsg.timestamp : chat.time
-      };
-    }).filter(c => 
-      c.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.context?.title.toLowerCase().includes(searchQuery.toLowerCase())
-    ),
-    [searchQuery, allMessages, chats]
-  );
-
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
