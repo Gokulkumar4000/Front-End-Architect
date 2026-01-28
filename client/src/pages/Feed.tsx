@@ -547,6 +547,10 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
     setLocation('/chat');
   };
 
+  const handleUnfollowClick = () => {
+    setShowUnfollowDialog(true);
+  };
+
   const handleFollowClick = () => {
     setShowFollowDialog(true);
   };
@@ -590,7 +594,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
                 <h4 className="text-sm font-bold leading-none">{post.author.name}</h4>
                 {isFollowing ? (
                   <button 
-                    onClick={() => setShowUnfollowDialog(true)}
+                    onClick={handleUnfollowClick}
                     className="flex items-center gap-1.5 text-[10px] text-primary/80 font-medium bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10 hover:bg-primary/10 transition-colors"
                   >
                     <CheckCircle2 className="w-3 h-3" />
