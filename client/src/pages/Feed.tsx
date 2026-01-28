@@ -548,6 +548,10 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
   };
 
   const handleFollowClick = () => {
+    setShowFollowDialog(true);
+  };
+
+  const confirmFollow = () => {
     const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
     const newFollowing = [...following, authorName];
     setFollowing(newFollowing);
@@ -560,26 +564,6 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
       title: "Following",
       description: `You are now following ${authorName}.`,
     });
-  };
-
-  const handleUnfollowClick = () => {
-    const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
-    const newFollowing = following.filter(name => name !== authorName);
-    setFollowing(newFollowing);
-    localStorage.setItem('following_users', JSON.stringify(newFollowing));
-    
-    // Dispatch event to update other components
-    window.dispatchEvent(new CustomEvent('following-change', { detail: { following: newFollowing } }));
-    
-    toast({
-      title: "Unfollowed",
-      description: `You are no longer following ${authorName}.`,
-    });
-    setShowUnfollowDialog(false);
-  };
-
-  const confirmFollow = () => {
-    handleFollowClick();
     setShowFollowDialog(false);
   };
 
