@@ -120,10 +120,14 @@ const MOCK_MESSAGES: Record<string, Message[]> = {
 export default function ChatPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const [chats, setChats] = useState<Chat[]>(MOCK_CHATS);
+  const [allMessages, setAllMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [showProfileSidebar, setShowProfileSidebar] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [messageInput, setMessageInput] = useState("");
+  const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
+
   const messages = useMemo(() => 
     selectedChatId ? (allMessages[selectedChatId] || []) : [],
     [selectedChatId, allMessages]
