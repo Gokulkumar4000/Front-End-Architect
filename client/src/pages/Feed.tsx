@@ -668,7 +668,13 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
           </DropdownMenu>
         </CardHeader>
 
-        <CardContent className="px-4 pb-4 pt-0 space-y-3 relative overflow-hidden transition-all duration-500 ease-in-out">
+        <CardContent className={cn(
+          "px-4 pb-4 pt-0 space-y-3 relative overflow-hidden transition-all duration-500 ease-in-out",
+          post.type === "fund" && "border-2 border-primary/40 shadow-[0_0_25px_rgba(168,85,247,0.3)] bg-primary/[0.03]"
+        )}>
+          {post.type === "fund" && (
+            <div className="absolute inset-0 pointer-events-none rounded-xl animate-flow-border opacity-20 z-10" />
+          )}
           <div className={cn(
             "absolute inset-0 z-20 bg-background/98 backdrop-blur-md p-4 flex flex-col h-full transition-all duration-300 ease-in-out",
             showComments ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full pointer-events-none"
@@ -734,7 +740,15 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
             showComments ? "opacity-0 scale-95 pointer-events-none" : "opacity-100 scale-100"
           )}>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 flex items-center gap-1 text-[10px] h-5 px-2">
+              <Badge 
+                variant="outline" 
+                className={cn(
+                  "flex items-center gap-1 text-[10px] h-5 px-2 transition-all duration-500",
+                  post.type === "fund" 
+                    ? "bg-primary/20 text-primary border-primary shadow-[0_0_10px_rgba(168,85,247,0.5)] animate-pulse" 
+                    : "bg-primary/5 text-primary border-primary/20"
+                )}
+              >
                 {typeIcon}
                 <span className="capitalize">{post.type}</span>
               </Badge>
