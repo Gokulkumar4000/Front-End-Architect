@@ -127,6 +127,8 @@ export default function ChatPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [messageInput, setMessageInput] = useState("");
   const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
+  const [pendingAttachments, setPendingAttachments] = useState<{file: File, preview: string, type: 'image' | 'file'}[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const messages = useMemo(() => 
     selectedChatId ? (allMessages[selectedChatId] || []) : [],
@@ -190,90 +192,98 @@ export default function ChatPage() {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
-    // Simulate file upload/sending
-    const isImage = file.type.startsWith('image/');
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result as string;
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        senderId: "me",
-        text: isImage ? "" : `Attached file: ${file.name}`,
-        image: isImage ? content : undefined,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        status: 'sent'
+    files.forEach(file => {
+      const isImage = file.type.startsWith('image/');
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const preview = event.target?.result as string;
+        setPendingAttachments(prev => [...prev, {
+          file,
+          preview,
+          type: isImage ? 'image' : 'file'
+        }]);
       };
       
-      setAllMessages(prev => ({
-        ...prev,
-        [selectedChatId!]: [...(prev[selectedChatId!] || []), newMessage]
-      }));
-      
-      toast({
-        title: isImage ? "Image sent" : "File attached",
-        description: `${file.name} has been sent.`,
-      });
-    };
-    
-    if (isImage) {
-      reader.readAsDataURL(file);
-    } else {
-      // For non-images, we just send the name for now in this mock
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        senderId: "me",
-        text: `Attached file: ${file.name}`,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        status: 'sent'
-      };
-      
-      setAllMessages(prev => ({
-        ...prev,
-        [selectedChatId!]: [...(prev[selectedChatId!] || []), newMessage]
-      }));
-
-      toast({
-        title: "File attached",
-        description: `${file.name} has been sent.`,
-      });
-    }
+      if (isImage) {
+        reader.readAsDataURL(file);
+      } else {
+        // For non-images, we just use the name as preview
+        setPendingAttachments(prev => [...prev, {
+          file,
+          preview: file.name,
+          type: 'file'
+        }]);
+      }
+    });
     
     // Reset input
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const handleSendMessage = () => {
-    if (!messageInput.trim() || !selectedChatId) return;
+  const removeAttachment = (index: number) => {
+    setPendingAttachments(prev => prev.filter((_, i) => i !== index));
+  };
 
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      senderId: "me",
-      text: messageInput.trim(),
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      status: 'sent',
-      replyTo: replyToMessage ? {
-        id: replyToMessage.id,
-        senderId: replyToMessage.senderId,
-        text: replyToMessage.text
-      } : undefined
-    };
+  const handleSendMessage = () => {
+    if ((!messageInput.trim() && pendingAttachments.length === 0) || !selectedChatId) return;
+
+    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    // If we have attachments, send them as separate messages or combined
+    // In this mock, we'll send them as individual messages for better UI
+    const newMessages: Message[] = [];
+
+    // Add attachments as messages
+    pendingAttachments.forEach((attachment, idx) => {
+      newMessages.push({
+        id: `attach-${Date.now()}-${idx}`,
+        senderId: "me",
+        text: attachment.type === 'image' ? "" : `Attached file: ${attachment.file.name}`,
+        image: attachment.type === 'image' ? attachment.preview : undefined,
+        timestamp,
+        status: 'sent',
+        replyTo: idx === 0 && replyToMessage ? {
+          id: replyToMessage.id,
+          senderId: replyToMessage.senderId,
+          text: replyToMessage.text
+        } : undefined
+      });
+    });
+
+    // Add text message if it exists and wasn't the only thing
+    if (messageInput.trim()) {
+      newMessages.push({
+        id: `text-${Date.now()}`,
+        senderId: "me",
+        text: messageInput.trim(),
+        timestamp,
+        status: 'sent',
+        replyTo: pendingAttachments.length === 0 && replyToMessage ? {
+          id: replyToMessage.id,
+          senderId: replyToMessage.senderId,
+          text: replyToMessage.text
+        } : undefined
+      });
+    }
 
     setAllMessages(prev => ({
       ...prev,
-      [selectedChatId]: [...(prev[selectedChatId] || []), newMessage]
+      [selectedChatId]: [...(prev[selectedChatId] || []), ...newMessages]
     }));
+    
     setMessageInput("");
+    setPendingAttachments([]);
     setReplyToMessage(null);
 
     // Mock auto-reply
     setTimeout(() => {
       const replyMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `reply-${Date.now()}`,
         senderId: selectedChatId,
-        text: "Thanks for your message! I'll get back to you soon.",
+        text: "Thanks for the files! I'll take a look right away.",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         status: 'delivered'
       };
@@ -549,6 +559,28 @@ export default function ChatPage() {
 
             {/* Input Area */}
             <div className="border-t border-white/5 bg-background/60 backdrop-blur-md sticky bottom-0 z-20">
+              {pendingAttachments.length > 0 && (
+                <div className="px-4 py-3 bg-white/5 flex gap-3 overflow-x-auto custom-scrollbar">
+                  {pendingAttachments.map((attachment, idx) => (
+                    <div key={idx} className="relative shrink-0 w-20 h-20 rounded-xl overflow-hidden border border-white/10 group/thumb">
+                      {attachment.type === 'image' ? (
+                        <img src={attachment.preview} className="w-full h-full object-cover" alt="Preview" />
+                      ) : (
+                        <div className="w-full h-full bg-white/5 flex flex-col items-center justify-center p-2 text-center">
+                          <FileText className="w-6 h-6 text-blue-400 mb-1" />
+                          <span className="text-[8px] text-white/50 truncate w-full">{attachment.file.name}</span>
+                        </div>
+                      )}
+                      <button 
+                        onClick={() => removeAttachment(idx)}
+                        className="absolute top-1 right-1 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center text-white opacity-0 group-hover/thumb:opacity-100 transition-opacity"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
               {replyToMessage && (
                 <div className="px-4 pt-3 pb-0">
                   <div className="max-w-4xl mx-auto">
@@ -638,7 +670,7 @@ export default function ChatPage() {
                     onClick={handleSendMessage}
                     className={cn(
                       "h-9 w-9 rounded-xl transition-all duration-300",
-                      messageInput.trim() ? "bg-primary scale-100 shadow-lg shadow-primary/20" : "bg-white/10 scale-90 pointer-events-none opacity-50"
+                      (messageInput.trim() || pendingAttachments.length > 0) ? "bg-primary scale-100 shadow-lg shadow-primary/20" : "bg-white/10 scale-90 pointer-events-none opacity-50"
                     )}
                   >
                     <Send className="w-4 h-4 text-white" />
