@@ -124,11 +124,16 @@ export default function ChatPage() {
   const [showProfileSidebar, setShowProfileSidebar] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [messageInput, setMessageInput] = useState("");
-  const [allMessages, setAllMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
-  const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
-  const [chats, setChats] = useState<Chat[]>(MOCK_CHATS);
+    const [allMessages, setAllMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
+    const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
+    const [chats, setChats] = useState<Chat[]>(MOCK_CHATS);
 
-  useEffect(() => {
+    const messages = useMemo(() => 
+      selectedChatId ? (allMessages[selectedChatId] || []) : [],
+      [selectedChatId, allMessages]
+    );
+
+    useEffect(() => {
     const pendingRequest = localStorage.getItem('pendingConnectRequest');
     if (pendingRequest) {
       const data = JSON.parse(pendingRequest);
@@ -166,12 +171,12 @@ export default function ChatPage() {
     [selectedChatId, chats]
   );
 
-  const messages = useMemo(() => 
-    selectedChatId ? (allMessages[selectedChatId] || []) : [],
-    [selectedChatId, allMessages]
-  );
+    const messages = useMemo(() => 
+      selectedChatId ? (allMessages[selectedChatId] || []) : [],
+      [selectedChatId, allMessages]
+    );
 
-  const filteredChats = useMemo(() => 
+    const filteredChats = useMemo(() => 
     chats.map(chat => {
       const chatMessages = allMessages[chat.id] || [];
       const lastMsg = chatMessages[chatMessages.length - 1];
@@ -206,7 +211,11 @@ export default function ChatPage() {
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         status: 'sent'
       };
-      setMessages([...messages, newMessage]);
+      
+      setAllMessages(prev => ({
+        ...prev,
+        [selectedChatId!]: [...(prev[selectedChatId!] || []), newMessage]
+      }));
       
       toast({
         title: isImage ? "Image sent" : "File attached",
@@ -225,7 +234,12 @@ export default function ChatPage() {
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         status: 'sent'
       };
-      setMessages([...messages, newMessage]);
+      
+      setAllMessages(prev => ({
+        ...prev,
+        [selectedChatId!]: [...(prev[selectedChatId!] || []), newMessage]
+      }));
+
       toast({
         title: "File attached",
         description: `${file.name} has been sent.`,
@@ -454,19 +468,30 @@ export default function ChatPage() {
                           </div>
                         )}
                         <div className={cn(
-                          "p-3.5 rounded-2xl relative group",
+                          "p-3.5 rounded-2xl relative group overflow-hidden transition-all duration-500",
                           msg.senderId === "me" 
                             ? "bg-primary text-white rounded-tr-none shadow-lg shadow-primary/10" 
-                            : "bg-white/5 text-white/90 rounded-tl-none border border-white/5"
+                            : "bg-white/5 text-white/90 rounded-tl-none border border-white/5",
+                          msg.text?.toLowerCase().includes("interested in connecting") && "border-2 border-primary/40 shadow-[0_0_20px_rgba(168,85,247,0.4)] bg-primary/10"
                         )}>
+                          {msg.text?.toLowerCase().includes("interested in connecting") && (
+                            <div className="absolute inset-0 pointer-events-none rounded-2xl animate-flow-border opacity-30 z-10" />
+                          )}
                           {msg.image && (
-                            <div className="mb-2 rounded-lg overflow-hidden border border-white/10">
+                            <div className="mb-2 rounded-lg overflow-hidden border border-white/10 relative z-20">
                               <img src={msg.image} alt="Sent" className="max-w-full h-auto object-cover max-h-60" />
                             </div>
                           )}
-                          {msg.text && <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>}
+                          {msg.text && (
+                            <p className={cn(
+                              "text-sm leading-relaxed whitespace-pre-wrap relative z-20",
+                              msg.text.toLowerCase().includes("interested in connecting") && "font-medium text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                            )}>
+                              {msg.text}
+                            </p>
+                          )}
                           <div className={cn(
-                            "flex items-center gap-1 mt-1.5",
+                            "flex items-center gap-1 mt-1.5 relative z-20",
                             msg.senderId === "me" ? "justify-end" : "justify-start"
                           )}>
                             <span className="text-[9px] opacity-60 font-medium">{msg.timestamp}</span>
