@@ -124,16 +124,12 @@ export default function ChatPage() {
   const [showProfileSidebar, setShowProfileSidebar] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [messageInput, setMessageInput] = useState("");
-    const [allMessages, setAllMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
-    const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
-    const [chats, setChats] = useState<Chat[]>(MOCK_CHATS);
+  const messages = useMemo(() => 
+    selectedChatId ? (allMessages[selectedChatId] || []) : [],
+    [selectedChatId, allMessages]
+  );
 
-    const messages = useMemo(() => 
-      selectedChatId ? (allMessages[selectedChatId] || []) : [],
-      [selectedChatId, allMessages]
-    );
-
-    useEffect(() => {
+  useEffect(() => {
     const pendingRequest = localStorage.getItem('pendingConnectRequest');
     if (pendingRequest) {
       const data = JSON.parse(pendingRequest);
@@ -171,12 +167,7 @@ export default function ChatPage() {
     [selectedChatId, chats]
   );
 
-    const messages = useMemo(() => 
-      selectedChatId ? (allMessages[selectedChatId] || []) : [],
-      [selectedChatId, allMessages]
-    );
-
-    const filteredChats = useMemo(() => 
+  const filteredChats = useMemo(() => 
     chats.map(chat => {
       const chatMessages = allMessages[chat.id] || [];
       const lastMsg = chatMessages[chatMessages.length - 1];
