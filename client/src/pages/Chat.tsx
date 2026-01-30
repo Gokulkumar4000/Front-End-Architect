@@ -558,35 +558,38 @@ export default function ChatPage() {
             {/* Input Area */}
             <div className="border-t border-white/5 bg-background/60 backdrop-blur-md sticky bottom-0 z-20">
               {pendingAttachments.length > 0 && (
-                <div className="bg-background/95 backdrop-blur-3xl border-t border-white/10 p-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="max-w-4xl mx-auto flex flex-col gap-4">
-                    {/* Primary Preview Section (Conditional - only show if something is selected or we want a bigger look) */}
-                    <div className="w-full flex justify-center items-center relative min-h-[120px] max-h-[300px]">
+                <div className="absolute inset-x-0 bottom-full bg-[#020617]/95 backdrop-blur-3xl border-t border-white/10 p-6 animate-in fade-in slide-in-from-bottom-5 duration-500 z-50 h-[calc(100vh-160px)] md:h-[calc(100vh-200px)] flex flex-col">
+                  <div className="max-w-4xl mx-auto flex flex-col h-full w-full gap-8">
+                    {/* Primary Preview Section - Expanded to fill space */}
+                    <div className="flex-1 flex flex-col justify-center items-center relative overflow-hidden bg-white/[0.02] rounded-3xl border border-white/5 p-8 shadow-inner">
                       {pendingAttachments[0].type === 'image' ? (
-                        <div className="relative group/main">
+                        <div className="relative group/main h-full w-full flex items-center justify-center">
                           <img 
                             src={pendingAttachments[0].preview} 
-                            className="max-w-full max-h-[280px] object-contain rounded-xl shadow-2xl border border-white/10" 
+                            className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl border border-white/10 transition-transform duration-500 group-hover/main:scale-[1.02]" 
                             alt="Main Preview" 
                           />
                           <button 
                             onClick={() => removeAttachment(0)}
-                            className="absolute -top-2 -right-2 w-8 h-8 bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-red-500 transition-all shadow-lg border border-white/10 opacity-0 group-hover/main:opacity-100"
+                            className="absolute top-4 right-4 w-10 h-10 bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-red-500 transition-all shadow-lg border border-white/10 opacity-0 group-hover/main:opacity-100"
                           >
-                            <X className="w-4 h-4" />
+                            <X className="w-5 h-5" />
                           </button>
                         </div>
                       ) : (
-                        <div className="w-full max-w-sm bg-white/5 rounded-2xl flex flex-col items-center justify-center p-6 text-center border border-white/10">
-                          <FileText className="w-12 h-12 text-blue-400 mb-3" />
-                          <span className="text-sm font-bold text-white truncate w-full">{pendingAttachments[0].file.name}</span>
+                        <div className="w-full max-w-md bg-white/5 rounded-3xl flex flex-col items-center justify-center p-12 text-center border border-white/10 shadow-2xl">
+                          <div className="w-24 h-24 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6 border border-blue-500/20">
+                            <FileText className="w-12 h-12 text-blue-400" />
+                          </div>
+                          <span className="text-lg font-black text-white truncate w-full mb-2 tracking-tight">{pendingAttachments[0].file.name}</span>
+                          <span className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Document Staged</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Bottom Mini Previews Carousel - Centered above input */}
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-2xl border border-white/10 overflow-x-auto max-w-full no-scrollbar scroll-smooth">
+                    {/* Bottom Mini Previews Carousel - Fixed at bottom of expanded area */}
+                    <div className="flex flex-col items-center gap-6 shrink-0 pb-4">
+                      <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-[2rem] border border-white/10 overflow-x-auto max-w-full no-scrollbar scroll-smooth shadow-lg">
                         {pendingAttachments.map((attachment, idx) => (
                           <div 
                             key={idx} 
@@ -599,41 +602,45 @@ export default function ChatPage() {
                               }
                             }}
                             className={cn(
-                              "relative shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all cursor-pointer hover:scale-105",
-                              idx === 0 ? "border-primary shadow-[0_0_10px_rgba(168,85,247,0.4)]" : "border-transparent opacity-50 hover:opacity-100"
+                              "relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer hover:scale-105 active:scale-95",
+                              idx === 0 ? "border-primary shadow-[0_0_20px_rgba(168,85,247,0.5)]" : "border-transparent opacity-40 hover:opacity-100"
                             )}
                           >
                             {attachment.type === 'image' ? (
                               <img src={attachment.preview} className="w-full h-full object-cover" alt="Thumb" />
                             ) : (
-                              <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                                <FileText className="w-5 h-5 text-blue-400" />
+                              <div className="w-full h-full bg-white/10 flex items-center justify-center">
+                                <FileText className="w-6 h-6 text-blue-400" />
                               </div>
                             )}
+                            {idx === 0 && <div className="absolute inset-0 bg-primary/10 pointer-events-none" />}
                           </div>
                         ))}
                         
                         <button 
                           onClick={() => fileInputRef.current?.click()}
-                          className="flex shrink-0 w-12 h-12 rounded-lg border-2 border-dashed border-white/20 items-center justify-center hover:border-primary/50 hover:bg-primary/5 transition-all"
+                          className="flex shrink-0 w-16 h-16 rounded-xl border-2 border-dashed border-white/20 items-center justify-center hover:border-primary/50 hover:bg-primary/5 transition-all group/add"
                         >
-                          <Plus className="w-5 h-5 text-muted-foreground" />
+                          <Plus className="w-6 h-6 text-muted-foreground group-hover/add:text-primary transition-colors" />
                         </button>
                       </div>
 
-                      <div className="flex items-center justify-between w-full px-2">
+                      <div className="flex items-center justify-between w-full px-4">
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          className="text-muted-foreground font-bold uppercase tracking-wider text-[9px] h-7"
+                          className="text-muted-foreground hover:text-white font-black uppercase tracking-[0.2em] text-[10px] h-9 px-6 rounded-full hover:bg-white/5"
                           onClick={() => setPendingAttachments([])}
                         >
                           Cancel
                         </Button>
-                        <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
-                          {pendingAttachments.length} item{pendingAttachments.length > 1 ? 's' : ''} staged
-                        </span>
-                        <div className="w-12" /> {/* Spacer to help balance if needed */}
+                        <div className="flex flex-col items-center">
+                          <span className="text-[11px] font-black text-primary uppercase tracking-[0.3em] animate-pulse">
+                            {pendingAttachments.length} item{pendingAttachments.length > 1 ? 's' : ''} staged
+                          </span>
+                          <div className="h-0.5 w-12 bg-primary/30 rounded-full mt-1" />
+                        </div>
+                        <div className="w-[100px]" /> {/* Balanced spacing */}
                       </div>
                     </div>
                   </div>
