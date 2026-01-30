@@ -502,8 +502,8 @@ export default function ChatPage() {
                             )}
                             
                             {msg.image && (
-                              <div className="mb-2 rounded-lg overflow-hidden border border-white/10 relative z-20">
-                                <img src={msg.image} alt="Sent" className="max-w-full h-auto object-cover max-h-60" />
+                              <div className="mb-2 rounded-lg overflow-hidden border border-white/10 relative z-20 -mx-4 -mt-4">
+                                <img src={msg.image} alt="Sent" className="w-full h-auto object-cover cursor-pointer hover:opacity-95 transition-opacity" />
                               </div>
                             )}
                             
