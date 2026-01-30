@@ -558,7 +558,7 @@ export default function ChatPage() {
             {/* Input Area */}
             <div className="border-t border-white/5 bg-background/60 backdrop-blur-md sticky bottom-0 z-20">
               {pendingAttachments.length > 0 && (
-                <div className="absolute inset-x-0 bottom-full bg-[#020617]/98 backdrop-blur-3xl border-t border-white/10 p-6 animate-in fade-in slide-in-from-bottom-5 duration-500 z-50 h-[calc(100vh-140px)] flex flex-col items-center justify-center">
+                <div className="absolute inset-x-0 bottom-full bg-[#020617] border-t border-white/10 p-6 animate-in fade-in slide-in-from-bottom-5 duration-500 z-50 h-[calc(100vh-140px)] flex flex-col items-center justify-center">
                   <div className="max-w-4xl w-full flex flex-col items-center gap-6">
                     {/* Primary Preview Section - LARGE */}
                     <div className="w-full flex-1 flex items-center justify-center relative min-h-[300px] max-h-[60vh]">
