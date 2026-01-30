@@ -586,7 +586,7 @@ export default function ChatPage() {
                     </div>
 
                     {/* Bottom Mini Previews Carousel - WhatsApp Style (Small & Centered) */}
-                    <div className="flex flex-col items-center gap-4 w-full shrink-0">
+                    <div className="flex flex-col items-center justify-end gap-4 w-full shrink-0 min-h-[120px]">
                       <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-2xl border border-white/10 overflow-x-auto max-w-full no-scrollbar scroll-smooth">
                         {pendingAttachments.map((attachment, idx) => (
                           <div 
