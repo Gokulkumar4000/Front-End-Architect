@@ -11,18 +11,27 @@ import Chat from "@/pages/Chat";
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
+import { useFirebaseAuth } from "@/hooks/use-auth";
 
 function ProtectedRoute({ component: Component, path }: { component: React.ComponentType<any>, path: string }) {
-  const [location, setLocation] = useLocation();
-  const userRole = localStorage.getItem("userRole");
+  const [, setLocation] = useLocation();
+  const { user, loading } = useFirebaseAuth();
 
   useEffect(() => {
-    if (!userRole) {
+    if (!loading && !user) {
       setLocation("/login");
     }
-  }, [userRole, setLocation]);
+  }, [user, loading, setLocation]);
 
-  if (!userRole) return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) return null;
   return <Component />;
 }
 

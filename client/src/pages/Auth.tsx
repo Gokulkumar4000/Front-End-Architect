@@ -55,7 +55,12 @@ import {
 import { cn } from "@/lib/utils";
 
 import { useToast } from "@/hooks/use-toast";
-import { MOCK_USERS } from "@/mocks/users";
+import {
+  auth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "@/lib/firebase";
 
 type AuthMode = "login" | "signup";
 type UserRole = "idea-holder" | "developer" | "investor";
@@ -648,36 +653,50 @@ export default function Auth() {
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPass, setLoginPass] = useState("");
+  const [loginErrors, setLoginErrors] = useState<{ email?: string; password?: string; general?: string }>({});
+
+  const validateLoginForm = () => {
+    const errors: { email?: string; password?: string } = {};
+    if (!loginEmail.trim()) {
+      errors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginEmail)) {
+      errors.email = "Please enter a valid email address.";
+    }
+    if (!loginPass) {
+      errors.password = "Password is required.";
+    } else if (loginPass.length < 6) {
+      errors.password = "Password must be at least 6 characters.";
+    }
+    return errors;
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Find user by username or email for convenience
-    const user = MOCK_USERS.find(u => 
-      (u.username === loginEmail || (u as any).email === loginEmail) && u.password === loginPass
-    );
-    
-    if (user) {
-      localStorage.setItem("userRole", user.role);
-      localStorage.setItem("username", user.username);
-      localStorage.setItem("isLoggedIn", "true");
-      toast({
-        title: "Welcome back!",
-        description: `Logged in as ${user.name}`,
-      });
-      setLocation("/feed");
-    } else {
-      toast({
-        title: "Login failed",
-        description: "Invalid credentials. Try alice / password123",
-        variant: "destructive",
-      });
+    setLoginErrors({});
+    const errors = validateLoginForm();
+    if (Object.keys(errors).length > 0) {
+      setLoginErrors(errors);
+      return;
     }
-    setIsSubmitting(false);
+    setIsSubmitting(true);
+    try {
+      await signInWithEmailAndPassword(auth, loginEmail.trim(), loginPass);
+      toast({ title: "Welcome back!", description: "Successfully signed in." });
+      setLocation("/feed");
+    } catch (err: any) {
+      const code = err?.code || "";
+      let message = "Something went wrong. Please try again.";
+      if (code === "auth/user-not-found" || code === "auth/wrong-password" || code === "auth/invalid-credential") {
+        message = "Incorrect email or password.";
+      } else if (code === "auth/too-many-requests") {
+        message = "Too many failed attempts. Please try again later.";
+      } else if (code === "auth/user-disabled") {
+        message = "This account has been disabled.";
+      }
+      setLoginErrors({ general: message });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -723,9 +742,6 @@ export default function Auth() {
   };
 
   const handleStartRegistration = () => {
-    if (selectedRole) {
-      localStorage.setItem("userRole", selectedRole);
-    }
     setOnboardingStep("registration");
     setSignupStep("basic-profile");
   };
@@ -748,13 +764,40 @@ export default function Auth() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.email) {
+      toast({ title: "Email required", description: "Please enter your email in the Basic Profile step.", variant: "destructive" });
+      return;
+    }
+    if (!formData.password || formData.password.length < 6) {
+      toast({ title: "Password too short", description: "Password must be at least 6 characters.", variant: "destructive" });
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      toast({ title: "Passwords don't match", description: "Please make sure both passwords match.", variant: "destructive" });
+      return;
+    }
     setIsSubmitting(true);
-    
-    // Simulate API call for registration
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const credential = await createUserWithEmailAndPassword(auth, formData.email.trim(), formData.password);
+      if (formData.fullName) {
+        await updateProfile(credential.user, { displayName: formData.fullName });
+      }
+      toast({ title: "Account created!", description: "Welcome to DevConnect!" });
       setLocation("/feed");
-    }, 2000);
+    } catch (err: any) {
+      const code = err?.code || "";
+      let message = "Registration failed. Please try again.";
+      if (code === "auth/email-already-in-use") {
+        message = "This email is already registered. Please log in instead.";
+      } else if (code === "auth/invalid-email") {
+        message = "Please enter a valid email address.";
+      } else if (code === "auth/weak-password") {
+        message = "Password is too weak. Use at least 6 characters.";
+      }
+      toast({ title: "Registration failed", description: message, variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitting) {
@@ -916,17 +959,26 @@ export default function Auth() {
                     <h2 className="text-2xl font-display font-bold">Welcome Back</h2>
                     <p className="text-muted-foreground">Access your workspace and projects.</p>
                   </div>
+                  {loginErrors.general && (
+                    <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm text-destructive font-medium">
+                      {loginErrors.general}
+                    </div>
+                  )}
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email or Username</Label>
+                      <Label htmlFor="email">Email Address</Label>
                       <Input 
                         id="email" 
-                        type="text" 
-                        placeholder="alice" 
-                        className="bg-white/5 border-white/10" 
+                        type="email" 
+                        placeholder="your@email.com" 
+                        className={`bg-white/5 border-white/10 ${loginErrors.email ? "border-destructive focus-visible:ring-destructive" : ""}`}
                         value={loginEmail}
-                        onChange={(e) => setLoginEmail(e.target.value)}
+                        onChange={(e) => { setLoginEmail(e.target.value); setLoginErrors(prev => ({ ...prev, email: undefined })); }}
+                        data-testid="input-login-email"
                       />
+                      {loginErrors.email && (
+                        <p className="text-xs text-destructive mt-1">{loginErrors.email}</p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="pass">Password</Label>
@@ -934,16 +986,21 @@ export default function Auth() {
                         id="pass" 
                         type="password" 
                         placeholder="••••••••" 
-                        className="bg-white/5 border-white/10" 
+                        className={`bg-white/5 border-white/10 ${loginErrors.password ? "border-destructive focus-visible:ring-destructive" : ""}`}
                         value={loginPass}
-                        onChange={(e) => setLoginPass(e.target.value)}
+                        onChange={(e) => { setLoginPass(e.target.value); setLoginErrors(prev => ({ ...prev, password: undefined })); }}
+                        data-testid="input-login-password"
                       />
+                      {loginErrors.password && (
+                        <p className="text-xs text-destructive mt-1">{loginErrors.password}</p>
+                      )}
                     </div>
                   </div>
                   <Button 
                     onClick={handleLogin}
                     disabled={isSubmitting}
                     className="w-full py-6 font-bold text-lg mt-4 shadow-lg shadow-primary/20"
+                    data-testid="button-login-submit"
                   >
                     {isSubmitting ? "Logging in..." : "Login to DevConnect"}
                   </Button>
@@ -1227,6 +1284,29 @@ export default function Auth() {
                                           value={formData.email || ""}
                                           onChange={(e) => updateFormData("email", e.target.value)}
                                         />
+                                      </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                      <div className="space-y-2">
+                                        <Label>Password</Label>
+                                        <GlassInput 
+                                          type="password"
+                                          placeholder="Min. 6 characters" 
+                                          value={formData.password || ""}
+                                          onChange={(e) => updateFormData("password", e.target.value)}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Confirm Password</Label>
+                                        <GlassInput 
+                                          type="password"
+                                          placeholder="Repeat your password" 
+                                          value={formData.confirmPassword || ""}
+                                          onChange={(e) => updateFormData("confirmPassword", e.target.value)}
+                                        />
+                                        {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                                          <p className="text-xs text-destructive mt-1">Passwords do not match.</p>
+                                        )}
                                       </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
