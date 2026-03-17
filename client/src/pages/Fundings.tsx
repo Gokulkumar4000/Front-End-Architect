@@ -4,11 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Coins, TrendingUp, Users, Heart, Bookmark, Target } from "lucide-react";
+import { Search, Coins, Users, Heart, Bookmark, Target, ExternalLink } from "lucide-react";
 import { getPostsByType, type FirestorePost } from "@/lib/firestoreService";
 import { useFirebaseAuth } from "@/hooks/use-auth";
 import { useUserActivity } from "@/hooks/use-user-activity";
 import { cn } from "@/lib/utils";
+import { FeedCard } from "@/pages/Feed";
 
 export default function Fundings() {
   const { user } = useFirebaseAuth();
@@ -17,6 +18,7 @@ export default function Fundings() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
+  const [selectedPost, setSelectedPost] = useState<FirestorePost | null>(null);
 
   useEffect(() => {
     getPostsByType("fund").then((data) => {
@@ -100,7 +102,7 @@ export default function Fundings() {
               const current = post.currentAmount || 0;
               const percent = goal > 0 ? Math.min(100, Math.round((current / goal) * 100)) : 0;
               return (
-                <div key={post.id} className="glass-card border-white/5 hover:border-emerald-400/20 p-5 rounded-2xl space-y-3 transition-all group cursor-pointer" data-testid={`card-funding-${post.id}`}>
+                <div key={post.id} className="glass-card border-white/5 hover:border-emerald-400/20 p-5 rounded-2xl space-y-3 transition-all group cursor-pointer" data-testid={`card-funding-${post.id}`} onClick={() => setSelectedPost(post)}>
                   <div className="flex items-start gap-3">
                     <Avatar className="h-9 w-9 shrink-0 ring-1 ring-white/10">
                       <AvatarImage src={post.author.avatar} />
@@ -145,10 +147,16 @@ export default function Fundings() {
                     <button onClick={(e) => handleLike(post, e)} className={cn("flex items-center gap-1 text-xs transition-colors", liked ? "text-rose-400" : "text-muted-foreground hover:text-rose-400")}>
                       <Heart className={cn("w-3.5 h-3.5", liked && "fill-current")} /> {post.stats.likes}
                     </button>
-                    <button onClick={(e) => handleSave(post, e)} className={cn("ml-auto flex items-center gap-1 text-xs transition-colors", saved ? "text-primary" : "text-muted-foreground hover:text-primary")}>
+                    <button onClick={(e) => handleSave(post, e)} className={cn("flex items-center gap-1 text-xs transition-colors", saved ? "text-primary" : "text-muted-foreground hover:text-primary")}>
                       <Bookmark className={cn("w-3.5 h-3.5", saved && "fill-current")} />
                     </button>
-                    <Button size="sm" className="h-7 text-xs px-3 bg-emerald-500 hover:bg-emerald-400 text-white">Invest</Button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setSelectedPost(post); }}
+                      className="ml-auto flex items-center gap-1 text-xs text-emerald-400/70 hover:text-emerald-400 transition-colors"
+                      data-testid={`button-view-post-${post.id}`}
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" /> View Full Post
+                    </button>
                   </div>
                 </div>
               );
@@ -156,6 +164,14 @@ export default function Fundings() {
           </div>
         )}
       </div>
+
+      {selectedPost && (
+        <FeedCard
+          post={selectedPost as any}
+          forceShowDetails={true}
+          onClose={() => setSelectedPost(null)}
+        />
+      )}
     </AppLayout>
   );
 }

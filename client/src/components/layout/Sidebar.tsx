@@ -65,36 +65,15 @@ export function AppSidebar({ role = "idea-holder" }: AppSidebarProps) {
   const [location] = useLocation();
   const [createModal, setCreateModal] = useState<{ open: boolean; type: CreatePostType }>({ open: false, type: "idea" });
 
-  const getGeneralItems = (role: UserRole) => {
-    const base = [
+  const getGeneralItems = (_role: UserRole) => {
+    return [
       { title: "Feed", icon: Rss, url: "/feed" },
       { title: "Connections", icon: Users, url: "/connections" },
+      { title: "Projects", icon: Code2, url: "/projects" },
+      { title: "Fundings", icon: Coins, url: "/fundings" },
+      { title: "Jobs", icon: Briefcase, url: "/jobs" },
+      { title: "Opportunities", icon: Zap, url: "/opportunities" },
     ];
-
-    switch (role) {
-      case "idea-holder":
-        return [
-          ...base,
-          { title: "Projects", icon: Code2, url: "/projects" },
-          { title: "Fundings", icon: Coins, url: "/fundings" },
-        ];
-      case "developer":
-        return [
-          ...base,
-          { title: "Projects", icon: Code2, url: "/projects" },
-          { title: "Jobs", icon: Briefcase, url: "/jobs" },
-          { title: "Fundings", icon: Coins, url: "/fundings" },
-        ];
-      case "investor":
-        return [
-          ...base,
-          { title: "Projects", icon: Code2, url: "/projects" },
-          { title: "Fundings", icon: Coins, url: "/fundings" },
-          { title: "Opportunities", icon: Zap, url: "/opportunities" },
-        ];
-      default:
-        return base;
-    }
   };
 
   const getMyActivityItems = (role: UserRole) => {

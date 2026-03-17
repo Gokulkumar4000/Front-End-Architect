@@ -230,6 +230,19 @@ export async function createPost(
     authorUid: uid,
     createdAt: serverTimestamp(),
   });
+  // Also store reference in users/{uid}/posts subcollection
+  const userPostRef = doc(db, "users", uid, "posts", ref.id);
+  await setDoc(userPostRef, {
+    postId: ref.id,
+    collection: colName,
+    type: postData.type,
+    title: postData.title,
+    content: postData.content,
+    domains: postData.domains || [],
+    createdAt: serverTimestamp(),
+    ...postData,
+    authorUid: uid,
+  });
   return { id: ref.id, collectionName: colName, ...postData };
 }
 
@@ -456,21 +469,53 @@ function encodeFollowKey(name: string): string {
 export async function toggleFollowUser(
   uid: string,
   targetName: string,
-  currentlyFollowing: boolean
+  currentlyFollowing: boolean,
+  targetUid?: string
 ): Promise<void> {
-  const followRef = doc(db, "users", uid, "following", encodeFollowKey(targetName));
+  // Write to current user's "followings" subcollection
+  const followingsRef = doc(db, "users", uid, "followings", encodeFollowKey(targetName));
+  // Legacy "following" subcollection (kept for backward compat)
+  const followingRef = doc(db, "users", uid, "following", encodeFollowKey(targetName));
   if (currentlyFollowing) {
-    await deleteDoc(followRef);
+    await deleteDoc(followingsRef);
+    try { await deleteDoc(followingRef); } catch {}
+    // Remove from target's followers subcollection
+    if (targetUid) {
+      const followerRef = doc(db, "users", targetUid, "followers", uid);
+      try { await deleteDoc(followerRef); } catch {}
+    }
   } else {
-    await setDoc(followRef, { name: targetName, followedAt: serverTimestamp() });
+    await setDoc(followingsRef, { name: targetName, uid: targetUid || "", followedAt: serverTimestamp() });
+    // Write to target's followers subcollection
+    if (targetUid) {
+      const followerRef = doc(db, "users", targetUid, "followers", uid);
+      await setDoc(followerRef, { uid, followedAt: serverTimestamp() });
+    }
   }
 }
 
 export async function getUserFollowing(uid: string): Promise<string[]> {
   try {
+    // Try new "followings" subcollection first
+    const followingsCol = collection(db, "users", uid, "followings");
+    const snap = await getDocs(followingsCol);
+    if (!snap.empty) {
+      return snap.docs.map((d) => (d.data().name as string) || d.id);
+    }
+    // Fall back to legacy "following" subcollection
     const followingCol = collection(db, "users", uid, "following");
-    const snap = await getDocs(followingCol);
-    return snap.docs.map((d) => (d.data().name as string) || d.id);
+    const snap2 = await getDocs(followingCol);
+    return snap2.docs.map((d) => (d.data().name as string) || d.id);
+  } catch {
+    return [];
+  }
+}
+
+export async function getUserFollowers(uid: string): Promise<string[]> {
+  try {
+    const followersCol = collection(db, "users", uid, "followers");
+    const snap = await getDocs(followersCol);
+    return snap.docs.map((d) => d.data().uid as string || d.id);
   } catch {
     return [];
   }

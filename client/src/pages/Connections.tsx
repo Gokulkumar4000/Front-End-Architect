@@ -122,11 +122,11 @@ export default function Connections() {
 
                   <div className="flex items-center gap-2 pt-2 border-t border-white/5">
                     {isFollowing ? (
-                      <Button variant="outline" size="sm" className="flex-1 h-8 text-xs border-primary/20 text-primary" onClick={() => activity.toggleFollow(person.fullName)}>
+                      <Button variant="outline" size="sm" className="flex-1 h-8 text-xs border-primary/20 text-primary" onClick={() => activity.toggleFollow(person.fullName, person.uid)}>
                         <CheckCircle2 className="w-3 h-3 mr-1" /> Following
                       </Button>
                     ) : (
-                      <Button size="sm" className="flex-1 h-8 text-xs" onClick={() => activity.toggleFollow(person.fullName)} data-testid={`button-follow-${person.uid}`}>
+                      <Button size="sm" className="flex-1 h-8 text-xs" onClick={() => activity.toggleFollow(person.fullName, person.uid)} data-testid={`button-follow-${person.uid}`}>
                         Follow
                       </Button>
                     )}

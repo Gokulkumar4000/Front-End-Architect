@@ -4,11 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Briefcase, DollarSign, Heart, Bookmark, Clock } from "lucide-react";
+import { Search, Briefcase, DollarSign, Heart, Bookmark, Clock, ExternalLink } from "lucide-react";
 import { getPostsByType, type FirestorePost } from "@/lib/firestoreService";
 import { useFirebaseAuth } from "@/hooks/use-auth";
 import { useUserActivity } from "@/hooks/use-user-activity";
 import { cn } from "@/lib/utils";
+import { FeedCard } from "@/pages/Feed";
 
 const JOB_TYPE_COLORS: Record<string, string> = {
   "Full-time": "text-blue-400 bg-blue-400/10 border-blue-400/20",
@@ -33,6 +34,7 @@ export default function Jobs() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
+  const [selectedPost, setSelectedPost] = useState<FirestorePost | null>(null);
 
   useEffect(() => {
     getPostsByType("recruitment").then((data) => {
@@ -105,7 +107,7 @@ export default function Jobs() {
               const saved = activity.isSaved(post.id);
               const jtColor = getJobTypeColor(post.jobType);
               return (
-                <div key={post.id} className="glass-card border-white/5 hover:border-purple-400/20 p-5 rounded-2xl transition-all group cursor-pointer" data-testid={`card-job-${post.id}`}>
+                <div key={post.id} className="glass-card border-white/5 hover:border-purple-400/20 p-5 rounded-2xl transition-all group cursor-pointer" data-testid={`card-job-${post.id}`} onClick={() => setSelectedPost(post)}>
                   <div className="flex items-start gap-4">
                     <Avatar className="h-10 w-10 shrink-0 ring-1 ring-white/10">
                       <AvatarImage src={post.author.avatar} />
@@ -143,7 +145,13 @@ export default function Jobs() {
                           <button onClick={(e) => handleSave(post, e)} className={cn("flex items-center gap-1 text-xs transition-colors", saved ? "text-primary" : "text-muted-foreground hover:text-primary")}>
                             <Bookmark className={cn("w-3.5 h-3.5", saved && "fill-current")} />
                           </button>
-                          <Button size="sm" className="h-7 text-xs px-3">Apply Now</Button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setSelectedPost(post); }}
+                            className="flex items-center gap-1 text-xs text-purple-400/70 hover:text-purple-400 transition-colors"
+                            data-testid={`button-view-post-${post.id}`}
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" /> View Full Post
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -154,6 +162,14 @@ export default function Jobs() {
           </div>
         )}
       </div>
+
+      {selectedPost && (
+        <FeedCard
+          post={selectedPost as any}
+          forceShowDetails={true}
+          onClose={() => setSelectedPost(null)}
+        />
+      )}
     </AppLayout>
   );
 }

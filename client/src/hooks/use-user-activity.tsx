@@ -19,7 +19,7 @@ interface UserActivityContextValue {
   loading: boolean;
   toggleLike: (postId: string, collectionName: string, currentLikes: number) => Promise<void>;
   toggleSave: (postId: string, postData: SavedPostData | null) => Promise<void>;
-  toggleFollow: (targetName: string) => Promise<void>;
+  toggleFollow: (targetName: string, targetUid?: string) => Promise<void>;
   updateNote: (postId: string, note: string) => Promise<void>;
   deleteNote: (postId: string) => Promise<void>;
   isLiked: (postId: string) => boolean;
@@ -108,7 +108,7 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
   );
 
   const toggleFollow = useCallback(
-    async (targetName: string) => {
+    async (targetName: string, targetUid?: string) => {
       if (!user) return;
       const currently = following.includes(targetName);
       const newFollowing = currently
@@ -119,7 +119,7 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
         new CustomEvent("following-change", { detail: { following: newFollowing } })
       );
       try {
-        await toggleFollowUser(user.uid, targetName, currently);
+        await toggleFollowUser(user.uid, targetName, currently, targetUid);
       } catch {
         setFollowing(following);
         window.dispatchEvent(
