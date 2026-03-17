@@ -927,7 +927,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-8">
-                      {post.type === "fund" ? [
+                      {(post.type === "fund" ? [
                         { label: "Supporters", value: (post as any).currentSupporters != null ? String((post as any).currentSupporters) : "—", icon: Users },
                         { label: "Goal", value: (post as any).fundingGoal ? `$${Number((post as any).fundingGoal).toLocaleString()}` : "—", icon: Coins },
                         { label: "Raised", value: (post as any).currentAmount ? `$${Number((post as any).currentAmount).toLocaleString()}` : "$0", icon: TrendingUp },
@@ -943,7 +943,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
                         { label: "Collaboration", value: "Open", icon: Users },
                         { label: "Stage", value: "Concept", icon: Rocket },
                         { label: "Domain", value: (post as any).domains?.[0] || "Various", icon: Map },
-                      ].map((stat) => (
+                      ]).map((stat) => (
                         <div key={stat.label} className="p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-primary/20 transition-colors group">
                           <stat.icon className="w-4 h-4 text-primary/40 group-hover:text-primary transition-colors mb-2" />
                           <p className="text-[10px] text-muted-foreground uppercase font-medium">{stat.label}</p>
