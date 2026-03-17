@@ -108,7 +108,7 @@ interface Post {
 }
 
 import { MOCK_POSTS } from "@/mocks/posts";
-import { MOCK_USERS } from "@/mocks/users";
+import { getPosts, seedMockPostsIfEmpty, type FirestorePost } from "@/lib/firestoreService";
 
 
 interface DetailsSidebarProps {
@@ -1440,6 +1440,7 @@ export default function Feed() {
 
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
+  const [firestorePosts, setFirestorePosts] = useState<Post[]>([]);
   const [feedFilter, setFeedFilter] = useState<'latest' | 'following' | 'saved'>('latest');
   const [following, setFollowing] = useState<string[]>(() => {
     const saved = localStorage.getItem('following_users');
@@ -1479,8 +1480,23 @@ export default function Feed() {
   );
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 300);
-    return () => clearTimeout(timer);
+    let cancelled = false;
+    (async () => {
+      try {
+        await seedMockPostsIfEmpty();
+        const posts = await getPosts();
+        if (!cancelled) {
+          setFirestorePosts(posts as unknown as Post[]);
+        }
+      } catch {
+        if (!cancelled) {
+          setFirestorePosts(MOCK_POSTS as unknown as Post[]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const [savedPosts, setSavedPosts] = useState<any[]>(() => {
@@ -1534,22 +1550,14 @@ export default function Feed() {
           {loading ? (
             <FeedSkeleton />
           ) : (
-            MOCK_POSTS.filter(post => {
+            firestorePosts.filter(post => {
               const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
-              
               if (feedFilter === 'saved') {
                 return savedPosts.some(sp => String(sp.id) === String(post.id));
               }
-              
               if (feedFilter === 'following') {
                 return following.includes(authorName);
               }
-              
-              // Latest tab: Always show everyone (as per common feed behavior)
-              // But if the user specifically wanted ONLY followed users in Latest too, 
-              // we can adjust. The user said: "their posts should visible in following in feed page and also in latest page too"
-              // This implies that in Latest tab, followed users' posts should certainly be there.
-              // By default return true, it includes everyone including followed.
               return true;
             }).map(post => (
               <FeedCard key={post.id} post={{...post, type: post.type as PostType}} />
@@ -1587,13 +1595,13 @@ export default function Feed() {
                 <div 
                   key={post.id} 
                   onClick={() => {
-                  const basePost = MOCK_POSTS.find(p => p.type === "idea") || MOCK_POSTS[0];
+                  const basePost = (firestorePosts.find(p => p.type === "idea") || firestorePosts[0] || MOCK_POSTS[0]) as any;
                   const typedPost: Post = { 
                     ...basePost, 
                     title: post.title, 
                     id: `trending-${post.id}`,
-                    type: basePost.type as PostType,
-                    domains: (basePost as any).domains || ["General"]
+                    type: (basePost.type || "idea") as PostType,
+                    domains: basePost.domains || ["General"]
                   };
                   setSelectedTrendingPost(typedPost);
                 }}
@@ -1645,13 +1653,13 @@ export default function Feed() {
                   <div 
                     key={post.id} 
                     onClick={() => {
-                      const basePost = MOCK_POSTS.find(p => p.type === "idea") || MOCK_POSTS[0];
+                      const basePost = (firestorePosts.find(p => p.type === "idea") || firestorePosts[0] || MOCK_POSTS[0]) as any;
                       const typedPost: Post = { 
                         ...basePost, 
                         title: post.title, 
                         id: `trending-${post.id}`,
-                        type: basePost.type as PostType,
-                        domains: (basePost as any).domains || ["General"]
+                        type: (basePost.type || "idea") as PostType,
+                        domains: basePost.domains || ["General"]
                       };
                       setSelectedTrendingPost(typedPost);
                       setShowTrendingDialog(false);

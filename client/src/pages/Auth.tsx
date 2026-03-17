@@ -61,6 +61,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "@/lib/firebase";
+import { saveUserProfile } from "@/lib/firestoreService";
 
 type AuthMode = "login" | "signup";
 type UserRole = "idea-holder" | "developer" | "investor";
@@ -746,7 +747,56 @@ export default function Auth() {
     setSignupStep("basic-profile");
   };
 
+  const validateCurrentStep = (): string | null => {
+    if (signupStep === "basic-profile") {
+      if (!formData.fullName?.trim()) return "Full Name is required.";
+      if (!formData.email?.trim()) return "Email Address is required.";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return "Please enter a valid email address.";
+      if (!formData.password) return "Password is required.";
+      if (formData.password.length < 6) return "Password must be at least 6 characters.";
+      if (!formData.confirmPassword) return "Please confirm your password.";
+      if (formData.password !== formData.confirmPassword) return "Passwords do not match.";
+      if (!formData.location) return "Location is required.";
+      if (!formData.timezone) return "Timezone is required.";
+    }
+    if (signupStep === "professional-identity") {
+      if (selectedRole === "idea-holder") {
+        if (!formData.interests?.length) return "Please add at least one interest area.";
+      }
+      if (selectedRole === "developer") {
+        if (!formData.interests?.length) return "Please add at least one technical domain.";
+        if (!formData.skills?.length) return "Please add at least one skill to your tech stack.";
+      }
+      if (selectedRole === "investor") {
+        if (!formData.investorCat) return "Please select your investor category.";
+        if (!formData.interests?.length) return "Please add at least one investment focus sector.";
+      }
+    }
+    if (signupStep === "working-preferences") {
+      if (!formData.workPref) return "Please specify your work preference or collaboration style.";
+      if (selectedRole === "developer" && !formData.availability) return "Please enter your availability (hours/week).";
+    }
+    if (signupStep === "org-affiliation") {
+      if (formData.isOrg === "yes") {
+        if (!formData.orgName?.trim()) return "Organization name is required.";
+        if (!formData.orgRole?.trim()) return "Your role in the organization is required.";
+      }
+    }
+    if (signupStep === "interests-goals") {
+      if (!formData.objectives?.trim()) return "Primary Objectives field is required.";
+    }
+    if (signupStep === "about-you") {
+      if (!formData.bio?.trim()) return "A short bio is required.";
+    }
+    return null;
+  };
+
   const nextStep = () => {
+    const error = validateCurrentStep();
+    if (error) {
+      toast({ title: "Please fill in required fields", description: error, variant: "destructive" });
+      return;
+    }
     const currentIndex = steps.indexOf(signupStep);
     if (currentIndex < steps.length - 1) {
       setSignupStep(steps[currentIndex + 1]);
@@ -782,6 +832,14 @@ export default function Auth() {
       if (formData.fullName) {
         await updateProfile(credential.user, { displayName: formData.fullName });
       }
+      const { password: _p, confirmPassword: _cp, ...safeFormData } = formData;
+      await saveUserProfile(credential.user.uid, {
+        ...safeFormData,
+        uid: credential.user.uid,
+        role: selectedRole || "idea-holder",
+        fullName: formData.fullName || "",
+        email: formData.email,
+      });
       toast({ title: "Account created!", description: "Welcome to DevConnect!" });
       setLocation("/feed");
     } catch (err: any) {

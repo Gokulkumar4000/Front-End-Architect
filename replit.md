@@ -37,5 +37,23 @@ DevConnect is a web application that connects visionaries, builders, and investo
 - `DATABASE_URL` - PostgreSQL connection string (automatically provisioned)
 - `PORT` - Server port (defaults to 5000)
 
+## Authentication & Data Layer
+- **Firebase Auth**: Email/password login and signup via `signInWithEmailAndPassword` / `createUserWithEmailAndPassword`
+- **Firestore**: User profiles stored in `/users/{uid}`; posts stored in `/posts` collection
+- **Firebase Config**: Stored as `VITE_FIREBASE_*` environment variables
+
+## Key Files
+- `client/src/lib/firebase.ts` — Firebase app, Auth, Firestore exports
+- `client/src/lib/firestoreService.ts` — `saveUserProfile`, `getUserProfile`, `updateUserProfile`, `getPosts`, `seedMockPostsIfEmpty`
+- `client/src/hooks/use-auth.ts` — `useFirebaseAuth()`, `useUser()`, `useLogout()` hooks
+- `client/src/pages/Auth.tsx` — Multi-step signup + login with Firebase
+- `client/src/pages/Profile.tsx` — Reads/writes user profile from Firestore
+- `client/src/pages/Feed.tsx` — Loads posts from Firestore (seeds mock data if empty)
+
+## Notes
+- Firestore Database must be enabled in Firebase Console (Build → Firestore Database → Create database → test mode)
+- Feed falls back to MOCK_POSTS if Firestore is unreachable
+
 ## Recent Changes
 - January 19, 2026: Initial import and Replit environment setup
+- March 17, 2026: Firebase Auth + Firestore fully integrated; Profile.tsx reads/writes from Firestore; Feed.tsx loads posts from Firestore with mock seed fallback
