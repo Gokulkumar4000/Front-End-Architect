@@ -773,8 +773,12 @@ export default function Auth() {
       }
     }
     if (signupStep === "working-preferences") {
-      if (!formData.workPref) return "Please specify your work preference or collaboration style.";
-      if (selectedRole === "developer" && !formData.availability) return "Please enter your availability (hours/week).";
+      if (selectedRole === "idea-holder" && !formData.workPref) return "Please specify your collaboration style.";
+      if (selectedRole === "developer") {
+        if (!formData.workPref) return "Please select your work preference.";
+        if (!formData.availability) return "Please enter your availability (hours/week).";
+      }
+      if (selectedRole === "investor" && !formData.involvement) return "Please select your preferred involvement level.";
     }
     if (signupStep === "org-affiliation") {
       if (formData.isOrg === "yes") {
