@@ -91,6 +91,7 @@ interface Comment {
 interface Post {
   id: string;
   type: PostType;
+  collectionName: string;
   author: {
     name: string;
     avatar: string;
@@ -105,6 +106,7 @@ interface Post {
   };
   comments?: Comment[];
   domains?: string[];
+  authorUid?: string;
 }
 
 import { getPosts, seedMockPostsIfEmpty, getPostComments, addPostComment, addReplyToComment, type FirestoreComment } from "@/lib/firestoreService";
@@ -371,7 +373,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
 
   useEffect(() => {
     if (!showComments || commentsLoaded || !post.id || post.id.startsWith('trending-')) return;
-    getPostComments(post.id).then((firestoreComments) => {
+    getPostComments(post.collectionName || 'ideas', post.id).then((firestoreComments) => {
       if (firestoreComments.length > 0) {
         setComments(firestoreComments as unknown as Comment[]);
       }
@@ -381,7 +383,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
 
   const handleLike = async () => {
     setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
-    await activity.toggleLike(post.id, likesCount);
+    await activity.toggleLike(post.id, post.collectionName || 'ideas', likesCount);
   };
 
   const handleSave = async () => {
@@ -444,13 +446,13 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
         return c;
       }));
       if (!post.id.startsWith('trending-')) {
-        addReplyToComment(post.id, replyTo.id, newComment as unknown as FirestoreComment).catch(() => {});
+        addReplyToComment(post.collectionName || 'ideas', post.id, replyTo.id, newComment as unknown as FirestoreComment).catch(() => {});
       }
       setReplyTo(null);
     } else {
       setComments(prev => [...(Array.isArray(prev) ? prev : []), newComment]);
       if (!post.id.startsWith('trending-')) {
-        addPostComment(post.id, {
+        addPostComment(post.collectionName || 'ideas', post.id, {
           author: { name: authorName, avatar: authorAvatar, role: userRole || "Member", uid: user?.uid },
           content: commentInput,
           timestamp: "Just now",

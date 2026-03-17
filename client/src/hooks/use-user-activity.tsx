@@ -11,14 +11,13 @@ import {
   deleteSavedPostNote,
   type SavedPostData,
 } from "@/lib/firestoreService";
-import { saveUserProfile } from "@/lib/firestoreService";
 
 interface UserActivityContextValue {
   likedPostIds: string[];
   savedPosts: SavedPostData[];
   following: string[];
   loading: boolean;
-  toggleLike: (postId: string, currentLikes: number) => Promise<void>;
+  toggleLike: (postId: string, collectionName: string, currentLikes: number) => Promise<void>;
   toggleSave: (postId: string, postData: SavedPostData | null) => Promise<void>;
   toggleFollow: (targetName: string) => Promise<void>;
   updateNote: (postId: string, note: string) => Promise<void>;
@@ -45,7 +44,6 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       return;
     }
-
     setLoading(true);
     Promise.all([
       getUserLikedPostIds(user.uid),
@@ -66,14 +64,14 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   const toggleLike = useCallback(
-    async (postId: string, _currentLikes: number) => {
+    async (postId: string, collectionName: string, _currentLikes: number) => {
       if (!user) return;
       const currently = likedPostIds.includes(postId);
       setLikedPostIds((prev) =>
         currently ? prev.filter((id) => id !== postId) : [...prev, postId]
       );
       try {
-        await toggleLikePost(user.uid, postId, currently);
+        await toggleLikePost(user.uid, postId, collectionName, currently);
       } catch {
         setLikedPostIds((prev) =>
           currently ? [...prev, postId] : prev.filter((id) => id !== postId)
@@ -122,7 +120,6 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
       );
       try {
         await toggleFollowUser(user.uid, targetName, currently);
-        await saveUserProfile(user.uid, { following: newFollowing });
       } catch {
         setFollowing(following);
         window.dispatchEvent(
