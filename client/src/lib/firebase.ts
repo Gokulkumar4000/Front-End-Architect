@@ -21,6 +21,14 @@ import {
   orderBy,
   serverTimestamp,
   Timestamp,
+  arrayUnion,
+  arrayRemove,
+  increment,
+  deleteField,
+  writeBatch,
+  where,
+  onSnapshot,
+  limit,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -55,4 +63,12 @@ export {
   orderBy,
   serverTimestamp,
   Timestamp,
+  arrayUnion,
+  arrayRemove,
+  increment,
+  deleteField,
+  writeBatch,
+  where,
+  onSnapshot,
+  limit,
 };

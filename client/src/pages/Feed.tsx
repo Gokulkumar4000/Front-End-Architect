@@ -107,8 +107,9 @@ interface Post {
   domains?: string[];
 }
 
-import { MOCK_POSTS } from "@/mocks/posts";
-import { getPosts, seedMockPostsIfEmpty, type FirestorePost } from "@/lib/firestoreService";
+import { getPosts, seedMockPostsIfEmpty, getPostComments, addPostComment, addReplyToComment, type FirestoreComment } from "@/lib/firestoreService";
+import { useFirebaseAuth } from "@/hooks/use-auth";
+import { useUserActivity } from "@/hooks/use-user-activity";
 
 
 interface DetailsSidebarProps {
@@ -304,47 +305,23 @@ const CommentItem = ({ comment, isReply = false, onReply, parentId }: { comment:
 export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { post: Post; forceShowDetails?: boolean; onClose?: () => void }) => {
   const [, setLocation] = useLocation();
   const userRole = localStorage.getItem("userRole") as string;
-  const [following, setFollowing] = useState<string[]>(() => {
-    const saved = localStorage.getItem('following_users');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const { user } = useFirebaseAuth();
+  const activity = useUserActivity();
 
-  const isFollowing = useMemo(() => {
+  const isFollowingAuthor = useMemo(() => {
     const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
-    return following.includes(authorName);
-  }, [following, post.author]);
+    return activity.isFollowing(authorName);
+  }, [activity, post.author]);
 
+  const isLiked = activity.isLiked(post.id);
+  const isSaved = activity.isSaved(post.id);
+  const [likesCount, setLikesCount] = useState(post.stats.likes);
   const [showFollowDialog, setShowFollowDialog] = useState(false);
   const [showUnfollowDialog, setShowUnfollowDialog] = useState(false);
-  const [isLiked, setIsLiked] = useState(() => {
-    const liked = localStorage.getItem(`liked_${post.id}`);
-    return liked === 'true';
-  });
-  const [isSaved, setIsSaved] = useState(() => {
-    const saved = localStorage.getItem('saved_posts');
-    if (!saved) return false;
-    const posts = JSON.parse(saved);
-    return posts.some((p: any) => String(p.id) === String(post.id));
-  });
-  const [likesCount, setLikesCount] = useState(post.stats.likes);
-
-  useEffect(() => {
-    localStorage.setItem(`liked_${post.id}`, String(isLiked));
-  }, [isLiked, post.id]);
-
-  useEffect(() => {
-    const handleSavedChange = (e: any) => {
-      const { post: updatedPost, isSaved: newStatus } = e.detail;
-      if (String(updatedPost.id) === String(post.id)) {
-        setIsSaved(newStatus);
-      }
-    };
-    window.addEventListener('post-saved-change', handleSavedChange);
-    return () => window.removeEventListener('post-saved-change', handleSavedChange);
-  }, [post.id]);
 
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>(post.comments || []);
+  const [commentsLoaded, setCommentsLoaded] = useState(false);
   const [commentInput, setCommentInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -372,7 +349,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
   const postUrl = `${window.location.origin}/post/${post.id}`;
 
   const isIdea = post.type === "idea";
-  const isOwner = false; // Mock owner check
+  const isOwner = !!(user && (post as any).authorUid && user.uid === (post as any).authorUid);
 
   const handleCopyLink = async () => {
     try {
@@ -392,56 +369,35 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
     }
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
+  useEffect(() => {
+    if (!showComments || commentsLoaded || !post.id || post.id.startsWith('trending-')) return;
+    getPostComments(post.id).then((firestoreComments) => {
+      if (firestoreComments.length > 0) {
+        setComments(firestoreComments as unknown as Comment[]);
+      }
+      setCommentsLoaded(true);
+    }).catch(() => setCommentsLoaded(true));
+  }, [showComments, post.id, commentsLoaded]);
+
+  const handleLike = async () => {
     setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+    await activity.toggleLike(post.id, likesCount);
   };
 
-  const handleSave = () => {
-    const newSavedStatus = !isSaved;
-    setIsSaved(newSavedStatus);
-    
-    // Update local storage directly to ensure consistency
-    const saved = localStorage.getItem('saved_posts');
-    let savedPosts = saved ? JSON.parse(saved) : [];
-    
-    if (newSavedStatus) {
-      const newPost = {
-        id: String(post.id),
-        title: post.title,
-        description: post.content,
-        author: post.author,
-        type: post.type === "fund" ? "funding" : post.type,
-        likes: likesCount,
-        domains: post.domains || ["General"]
-      };
-      savedPosts.push(newPost);
-    } else {
-      savedPosts = savedPosts.filter((p: any) => String(p.id) !== String(post.id));
-    }
-    localStorage.setItem('saved_posts', JSON.stringify(savedPosts));
-
-    // Dispatch custom event for Saved page and other FeedCard instances to listen to
-    const event = new CustomEvent('post-saved-change', {
-      detail: {
-        post: {
-          ...post,
-          id: post.id,
-          title: post.title,
-          content: post.content,
-          author: post.author,
-          type: post.type === "fund" ? "funding" : post.type,
-          likes: likesCount,
-          domains: post.domains || ["General"]
-        },
-        isSaved: newSavedStatus
-      }
-    });
-    window.dispatchEvent(event);
-
+  const handleSave = async () => {
+    const postData = {
+      id: String(post.id),
+      type: (post.type === "fund" ? "funding" : post.type) as "idea" | "project" | "funding" | "recruitment",
+      title: post.title,
+      description: post.content,
+      author: post.author,
+      domains: post.domains || ["General"],
+      likes: likesCount,
+    };
+    await activity.toggleSave(post.id, isSaved ? null : postData);
     toast({
-      title: newSavedStatus ? "Post saved" : "Post removed",
-      description: newSavedStatus ? "You can find this post in your saved collection." : "Post has been removed from your saved collection.",
+      title: isSaved ? "Post removed" : "Post saved",
+      description: isSaved ? "Post has been removed from your saved collection." : "You can find this post in your saved collection.",
     });
   };
 
@@ -460,14 +416,16 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
     });
   };
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!commentInput.trim()) return;
     
+    const authorName = user?.displayName || "Visionary Builder";
+    const authorAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(authorName)}`;
     const newComment: Comment = {
       id: Date.now().toString(),
       author: {
-        name: "Visionary Builder",
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=Me`,
+        name: authorName,
+        avatar: authorAvatar,
         role: userRole || "Member"
       },
       content: commentInput,
@@ -480,15 +438,26 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
         if (c.id === replyTo.id) {
           return { ...c, replies: [...(c.replies || []), newComment] };
         }
-        // Also check nested replies to allow replying to a reply
         if (c.replies?.some(r => r.id === replyTo.id)) {
           return { ...c, replies: [...(c.replies || []), newComment] };
         }
         return c;
       }));
+      if (!post.id.startsWith('trending-')) {
+        addReplyToComment(post.id, replyTo.id, newComment as unknown as FirestoreComment).catch(() => {});
+      }
       setReplyTo(null);
     } else {
       setComments(prev => [...(Array.isArray(prev) ? prev : []), newComment]);
+      if (!post.id.startsWith('trending-')) {
+        addPostComment(post.id, {
+          author: { name: authorName, avatar: authorAvatar, role: userRole || "Member", uid: user?.uid },
+          content: commentInput,
+          timestamp: "Just now",
+          likes: 0,
+          replies: [],
+        }).catch(() => {});
+      }
     }
     setCommentInput("");
   };
@@ -551,33 +520,29 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
     setShowUnfollowDialog(true);
   };
 
+  const confirmUnfollow = async () => {
+    const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
+    await activity.toggleFollow(authorName);
+    toast({
+      title: "Unfollowed",
+      description: `You are no longer following ${authorName}.`,
+    });
+    setShowUnfollowDialog(false);
+  };
+
   const handleFollowClick = () => {
     setShowFollowDialog(true);
   };
 
-  const confirmFollow = () => {
+  const confirmFollow = async () => {
     const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
-    const newFollowing = [...following, authorName];
-    setFollowing(newFollowing);
-    localStorage.setItem('following_users', JSON.stringify(newFollowing));
-    
-    // Dispatch event to update other components
-    window.dispatchEvent(new CustomEvent('following-change', { detail: { following: newFollowing } }));
-    
+    await activity.toggleFollow(authorName);
     toast({
       title: "Following",
       description: `You are now following ${authorName}.`,
     });
     setShowFollowDialog(false);
   };
-
-  useEffect(() => {
-    const handleFollowingChange = (e: any) => {
-      setFollowing(e.detail.following);
-    };
-    window.addEventListener('following-change', handleFollowingChange);
-    return () => window.removeEventListener('following-change', handleFollowingChange);
-  }, []);
 
 
   return (
@@ -592,7 +557,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h4 className="text-sm font-bold leading-none">{post.author.name}</h4>
-                {isFollowing ? (
+                {isFollowingAuthor ? (
                   <button 
                     onClick={handleUnfollowClick}
                     className="flex items-center gap-1.5 text-[10px] text-primary/80 font-medium bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10 hover:bg-primary/10 transition-colors"
@@ -858,7 +823,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
           <AlertDialogFooter className="gap-2 sm:gap-0 mt-6">
             <AlertDialogCancel className="bg-white/5 border-white/10 hover:bg-white/10 hover:text-white transition-all h-10">Cancel</AlertDialogCancel>
             <AlertDialogAction 
-              onClick={handleUnfollowClick}
+              onClick={confirmUnfollow}
               className="bg-destructive text-white hover:bg-destructive/90 shadow-lg shadow-destructive/20 h-10 font-bold"
             >
               Unfollow
@@ -1439,34 +1404,19 @@ export default function Feed() {
   const connectionsToShow = showAllConnections ? allConnections : allConnections.slice(0, 5);
 
   const { toast } = useToast();
+  const feedActivity = useUserActivity();
   const [loading, setLoading] = useState(true);
   const [firestorePosts, setFirestorePosts] = useState<Post[]>([]);
   const [feedFilter, setFeedFilter] = useState<'latest' | 'following' | 'saved'>('latest');
-  const [following, setFollowing] = useState<string[]>(() => {
-    const saved = localStorage.getItem('following_users');
-    return saved ? JSON.parse(saved) : [];
-  });
 
-  useEffect(() => {
-    const handleFollowingChange = (e: any) => {
-      setFollowing(e.detail.following);
-    };
-    window.addEventListener('following-change', handleFollowingChange);
-    return () => window.removeEventListener('following-change', handleFollowingChange);
-  }, []);
+  const following = feedActivity.following;
 
-  const handleFollowPerson = (name: string) => {
-    const newFollowing = following.includes(name) 
-      ? following.filter(n => n !== name)
-      : [...following, name];
-    
-    setFollowing(newFollowing);
-    localStorage.setItem('following_users', JSON.stringify(newFollowing));
-    window.dispatchEvent(new CustomEvent('following-change', { detail: { following: newFollowing } }));
-    
+  const handleFollowPerson = async (name: string) => {
+    const wasFollowing = feedActivity.isFollowing(name);
+    await feedActivity.toggleFollow(name);
     toast({
-      title: following.includes(name) ? "Unfollowed" : "Following",
-      description: following.includes(name) ? `You are no longer following ${name}.` : `You are now following ${name}.`,
+      title: wasFollowing ? "Unfollowed" : "Following",
+      description: wasFollowing ? `You are no longer following ${name}.` : `You are now following ${name}.`,
     });
   };
   const [showTrendingDialog, setShowTrendingDialog] = useState(false);
@@ -1489,9 +1439,7 @@ export default function Feed() {
           setFirestorePosts(posts as unknown as Post[]);
         }
       } catch {
-        if (!cancelled) {
-          setFirestorePosts(MOCK_POSTS as unknown as Post[]);
-        }
+        if (!cancelled) setLoading(false);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -1499,19 +1447,7 @@ export default function Feed() {
     return () => { cancelled = true; };
   }, []);
 
-  const [savedPosts, setSavedPosts] = useState<any[]>(() => {
-    const saved = localStorage.getItem('saved_posts');
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  useEffect(() => {
-    const handleSavedChange = (e: any) => {
-      const saved = localStorage.getItem('saved_posts');
-      setSavedPosts(saved ? JSON.parse(saved) : []);
-    };
-    window.addEventListener('post-saved-change', handleSavedChange);
-    return () => window.removeEventListener('post-saved-change', handleSavedChange);
-  }, []);
+  const savedPosts = feedActivity.savedPosts;
 
   return (
     <AppLayout>
@@ -1595,7 +1531,8 @@ export default function Feed() {
                 <div 
                   key={post.id} 
                   onClick={() => {
-                  const basePost = (firestorePosts.find(p => p.type === "idea") || firestorePosts[0] || MOCK_POSTS[0]) as any;
+                  const basePost = (firestorePosts.find(p => p.type === "idea") || firestorePosts[0]) as any;
+                  if (!basePost) return;
                   const typedPost: Post = { 
                     ...basePost, 
                     title: post.title, 
@@ -1653,7 +1590,8 @@ export default function Feed() {
                   <div 
                     key={post.id} 
                     onClick={() => {
-                      const basePost = (firestorePosts.find(p => p.type === "idea") || firestorePosts[0] || MOCK_POSTS[0]) as any;
+                      const basePost = (firestorePosts.find(p => p.type === "idea") || firestorePosts[0]) as any;
+                      if (!basePost) return;
                       const typedPost: Post = { 
                         ...basePost, 
                         title: post.title, 

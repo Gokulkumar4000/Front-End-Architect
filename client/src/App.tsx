@@ -12,6 +12,7 @@ import Profile from "@/pages/Profile";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { useFirebaseAuth } from "@/hooks/use-auth";
+import { UserActivityProvider } from "@/hooks/use-user-activity";
 
 function ProtectedRoute({ component: Component, path }: { component: React.ComponentType<any>, path: string }) {
   const [, setLocation] = useLocation();
@@ -62,8 +63,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Router />
+        <UserActivityProvider>
+          <Toaster />
+          <Router />
+        </UserActivityProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

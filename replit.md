@@ -44,16 +44,26 @@ DevConnect is a web application that connects visionaries, builders, and investo
 
 ## Key Files
 - `client/src/lib/firebase.ts` — Firebase app, Auth, Firestore exports
-- `client/src/lib/firestoreService.ts` — `saveUserProfile`, `getUserProfile`, `updateUserProfile`, `getPosts`, `seedMockPostsIfEmpty`
+- `client/src/lib/firestoreService.ts` — All Firebase operations: posts, likes, saves, comments, following, user profiles
 - `client/src/hooks/use-auth.ts` — `useFirebaseAuth()`, `useUser()`, `useLogout()` hooks
+- `client/src/hooks/use-user-activity.tsx` — UserActivityContext: centralized state for likes, saves, following (all Firebase-backed)
 - `client/src/pages/Auth.tsx` — Multi-step signup + login with Firebase
 - `client/src/pages/Profile.tsx` — Reads/writes user profile from Firestore
-- `client/src/pages/Feed.tsx` — Loads posts from Firestore (seeds mock data if empty)
+- `client/src/pages/Feed.tsx` — Posts from Firestore; likes/saves/comments/following via Firebase
+- `client/src/pages/Saved.tsx` — Saved posts from Firestore (per-user subcollection)
+
+## Firestore Data Structure
+- `posts/{postId}` — Post documents with stats (likes, comments), authorUid, domains
+- `posts/{postId}/comments/{commentId}` — Comments subcollection (with nested replies array)
+- `users/{uid}` — User profile + `likedPostIds[]`, `savedPostIds[]`, `following[]` arrays
+- `users/{uid}/savedPosts/{postId}` — Full saved post data including notes
 
 ## Notes
 - Firestore Database must be enabled in Firebase Console (Build → Firestore Database → Create database → test mode)
-- Feed falls back to MOCK_POSTS if Firestore is unreachable
+- No mock data fallbacks — all data persisted in Firebase
+- UserActivityProvider wraps the entire app in App.tsx
 
 ## Recent Changes
 - January 19, 2026: Initial import and Replit environment setup
-- March 17, 2026: Firebase Auth + Firestore fully integrated; Profile.tsx reads/writes from Firestore; Feed.tsx loads posts from Firestore with mock seed fallback
+- March 17, 2026: Firebase Auth + Firestore fully integrated; Profile.tsx reads/writes from Firestore; Feed.tsx loads posts from Firestore
+- March 17, 2026: Full Firebase migration — likes, saves, comments, following all stored in Firestore; removed all localStorage usage for user activity data

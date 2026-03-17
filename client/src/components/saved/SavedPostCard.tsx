@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useUserActivity } from "@/hooks/use-user-activity";
 
 export interface SavedPost {
   id: string;
@@ -35,19 +36,11 @@ interface SavedPostCardProps {
 export function SavedPostCard({ post, onOpenNote, onClick }: SavedPostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes);
+  const activity = useUserActivity();
 
   const handleSaveToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const event = new CustomEvent('post-saved-change', {
-      detail: {
-        post: {
-          ...post,
-          content: post.description
-        },
-        isSaved: false
-      }
-    });
-    window.dispatchEvent(event);
+    activity.toggleSave(post.id, null);
   };
 
   const handleLike = (e: React.MouseEvent) => {

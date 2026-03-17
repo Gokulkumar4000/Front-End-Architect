@@ -1,17 +1,12 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { SavedPostCard, SavedPost } from "@/components/saved/SavedPostCard";
+import { SavedPostCard } from "@/components/saved/SavedPostCard";
+import type { SavedPost } from "@/components/saved/SavedPostCard";
 import { SavedAnalytics } from "@/components/saved/SavedAnalytics";
 import { SavedFilters } from "@/components/saved/SavedFilters";
 import { NoteModal } from "@/components/saved/NoteModal";
-import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import Feed, { FeedCard } from "./Feed";
-
-import { MOCK_POSTS } from "@/mocks/posts";
-import { MOCK_USERS } from "@/mocks/users";
+import { FeedCard } from "./Feed";
+import { useUserActivity } from "@/hooks/use-user-activity";
 
 export default function Saved() {
   const [search, setSearch] = useState("");
@@ -22,53 +17,28 @@ export default function Saved() {
   const [detailedPost, setDetailedPost] = useState<any>(null);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
 
-  const [posts, setPosts] = useState<SavedPost[]>(() => {
-    const saved = localStorage.getItem('saved_posts');
-    if (saved) return JSON.parse(saved);
-    return [];
-  });
+  const { savedPosts, updateNote, deleteNote } = useUserActivity();
 
-  useEffect(() => {
-    localStorage.setItem('saved_posts', JSON.stringify(posts));
-  }, [posts]);
-
-  useEffect(() => {
-    const handleSavedChange = (e: any) => {
-      const { post, isSaved } = e.detail;
-      if (isSaved) {
-        setPosts(prev => {
-          const exists = prev.find(p => String(p.id) === String(post.id));
-          if (exists) return prev;
-          const newPost: SavedPost = {
-            id: String(post.id),
-            type: (post.type === "fund" ? "funding" : post.type) || "idea",
-            title: post.title,
-            description: post.content || post.description,
-            author: typeof post.author === 'string' ? { name: post.author } : post.author,
-            domains: post.domains || ["General"],
-            likes: post.stats?.likes || post.likes || 0
-          };
-          const newPosts = [...prev, newPost];
-          localStorage.setItem('saved_posts', JSON.stringify(newPosts));
-          return newPosts;
-        });
-      } else {
-        setPosts(prev => {
-          const newPosts = prev.filter(p => String(p.id) !== String(post.id));
-          localStorage.setItem('saved_posts', JSON.stringify(newPosts));
-          return newPosts;
-        });
-      }
-    };
-
-    window.addEventListener('post-saved-change', handleSavedChange);
-    return () => window.removeEventListener('post-saved-change', handleSavedChange);
-  }, []);
+  const posts: SavedPost[] = useMemo(
+    () =>
+      savedPosts.map((p) => ({
+        id: p.id,
+        type: p.type as SavedPost["type"],
+        title: p.title,
+        description: p.description,
+        author: p.author,
+        domains: p.domains,
+        likes: p.likes,
+        note: p.note,
+      })),
+    [savedPosts]
+  );
 
   const filteredPosts = useMemo(() => {
-    return posts.filter(post => {
-      const matchesSearch = post.title.toLowerCase().includes(search.toLowerCase()) || 
-                          post.author.name.toLowerCase().includes(search.toLowerCase());
+    return posts.filter((post) => {
+      const matchesSearch =
+        post.title.toLowerCase().includes(search.toLowerCase()) ||
+        post.author.name.toLowerCase().includes(search.toLowerCase());
       const matchesType = type === "all" || post.type === type;
       const matchesDomain = domain === "all" || post.domains.includes(domain);
       const matchesNotes = !withNotes || !!post.note;
@@ -76,24 +46,27 @@ export default function Saved() {
     });
   }, [posts, search, type, domain, withNotes]);
 
-  const analyticsData = useMemo(() => [
-    { name: "Ideas", value: filteredPosts.filter(p => p.type === "idea").length },
-    { name: "Projects", value: filteredPosts.filter(p => p.type === "project").length },
-    { name: "Funding", value: filteredPosts.filter(p => p.type === "funding").length }
-  ], [filteredPosts]);
+  const analyticsData = useMemo(
+    () => [
+      { name: "Ideas", value: filteredPosts.filter((p) => p.type === "idea").length },
+      { name: "Projects", value: filteredPosts.filter((p) => p.type === "project").length },
+      { name: "Funding", value: filteredPosts.filter((p) => p.type === "funding").length },
+    ],
+    [filteredPosts]
+  );
 
   const domainData = useMemo(() => {
     const counts: Record<string, number> = {};
-    filteredPosts.forEach(p => p.domains.forEach(d => counts[d] = (counts[d] || 0) + 1));
+    filteredPosts.forEach((p) => p.domains.forEach((d) => (counts[d] = (counts[d] || 0) + 1)));
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
   }, [filteredPosts]);
 
-  const handleUpdateNote = (postId: string, note: string) => {
-    setPosts(prev => prev.map(p => p.id === postId ? { ...p, note } : p));
+  const handleUpdateNote = async (postId: string, note: string) => {
+    await updateNote(postId, note);
   };
 
-  const handleDeleteNote = (postId: string) => {
-    setPosts(prev => prev.map(p => p.id === postId ? { ...p, note: undefined } : p));
+  const handleDeleteNote = async (postId: string) => {
+    await deleteNote(postId);
   };
 
   return (
@@ -103,14 +76,14 @@ export default function Saved() {
           <h1 className="text-3xl font-display font-bold text-gradient-primary mb-2">Saved Posts</h1>
           <div className="flex flex-wrap gap-4 text-xs text-muted-foreground font-medium">
             <span>Total: {posts.length}</span>
-            <span>Ideas: {posts.filter(p => p.type === "idea").length}</span>
-            <span>Projects: {posts.filter(p => p.type === "project").length}</span>
-            <span>Funding: {posts.filter(p => p.type === "funding").length}</span>
+            <span>Ideas: {posts.filter((p) => p.type === "idea").length}</span>
+            <span>Projects: {posts.filter((p) => p.type === "project").length}</span>
+            <span>Funding: {posts.filter((p) => p.type === "funding").length}</span>
           </div>
         </header>
 
         <SavedAnalytics data={analyticsData} domainData={domainData} />
-        
+
         <SavedFilters
           search={search}
           onSearchChange={setSearch}
@@ -123,10 +96,10 @@ export default function Saved() {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPosts.map(post => (
-            <SavedPostCard 
-              key={post.id} 
-              post={post} 
+          {filteredPosts.map((post) => (
+            <SavedPostCard
+              key={post.id}
+              post={post}
               onOpenNote={(p) => {
                 setSelectedPost(p);
                 setIsNoteOpen(true);
@@ -139,12 +112,14 @@ export default function Saved() {
                   type: (p.type === "funding" ? "fund" : p.type) as any,
                   author: {
                     name: p.author.name,
-                    avatar: p.author.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.author.name}`,
-                    role: "Visionary"
+                    avatar:
+                      p.author.avatar ||
+                      `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.author.name}`,
+                    role: "Visionary",
                   },
                   timestamp: "Saved",
                   stats: { likes: p.likes, comments: 0 },
-                  comments: []
+                  comments: [],
                 };
                 setDetailedPost(feedPost);
               }}
@@ -159,9 +134,9 @@ export default function Saved() {
         )}
 
         {detailedPost && (
-          <FeedCard 
-            post={detailedPost} 
-            forceShowDetails={true} 
+          <FeedCard
+            post={detailedPost}
+            forceShowDetails={true}
             onClose={() => setDetailedPost(null)}
           />
         )}
