@@ -14,6 +14,8 @@ import {
   orderBy,
   where,
   increment,
+  onSnapshot,
+  writeBatch,
 } from "./firebase";
 
 // ─── Type → Collection Mapping ───────────────────────────────────────────────
@@ -440,4 +442,245 @@ export async function addReplyToComment(
     const existing = (snap.data().replies as FirestoreComment[]) || [];
     await updateDoc(commentRef, { replies: [...existing, reply] });
   }
+}
+
+// ─── Chat ─────────────────────────────────────────────────────────────────────
+// Structure: chats/{chatId}  →  chats/{chatId}/messages/{msgId}
+
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  text: string;
+  image?: string;
+  timestamp: any;
+  status: "sent" | "delivered" | "read";
+  replyTo?: { id: string; senderId: string; text: string };
+}
+
+export interface ChatRoom {
+  id: string;
+  participants: string[];
+  participantNames: Record<string, string>;
+  participantAvatars: Record<string, string>;
+  participantRoles: Record<string, string>;
+  lastMessage: string;
+  lastMessageAt: any;
+  context?: { type: string; title: string };
+  unreadCounts: Record<string, number>;
+}
+
+export function subscribeToUserChats(
+  uid: string,
+  callback: (chats: ChatRoom[]) => void
+): () => void {
+  const chatsCol = collection(db, "chats");
+  const q = query(chatsCol, where("participants", "array-contains", uid), orderBy("lastMessageAt", "desc"));
+  return onSnapshot(q, (snap) => {
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as ChatRoom)));
+  });
+}
+
+export function subscribeToMessages(
+  chatId: string,
+  callback: (msgs: ChatMessage[]) => void
+): () => void {
+  const msgsCol = collection(db, "chats", chatId, "messages");
+  const q = query(msgsCol, orderBy("timestamp", "asc"));
+  return onSnapshot(q, (snap) => {
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as ChatMessage)));
+  });
+}
+
+export async function getOrCreateChat(
+  myUid: string,
+  myName: string,
+  myAvatar: string,
+  myRole: string,
+  otherUid: string,
+  otherName: string,
+  otherAvatar: string,
+  otherRole: string,
+  context?: { type: string; title: string }
+): Promise<string> {
+  const chatsCol = collection(db, "chats");
+  const q = query(chatsCol, where("participants", "array-contains", myUid));
+  const snap = await getDocs(q);
+  const existing = snap.docs.find((d) => {
+    const p = d.data().participants as string[];
+    return p.includes(otherUid);
+  });
+  if (existing) return existing.id;
+
+  const ref = await addDoc(chatsCol, {
+    participants: [myUid, otherUid],
+    participantNames: { [myUid]: myName, [otherUid]: otherName },
+    participantAvatars: { [myUid]: myAvatar, [otherUid]: otherAvatar },
+    participantRoles: { [myUid]: myRole, [otherUid]: otherRole },
+    lastMessage: "",
+    lastMessageAt: serverTimestamp(),
+    context: context || null,
+    unreadCounts: { [myUid]: 0, [otherUid]: 0 },
+  });
+  return ref.id;
+}
+
+export async function sendMessage(
+  chatId: string,
+  senderId: string,
+  text: string,
+  image?: string,
+  replyTo?: { id: string; senderId: string; text: string }
+): Promise<void> {
+  const msgsCol = collection(db, "chats", chatId, "messages");
+  await addDoc(msgsCol, {
+    senderId,
+    text,
+    image: image || null,
+    replyTo: replyTo || null,
+    timestamp: serverTimestamp(),
+    status: "sent",
+  });
+  const chatRef = doc(db, "chats", chatId);
+  await updateDoc(chatRef, {
+    lastMessage: text || "📎 Attachment",
+    lastMessageAt: serverTimestamp(),
+  });
+}
+
+export async function markChatAsRead(chatId: string, uid: string): Promise<void> {
+  const chatRef = doc(db, "chats", chatId);
+  await updateDoc(chatRef, { [`unreadCounts.${uid}`]: 0 });
+}
+
+// ─── Applications ─────────────────────────────────────────────────────────────
+// Structure: applications/{applicationId}
+
+export interface Application {
+  id: string;
+  applicantUid: string;
+  applicantName: string;
+  applicantAvatar: string;
+  postId: string;
+  postTitle: string;
+  postAuthorUid: string;
+  message: string;
+  status: "pending" | "accepted" | "rejected";
+  appliedAt: any;
+}
+
+export async function applyToJob(
+  applicantUid: string,
+  applicantName: string,
+  applicantAvatar: string,
+  postId: string,
+  postTitle: string,
+  postAuthorUid: string,
+  message: string
+): Promise<void> {
+  const applicationsCol = collection(db, "applications");
+  await addDoc(applicationsCol, {
+    applicantUid,
+    applicantName,
+    applicantAvatar,
+    postId,
+    postTitle,
+    postAuthorUid,
+    message,
+    status: "pending",
+    appliedAt: serverTimestamp(),
+  });
+}
+
+export async function getMyApplications(uid: string): Promise<Application[]> {
+  try {
+    const col = collection(db, "applications");
+    const q = query(col, where("applicantUid", "==", uid), orderBy("appliedAt", "desc"));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Application));
+  } catch {
+    return [];
+  }
+}
+
+export async function getApplicationsForMyPosts(uid: string): Promise<Application[]> {
+  try {
+    const col = collection(db, "applications");
+    const q = query(col, where("postAuthorUid", "==", uid), orderBy("appliedAt", "desc"));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Application));
+  } catch {
+    return [];
+  }
+}
+
+export async function updateApplicationStatus(
+  applicationId: string,
+  status: "accepted" | "rejected"
+): Promise<void> {
+  const appRef = doc(db, "applications", applicationId);
+  await updateDoc(appRef, { status });
+}
+
+// ─── Investments ──────────────────────────────────────────────────────────────
+// Structure: investments/{investmentId}
+
+export interface Investment {
+  id: string;
+  investorUid: string;
+  investorName: string;
+  investorAvatar: string;
+  postId: string;
+  postTitle: string;
+  postAuthorUid: string;
+  postCollection: string;
+  amount?: string;
+  note?: string;
+  status: "interested" | "committed" | "completed";
+  investedAt: any;
+}
+
+export async function addInvestment(
+  investorUid: string,
+  investorName: string,
+  investorAvatar: string,
+  postId: string,
+  postTitle: string,
+  postAuthorUid: string,
+  postCollection: string,
+  amount?: string,
+  note?: string
+): Promise<void> {
+  const investmentsCol = collection(db, "investments");
+  await addDoc(investmentsCol, {
+    investorUid,
+    investorName,
+    investorAvatar,
+    postId,
+    postTitle,
+    postAuthorUid,
+    postCollection,
+    amount: amount || "",
+    note: note || "",
+    status: "interested",
+    investedAt: serverTimestamp(),
+  });
+}
+
+export async function getMyInvestments(uid: string): Promise<Investment[]> {
+  try {
+    const col = collection(db, "investments");
+    const q = query(col, where("investorUid", "==", uid), orderBy("investedAt", "desc"));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Investment));
+  } catch {
+    return [];
+  }
+}
+
+export async function updateInvestmentStatus(
+  investmentId: string,
+  status: "interested" | "committed" | "completed"
+): Promise<void> {
+  const ref = doc(db, "investments", investmentId);
+  await updateDoc(ref, { status });
 }

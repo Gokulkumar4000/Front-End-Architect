@@ -38,32 +38,23 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { MOCK_USERS } from "@/mocks/users";
+import { useFirebaseAuth } from "@/hooks/use-auth";
+import { useUserProfile } from "@/hooks/use-profile";
 
 type UserRole = "idea-holder" | "developer" | "investor";
 
 export function Navbar() {
-  const [location, setLocation] = useLocation();
-  const role = (localStorage.getItem("userRole") as UserRole) || "idea-holder";
-  const username = localStorage.getItem("username");
-  
-  const currentUser = MOCK_USERS.find(u => u.username === username) || {
-    name: "Guest User",
-    username: "guest",
-    avatar: "",
-    role: "idea-holder"
-  };
+  const [, setLocation] = useLocation();
+  const { logout } = useFirebaseAuth();
+  const { profile, user } = useUserProfile();
 
-  const initials = currentUser.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
+  const role = (profile?.role as UserRole) || "idea-holder";
+  const displayName = profile?.fullName || user?.displayName || user?.email?.split("@")[0] || "User";
+  const avatarSrc = profile?.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(displayName)}`;
+  const initials = displayName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("username");
-    localStorage.removeItem("userRole");
+  const handleLogout = async () => {
+    await logout();
     setLocation("/login");
   };
 
@@ -118,9 +109,9 @@ export function Navbar() {
       <div className="flex-1 max-w-md mx-4 hidden sm:block">
         <div className="relative group">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-          <Input 
+          <Input
             id="search-input"
-            placeholder="Search projects, ideas, people..." 
+            placeholder="Search projects, ideas, people..."
             className="pl-10 bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary/20 h-9"
           />
         </div>
@@ -143,81 +134,22 @@ export function Navbar() {
           <DropdownMenuContent className="w-72 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200" align="end" forceMount>
             <DropdownMenuLabel className="font-normal px-3 py-2 flex items-center justify-between">
               <span className="text-xs font-bold text-gradient-primary">Notifications</span>
-              <span className="text-[10px] text-muted-foreground">3 new</span>
+              <span className="text-[10px] text-muted-foreground">No new notifications</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-white/5" />
-            <div className="max-h-64 overflow-y-auto custom-scrollbar">
-              <div className="px-2 py-1.5 hover:bg-primary/10 cursor-pointer rounded-md mx-1 my-0.5 group">
-                <div className="flex gap-2 w-full items-start">
-                  <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                    <Lightbulb className="w-3.5 h-3.5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate">New collaboration request</p>
-                    <p className="text-[10px] text-muted-foreground truncate">Sarah wants to join your project</p>
-                    <p className="text-[9px] text-muted-foreground/60 mt-0.5">2 min ago</p>
-                  </div>
-                  <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded" data-testid="button-dismiss-notification-1">
-                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
-                  </button>
-                </div>
-              </div>
-              <div className="px-2 py-1.5 hover:bg-primary/10 cursor-pointer rounded-md mx-1 my-0.5 group">
-                <div className="flex gap-2 w-full items-start">
-                  <div className="w-7 h-7 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                    <Coins className="w-3.5 h-3.5 text-green-500" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate">Investment received</p>
-                    <p className="text-[10px] text-muted-foreground truncate">You received $5,000 for AI Tutor</p>
-                    <p className="text-[9px] text-muted-foreground/60 mt-0.5">1 hour ago</p>
-                  </div>
-                  <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded" data-testid="button-dismiss-notification-2">
-                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
-                  </button>
-                </div>
-              </div>
-              <div className="px-2 py-1.5 hover:bg-primary/10 cursor-pointer rounded-md mx-1 my-0.5 group">
-                <div className="flex gap-2 w-full items-start">
-                  <div className="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="w-3.5 h-3.5 text-blue-500" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate">New message from Alex</p>
-                    <p className="text-[10px] text-muted-foreground truncate">Hey, I loved your idea about...</p>
-                    <p className="text-[9px] text-muted-foreground/60 mt-0.5">3 hours ago</p>
-                  </div>
-                  <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded" data-testid="button-dismiss-notification-3">
-                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
-                  </button>
-                </div>
-              </div>
-              <div className="px-2 py-1.5 hover:bg-primary/10 cursor-pointer rounded-md mx-1 my-0.5 bg-muted/20 group">
-                <div className="flex gap-2 w-full items-start">
-                  <div className="w-7 h-7 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
-                    <Target className="w-3.5 h-3.5 text-orange-500" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate">Milestone achieved</p>
-                    <p className="text-[10px] text-muted-foreground truncate">Your project reached 100 views</p>
-                    <p className="text-[9px] text-muted-foreground/60 mt-0.5">Yesterday</p>
-                  </div>
-                  <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded" data-testid="button-dismiss-notification-4">
-                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
-                  </button>
-                </div>
-              </div>
+            <div className="px-3 py-6 text-center text-xs text-muted-foreground">
+              You're all caught up!
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
-        
+
         {/* Desktop Profile Dropdown */}
         <div className="hidden md:block">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full hover-elevate active-elevate-2 p-0 overflow-hidden">
                 <Avatar className="h-10 w-10 border-2 border-primary/10">
-                  <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                  <AvatarImage src={avatarSrc} alt={displayName} />
                   <AvatarFallback className="bg-primary/5 text-primary">{initials}</AvatarFallback>
                 </Avatar>
               </Button>
@@ -225,8 +157,8 @@ export function Navbar() {
             <DropdownMenuContent className="w-56 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200" align="end" forceMount>
               <DropdownMenuLabel className="font-normal px-4 py-3">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-bold leading-none text-gradient-primary">{currentUser.name}</p>
-                  <p className="text-xs leading-none text-muted-foreground font-medium">@{currentUser.username}</p>
+                  <p className="text-sm font-bold leading-none text-gradient-primary">{displayName}</p>
+                  <p className="text-xs leading-none text-muted-foreground font-medium">{user?.email || ""}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-white/5" />
@@ -242,9 +174,9 @@ export function Navbar() {
                     </div>
                   </Link>
                 </DropdownMenuItem>
-                
+
                 <DropdownMenuSeparator className="bg-white/5 my-1" />
-                
+
                 <DropdownMenuLabel className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
                   My Activity
                 </DropdownMenuLabel>
@@ -278,7 +210,7 @@ export function Navbar() {
               </div>
               <DropdownMenuSeparator className="bg-white/5" />
               <div className="p-1">
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={handleLogout}
                   className="text-destructive focus:text-destructive focus:bg-destructive/10 relative overflow-hidden transition-colors cursor-pointer rounded-md group/nav-item"
                 >
@@ -301,7 +233,7 @@ export function Navbar() {
             <SheetTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full hover-elevate active-elevate-2 p-0 overflow-hidden">
                 <Avatar className="h-10 w-10 border-2 border-primary/10">
-                  <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                  <AvatarImage src={avatarSrc} alt={displayName} />
                   <AvatarFallback className="bg-primary/5 text-primary">{initials}</AvatarFallback>
                 </Avatar>
               </Button>
@@ -310,8 +242,8 @@ export function Navbar() {
               <SheetHeader className="font-normal px-6 py-8 border-b border-white/5 text-left">
                 <SheetTitle>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-lg font-bold leading-none text-gradient-primary">{currentUser.name}</p>
-                    <p className="text-sm leading-none text-muted-foreground font-medium">@{currentUser.username}</p>
+                    <p className="text-lg font-bold leading-none text-gradient-primary">{displayName}</p>
+                    <p className="text-sm leading-none text-muted-foreground font-medium">{user?.email || ""}</p>
                   </div>
                 </SheetTitle>
               </SheetHeader>
@@ -366,7 +298,7 @@ export function Navbar() {
                 </div>
 
                 <div className="mt-auto p-4 border-t border-white/5 pb-10">
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-destructive/10 text-destructive transition-all text-sm font-bold group relative overflow-hidden"
                   >

@@ -9,6 +9,17 @@ import Feed from "@/pages/Feed";
 import Saved from "@/pages/Saved";
 import Chat from "@/pages/Chat";
 import Profile from "@/pages/Profile";
+import Dashboard from "@/pages/Dashboard";
+import MyIdeas from "@/pages/MyIdeas";
+import MyFundraising from "@/pages/MyFundraising";
+import Analytics from "@/pages/Analytics";
+import MyProjects from "@/pages/MyProjects";
+import AppliedJobs from "@/pages/AppliedJobs";
+import ApplicationsReceived from "@/pages/ApplicationsReceived";
+import MyInvestments from "@/pages/MyInvestments";
+import Portfolio from "@/pages/Portfolio";
+import Funded from "@/pages/Funded";
+import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { useFirebaseAuth } from "@/hooks/use-auth";
@@ -53,6 +64,39 @@ function Router() {
       </Route>
       <Route path="/profile">
         <ProtectedRoute component={Profile} path="/profile" />
+      </Route>
+      <Route path="/dashboard">
+        <ProtectedRoute component={Dashboard} path="/dashboard" />
+      </Route>
+      <Route path="/my-ideas">
+        <ProtectedRoute component={MyIdeas} path="/my-ideas" />
+      </Route>
+      <Route path="/my-fundraising">
+        <ProtectedRoute component={MyFundraising} path="/my-fundraising" />
+      </Route>
+      <Route path="/analytics">
+        <ProtectedRoute component={Analytics} path="/analytics" />
+      </Route>
+      <Route path="/my-projects">
+        <ProtectedRoute component={MyProjects} path="/my-projects" />
+      </Route>
+      <Route path="/applied-jobs">
+        <ProtectedRoute component={AppliedJobs} path="/applied-jobs" />
+      </Route>
+      <Route path="/applications-received">
+        <ProtectedRoute component={ApplicationsReceived} path="/applications-received" />
+      </Route>
+      <Route path="/my-investments">
+        <ProtectedRoute component={MyInvestments} path="/my-investments" />
+      </Route>
+      <Route path="/portfolio">
+        <ProtectedRoute component={Portfolio} path="/portfolio" />
+      </Route>
+      <Route path="/funded">
+        <ProtectedRoute component={Funded} path="/funded" />
+      </Route>
+      <Route path="/settings">
+        <ProtectedRoute component={Settings} path="/settings" />
       </Route>
       <Route component={NotFound} />
     </Switch>
