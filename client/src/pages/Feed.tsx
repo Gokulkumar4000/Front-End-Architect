@@ -894,51 +894,60 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
                 {activeSection === "overview" && (
                   <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
-                      <Info className="w-4 h-4" /> {post.type === "idea" ? "Project Overview" : post.type === "project" ? "Project Overview" : "Funding Overview"}
+                      <Info className="w-4 h-4" /> {post.type === "idea" ? "Idea Overview" : post.type === "project" ? "Project Overview" : post.type === "fund" ? "Funding Overview" : "Job Overview"}
                     </h3>
                     <div className="prose prose-invert prose-sm">
-                      <p className="text-white/80 leading-relaxed text-base italic border-l-2 border-primary/30 pl-4 py-2 bg-primary/[0.02] rounded-r-lg">
-                        {post.type === "idea" 
-                          ? "\"Bridging the gap between initial concept and real-world implementation through data-driven innovation.\""
-                          : post.type === "project"
-                          ? `\"${post.title}: ${post.content.substring(0, 100)}...\"`
-                          : `\"Trust-based funding for ${post.title}. Full transparency on goals and usage.\"`}
-                      </p>
-                      <div className="flex items-center gap-3 mt-6 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                      <div className="flex items-center gap-3 mt-2 mb-5 p-3 rounded-xl bg-white/[0.02] border border-white/5 flex-wrap">
                          <div className="px-2 py-1 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">
-                           {post.type === "project" ? "Status: In Progress" : post.type === "fund" ? "Stage: Growth" : "Stage: Concept"}
+                           {post.type === "project" ? "Status: Open" : post.type === "fund" ? "Status: Active" : post.type === "recruitment" ? "Status: Hiring" : "Status: Concept"}
                          </div>
-                         <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">
-                           Category: {post.type === "idea" ? "SaaS / AI" : post.type === "project" ? "Open Source" : "FinTech"}
-                         </div>
+                         {(post as any).domains?.length > 0 && (
+                           <div className="text-[10px] text-muted-foreground font-medium">
+                             {(post as any).domains.join(" • ")}
+                           </div>
+                         )}
                       </div>
                       {post.type === "fund" && (
-                        <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2">
-                          <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-widest">
-                            <span>Duration</span>
-                            <span className="text-white font-bold">Jan 2026 - June 2026</span>
-                          </div>
+                        <div className="mb-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2">
+                          {(post as any).deadline && (
+                            <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-widest">
+                              <span>Deadline</span>
+                              <span className="text-white font-bold">{(post as any).deadline}</span>
+                            </div>
+                          )}
                           <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-widest">
                             <span>Creator</span>
-                            <span className="text-white font-bold">GreenTech Solutions Org</span>
+                            <span className="text-white font-bold">{post.author.name}</span>
                           </div>
                         </div>
                       )}
-                      <p className="text-white/70 leading-relaxed text-sm mt-6">
+                      <p className="text-white/70 leading-relaxed text-sm">
                         {post.content}
                       </p>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-8">
-                      {[
-                        { label: post.type === "fund" ? "Supporters" : "Team Size", value: post.type === "fund" ? "124" : "3-5 People", icon: Users },
-                        { label: post.type === "fund" ? "Goal" : "Timeline", value: post.type === "fund" ? "$50,000" : "6 Months", icon: post.type === "fund" ? Coins : Calendar },
-                        { label: "Domain", value: "Global", icon: Map },
+                      {post.type === "fund" ? [
+                        { label: "Supporters", value: (post as any).currentSupporters != null ? String((post as any).currentSupporters) : "—", icon: Users },
+                        { label: "Goal", value: (post as any).fundingGoal ? `$${Number((post as any).fundingGoal).toLocaleString()}` : "—", icon: Coins },
+                        { label: "Raised", value: (post as any).currentAmount ? `$${Number((post as any).currentAmount).toLocaleString()}` : "$0", icon: TrendingUp },
+                      ] : post.type === "project" ? [
+                        { label: "Roles Needed", value: (post as any).rolesNeeded || "Open", icon: Users },
+                        { label: "Timeline", value: (post as any).timeline || "TBD", icon: Calendar },
+                        { label: "Skills", value: (post as any).skillsRequired?.split(",")[0] || "Various", icon: Star },
+                      ] : post.type === "recruitment" ? [
+                        { label: "Job Type", value: (post as any).jobType || "Open", icon: Briefcase },
+                        { label: "Compensation", value: (post as any).compensation || "TBD", icon: Coins },
+                        { label: "Domains", value: (post as any).domains?.[0] || "Various", icon: Map },
+                      ] : [
+                        { label: "Collaboration", value: "Open", icon: Users },
+                        { label: "Stage", value: "Concept", icon: Rocket },
+                        { label: "Domain", value: (post as any).domains?.[0] || "Various", icon: Map },
                       ].map((stat) => (
                         <div key={stat.label} className="p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-primary/20 transition-colors group">
                           <stat.icon className="w-4 h-4 text-primary/40 group-hover:text-primary transition-colors mb-2" />
                           <p className="text-[10px] text-muted-foreground uppercase font-medium">{stat.label}</p>
-                          <p className="text-xs font-bold text-white mt-1">{stat.value}</p>
+                          <p className="text-xs font-bold text-white mt-1 truncate">{stat.value}</p>
                         </div>
                       ))}
                     </div>
@@ -954,32 +963,36 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
                       <div className="grid grid-cols-2 gap-8">
                         <div className="space-y-1">
                           <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Target Amount</p>
-                          <p className="text-3xl font-bold text-white">$50,000</p>
+                          <p className="text-3xl font-bold text-white">{(post as any).fundingGoal ? `$${Number((post as any).fundingGoal).toLocaleString()}` : "Not Set"}</p>
                         </div>
                         <div className="space-y-1">
                           <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Min. Contribution</p>
-                          <p className="text-xl font-bold text-white">$100</p>
+                          <p className="text-xl font-bold text-white">{(post as any).minContribution ? `$${Number((post as any).minContribution).toLocaleString()}` : "Open"}</p>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/10">
-                        <div className="space-y-1">
-                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Deadline</p>
-                          <p className="text-xs font-bold text-white">June 30, 2026</p>
+                      {(post as any).deadline && (
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/10">
+                          <div className="space-y-1">
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Deadline</p>
+                            <p className="text-xs font-bold text-white">{(post as any).deadline}</p>
+                          </div>
+                          <div className="space-y-1 text-right">
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Creator</p>
+                            <p className="text-xs font-bold text-white">{post.author.name}</p>
+                          </div>
                         </div>
-                        <div className="space-y-1 text-right">
-                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Currency</p>
-                          <p className="text-xs font-bold text-white">USD (Digital Assets)</p>
+                      )}
+                      {(post as any).fundingGoal && (post as any).currentAmount != null && (
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+                            <span className="text-primary">${Number((post as any).currentAmount).toLocaleString()} Raised</span>
+                            <span className="text-muted-foreground">{Math.round(((post as any).currentAmount / (post as any).fundingGoal) * 100)}% of Goal</span>
+                          </div>
+                          <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
+                            <div className="h-full bg-primary rounded-full" style={{ width: `${Math.min(100, Math.round(((post as any).currentAmount / (post as any).fundingGoal) * 100))}%` }} />
+                          </div>
                         </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
-                          <span className="text-primary">Progress</span>
-                          <span className="text-muted-foreground">Target Reach</span>
-                        </div>
-                        <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
-                          <div className="h-full bg-primary rounded-full w-[65%]" />
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 )}

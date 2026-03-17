@@ -15,7 +15,6 @@ import {
   where,
   increment,
   onSnapshot,
-  writeBatch,
 } from "./firebase";
 
 // ─── Type → Collection Mapping ───────────────────────────────────────────────
@@ -129,6 +128,35 @@ export interface FirestorePost {
   comments?: FirestoreComment[];
   createdAt?: any;
   authorUid?: string;
+
+  // ── Idea-specific ──
+  problem?: string;
+  solution?: string;
+  traction?: string;
+  market?: string;
+  collaborationNeeds?: string;
+
+  // ── Project-specific ──
+  projectDescription?: string;
+  rolesNeeded?: string;
+  skillsRequired?: string;
+  timeline?: string;
+  benefits?: string;
+  teamInfo?: string;
+
+  // ── Fund-specific ──
+  fundingGoal?: number;
+  minContribution?: number;
+  deadline?: string;
+  fundUsage?: string;
+  roadmap?: string;
+  currentAmount?: number;
+  currentSupporters?: number;
+
+  // ── Recruitment-specific ──
+  jobType?: string;
+  compensation?: string;
+  requirements?: string;
 }
 
 async function fetchFromCollection(colName: string): Promise<FirestorePost[]> {
@@ -205,6 +233,10 @@ export async function createPost(
   return { id: ref.id, collectionName: colName, ...postData };
 }
 
+export async function deletePost(collectionName: string, postId: string): Promise<void> {
+  await deleteDoc(doc(db, collectionName, postId));
+}
+
 export async function seedMockPostsIfEmpty() {
   const ideasCol = collection(db, "ideas");
   const existing = await getDocs(ideasCol);
@@ -215,73 +247,115 @@ export async function seedMockPostsIfEmpty() {
       type: "idea" as PostType,
       author: { name: "Alice Visionary", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice", role: "Idea Holder" },
       title: "AI-Powered Sustainable Farming",
-      content: "We are developing a revolutionary automated sensor network for small-scale urban farmers. Our system uses advanced IoT devices and machine learning to monitor soil health, predict crop diseases before they manifest, and optimize water usage by up to 60%. This solution empowers local growers to increase yields while reducing their environmental footprint through data-driven precision agriculture techniques.",
+      content: "We are developing a revolutionary automated sensor network for small-scale urban farmers. Our system uses advanced IoT devices and machine learning to monitor soil health, predict crop diseases before they manifest, and optimize water usage by up to 60%.",
       timestamp: "2h ago",
       stats: { likes: 124, comments: 2 },
       domains: ["AI/ML", "Agriculture"],
+      problem: "Small-scale urban farmers struggle with crop diseases, inefficient water usage, and lack of data-driven insights. Traditional methods waste up to 40% more water and result in lower yields.",
+      solution: "An IoT sensor network combined with a machine learning platform that monitors soil moisture, pH, temperature, and humidity in real-time. The AI predicts disease outbreaks 2 weeks in advance with 87% accuracy.",
+      traction: "Pilot tested with 12 urban farms in Berlin. Average yield improvement of 34% and water savings of 58%. Currently processing over 2M data points per day.",
+      market: "Global precision agriculture market valued at $9.5B in 2024, growing at 12.7% CAGR. Target market: 600M+ small-scale farmers worldwide. Initial focus on Europe and North America.",
+      collaborationNeeds: "Looking for a Full-Stack Developer with IoT experience, a Data Scientist specializing in time-series analysis, and an agricultural domain expert. Equity-based collaboration welcome.",
     },
     {
       type: "project" as PostType,
       author: { name: "Bob Builder", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob", role: "Developer" },
       title: "Open Source CRM for Non-Profits",
-      content: "Our team has just reached a major milestone in the DevConnect UI library project. We've successfully integrated accessible, high-performance components that enable non-profit organizations to manage donor relationships effectively. Unlike commercial CRM solutions, our open-source platform focuses on simplicity and core functionality.",
+      content: "Our team has just reached a major milestone in the DevConnect UI library project. We've successfully integrated accessible, high-performance components that enable non-profit organizations to manage donor relationships effectively.",
       timestamp: "4h ago",
       stats: { likes: 85, comments: 0 },
       domains: ["Web3", "Open Source"],
+      projectDescription: "A fully open-source CRM built specifically for non-profit organizations. Unlike commercial CRM solutions, we focus on simplicity, donor lifecycle management, grant tracking, and volunteer coordination — all in one place.",
+      rolesNeeded: "Backend Developer (Node.js/PostgreSQL), UX Designer, DevOps Engineer (CI/CD)",
+      skillsRequired: "React, Node.js, PostgreSQL, Docker, Figma",
+      timeline: "MVP in 3 months, Beta in 6 months, v1.0 release in 9 months",
+      benefits: "Open-source contribution credit, equity options, mentorship from senior engineers, real-world impact for hundreds of non-profits globally.",
+      teamInfo: "Team of 3 experienced developers. Looking to grow to 6-8 members for the beta phase.",
     },
     {
       type: "fund" as PostType,
       author: { name: "Charlie Capital", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie", role: "Investor" },
       title: "Seed Fund for GreenTech",
-      content: "We are officially opening applications for our early-stage CleanTech Seed Fund. We are looking for visionary founders working on carbon capture, renewable energy storage, and circular economy solutions. Our fund provides capital, strategic mentorship, and access to a global network of industry experts.",
+      content: "We are officially opening applications for our early-stage CleanTech Seed Fund. We are looking for visionary founders working on carbon capture, renewable energy storage, and circular economy solutions.",
       timestamp: "6h ago",
       stats: { likes: 210, comments: 45 },
       domains: ["FinTech", "Sustainability"],
+      fundingGoal: 50000,
+      minContribution: 100,
+      deadline: "2026-06-30",
+      fundUsage: "40% product development, 25% marketing & growth, 20% operations, 10% legal & compliance, 5% contingency",
+      roadmap: "Q1 2026: Team expansion. Q2 2026: MVP launch. Q3 2026: Beta users & revenue. Q4 2026: Series A preparation.",
+      currentAmount: 32500,
+      currentSupporters: 124,
     },
     {
       type: "recruitment" as PostType,
       author: { name: "Diana Dev", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Diana", role: "Developer" },
       title: "Looking for a React Native Developer",
-      content: "We are building a cross-platform mobile app for real-time team collaboration and need an experienced React Native developer to join us. The ideal candidate has 2+ years of experience with React Native, strong TypeScript skills, and familiarity with Firebase. This is a fully remote, equity-based role.",
+      content: "We are building a cross-platform mobile app for real-time team collaboration and need an experienced React Native developer to join us. This is a fully remote, equity-based role.",
       timestamp: "8h ago",
       stats: { likes: 56, comments: 12 },
       domains: ["Mobile", "React Native"],
+      jobType: "Part-time / Contract",
+      compensation: "Equity-based (1-3%), Remote",
+      requirements: "2+ years React Native experience, TypeScript, Firebase, REST APIs. Bonus: WebRTC, CRDT algorithms.",
     },
     {
       type: "idea" as PostType,
       author: { name: "Eve Entrepreneur", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Eve", role: "Idea Holder" },
       title: "Decentralized Freelance Marketplace",
-      content: "A blockchain-based freelance platform where payments are handled by smart contracts, removing the need for intermediaries. Freelancers get paid instantly upon milestone completion, and clients enjoy full transparency into the work being done. Our goal is to reduce the 20% fee charged by existing platforms down to under 2%.",
+      content: "A blockchain-based freelance platform where payments are handled by smart contracts, removing the need for intermediaries. Our goal is to reduce the 20% fee charged by existing platforms down to under 2%.",
       timestamp: "12h ago",
       stats: { likes: 178, comments: 33 },
       domains: ["Web3", "FinTech"],
+      problem: "Freelancing platforms like Upwork and Fiverr charge 20-30% in fees, hold payments for weeks, and have no transparent dispute resolution. Freelancers worldwide lose billions in unnecessary fees each year.",
+      solution: "A smart contract-based platform on Ethereum/Polygon where escrow is automated, payments release on milestone approval, and disputes are resolved by a decentralized jury of domain experts.",
+      traction: "Whitepaper complete, 3,000+ early interest signups, partnerships with 2 blockchain accelerators in Asia.",
+      market: "Global freelance economy worth $1.5 trillion. 59M+ Americans freelance. 3% market share = $45B opportunity.",
+      collaborationNeeds: "Solidity developer, Web3 frontend developer (wagmi/ethers.js), tokenomics advisor. Open to revenue share arrangement.",
     },
     {
       type: "fund" as PostType,
       author: { name: "Fiona Funds", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Fiona", role: "Investor" },
       title: "HealthTech Innovation Fund 2026",
-      content: "Our HealthTech fund is seeking startups building next-generation digital health tools—remote patient monitoring, AI diagnostics, mental wellness platforms, and more. We write checks from $250K to $2M and provide active operational support alongside capital.",
+      content: "Our HealthTech fund is seeking startups building next-generation digital health tools—remote patient monitoring, AI diagnostics, mental wellness platforms, and more.",
       timestamp: "1d ago",
       stats: { likes: 143, comments: 18 },
       domains: ["HealthTech", "AI/ML"],
+      fundingGoal: 2000000,
+      minContribution: 250000,
+      deadline: "2026-12-31",
+      fundUsage: "50% direct investment to startups, 30% operational support & mentorship, 15% legal & fund management, 5% reserve",
+      roadmap: "Q1: Fund close. Q2: First 3 investments. Q3: Portfolio support. Q4: Follow-on decisions.",
+      currentAmount: 850000,
+      currentSupporters: 7,
     },
     {
       type: "project" as PostType,
       author: { name: "Greg Gig", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Greg", role: "Developer" },
       title: "Real-Time Collaborative Code Editor",
-      content: "Building a VS Code-like browser IDE supporting real-time multi-user collaboration, integrated AI code suggestions, and one-click deployment pipelines. We're using WebRTC for peer connections and CRDT for conflict-free document merging.",
+      content: "Building a VS Code-like browser IDE supporting real-time multi-user collaboration, integrated AI code suggestions, and one-click deployment pipelines using WebRTC and CRDT.",
       timestamp: "2d ago",
       stats: { likes: 92, comments: 7 },
       domains: ["DevTools", "Web3"],
+      projectDescription: "A browser-based collaborative IDE that enables multiple developers to code together in real-time, with syntax highlighting for 50+ languages, AI-powered suggestions, and integrated Git.",
+      rolesNeeded: "Frontend Developer, AI/ML Engineer, DevOps/Cloud Engineer",
+      skillsRequired: "React, WebRTC, CRDT algorithms, OpenAI API, AWS/GCP, Monaco Editor",
+      timeline: "Alpha in 2 months, Public beta in 4 months",
+      benefits: "Equity stake, remote-first, cutting-edge tech stack, potential to be acquired by major IDE players.",
+      teamInfo: "Solo founder with 8 years experience. Ex-Google engineer. Looking for 2-3 co-founders.",
     },
     {
       type: "recruitment" as PostType,
       author: { name: "Hana HR", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Hana", role: "Idea Holder" },
       title: "Co-Founder & CTO Wanted",
-      content: "We're a pre-seed EdTech startup looking for a technical co-founder with deep expertise in cloud infrastructure and AI. If you're passionate about reshaping how people learn technical skills, this is your chance to shape the product from day one and own meaningful equity.",
+      content: "We're a pre-seed EdTech startup looking for a technical co-founder with deep expertise in cloud infrastructure and AI. Shape the product from day one and own meaningful equity.",
       timestamp: "3d ago",
       stats: { likes: 74, comments: 9 },
       domains: ["EdTech", "AI/ML"],
+      jobType: "Full-time / Co-founder",
+      compensation: "15-25% equity + future salary once funded",
+      requirements: "5+ years engineering experience, cloud infrastructure (AWS/GCP), LLM/AI experience, strong leadership. EdTech or consumer product background is a big plus.",
     },
   ];
 
@@ -291,7 +365,7 @@ export async function seedMockPostsIfEmpty() {
   }
 }
 
-// ─── Likes (userActivity subcollection) ──────────────────────────────────────
+// ─── Likes (stored under users/{uid}/likes/) ──────────────────────────────────
 
 export async function toggleLikePost(
   uid: string,
@@ -299,7 +373,7 @@ export async function toggleLikePost(
   collectionName: string,
   currentlyLiked: boolean
 ): Promise<void> {
-  const likeRef = doc(db, "userActivity", uid, "likes", postId);
+  const likeRef = doc(db, "users", uid, "likes", postId);
   const postRef = doc(db, collectionName, postId);
   if (currentlyLiked) {
     await deleteDoc(likeRef);
@@ -312,7 +386,7 @@ export async function toggleLikePost(
 
 export async function getUserLikedPostIds(uid: string): Promise<string[]> {
   try {
-    const likesCol = collection(db, "userActivity", uid, "likes");
+    const likesCol = collection(db, "users", uid, "likes");
     const snap = await getDocs(likesCol);
     return snap.docs.map((d) => d.id);
   } catch {
@@ -320,7 +394,7 @@ export async function getUserLikedPostIds(uid: string): Promise<string[]> {
   }
 }
 
-// ─── Saves (userActivity subcollection) ───────────────────────────────────────
+// ─── Saves (stored under users/{uid}/saves/) ──────────────────────────────────
 
 export interface SavedPostData {
   id: string;
@@ -341,7 +415,7 @@ export async function toggleSavePost(
   postData: SavedPostData | null,
   currentlySaved: boolean
 ): Promise<void> {
-  const saveRef = doc(db, "userActivity", uid, "saves", postId);
+  const saveRef = doc(db, "users", uid, "saves", postId);
   if (currentlySaved) {
     await deleteDoc(saveRef);
   } else if (postData) {
@@ -351,7 +425,7 @@ export async function toggleSavePost(
 
 export async function getUserSavedPosts(uid: string): Promise<SavedPostData[]> {
   try {
-    const savesCol = collection(db, "userActivity", uid, "saves");
+    const savesCol = collection(db, "users", uid, "saves");
     const snap = await getDocs(savesCol);
     return snap.docs.map((d) => ({ id: d.id, ...d.data() } as SavedPostData));
   } catch {
@@ -364,16 +438,16 @@ export async function updateSavedPostNote(
   postId: string,
   note: string
 ): Promise<void> {
-  const saveRef = doc(db, "userActivity", uid, "saves", postId);
+  const saveRef = doc(db, "users", uid, "saves", postId);
   await updateDoc(saveRef, { note });
 }
 
 export async function deleteSavedPostNote(uid: string, postId: string): Promise<void> {
-  const saveRef = doc(db, "userActivity", uid, "saves", postId);
+  const saveRef = doc(db, "users", uid, "saves", postId);
   await updateDoc(saveRef, { note: deleteField() });
 }
 
-// ─── Following (userActivity subcollection) ───────────────────────────────────
+// ─── Following & Followers (stored under users/{uid}/following/ and users/{uid}/followers/) ──
 
 function encodeFollowKey(name: string): string {
   return name.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 100);
@@ -384,7 +458,7 @@ export async function toggleFollowUser(
   targetName: string,
   currentlyFollowing: boolean
 ): Promise<void> {
-  const followRef = doc(db, "userActivity", uid, "following", encodeFollowKey(targetName));
+  const followRef = doc(db, "users", uid, "following", encodeFollowKey(targetName));
   if (currentlyFollowing) {
     await deleteDoc(followRef);
   } else {
@@ -394,11 +468,31 @@ export async function toggleFollowUser(
 
 export async function getUserFollowing(uid: string): Promise<string[]> {
   try {
-    const followingCol = collection(db, "userActivity", uid, "following");
+    const followingCol = collection(db, "users", uid, "following");
     const snap = await getDocs(followingCol);
     return snap.docs.map((d) => (d.data().name as string) || d.id);
   } catch {
     return [];
+  }
+}
+
+export async function getFollowersCount(uid: string): Promise<number> {
+  try {
+    const followersCol = collection(db, "users", uid, "followers");
+    const snap = await getDocs(followersCol);
+    return snap.size;
+  } catch {
+    return 0;
+  }
+}
+
+export async function getFollowingCount(uid: string): Promise<number> {
+  try {
+    const followingCol = collection(db, "users", uid, "following");
+    const snap = await getDocs(followingCol);
+    return snap.size;
+  } catch {
+    return 0;
   }
 }
 
@@ -445,7 +539,6 @@ export async function addReplyToComment(
 }
 
 // ─── Chat ─────────────────────────────────────────────────────────────────────
-// Structure: chats/{chatId}  →  chats/{chatId}/messages/{msgId}
 
 export interface ChatMessage {
   id: string;
@@ -553,7 +646,6 @@ export async function markChatAsRead(chatId: string, uid: string): Promise<void>
 }
 
 // ─── Applications ─────────────────────────────────────────────────────────────
-// Structure: applications/{applicationId}
 
 export interface Application {
   id: string;
@@ -622,7 +714,6 @@ export async function updateApplicationStatus(
 }
 
 // ─── Investments ──────────────────────────────────────────────────────────────
-// Structure: investments/{investmentId}
 
 export interface Investment {
   id: string;

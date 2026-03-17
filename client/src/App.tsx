@@ -20,6 +20,11 @@ import MyInvestments from "@/pages/MyInvestments";
 import Portfolio from "@/pages/Portfolio";
 import Funded from "@/pages/Funded";
 import Settings from "@/pages/Settings";
+import Projects from "@/pages/Projects";
+import Connections from "@/pages/Connections";
+import Fundings from "@/pages/Fundings";
+import Jobs from "@/pages/Jobs";
+import Opportunities from "@/pages/Opportunities";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { useFirebaseAuth } from "@/hooks/use-auth";
@@ -97,6 +102,21 @@ function Router() {
       </Route>
       <Route path="/settings">
         <ProtectedRoute component={Settings} path="/settings" />
+      </Route>
+      <Route path="/projects">
+        <ProtectedRoute component={Projects} path="/projects" />
+      </Route>
+      <Route path="/connections">
+        <ProtectedRoute component={Connections} path="/connections" />
+      </Route>
+      <Route path="/fundings">
+        <ProtectedRoute component={Fundings} path="/fundings" />
+      </Route>
+      <Route path="/jobs">
+        <ProtectedRoute component={Jobs} path="/jobs" />
+      </Route>
+      <Route path="/opportunities">
+        <ProtectedRoute component={Opportunities} path="/opportunities" />
       </Route>
       <Route component={NotFound} />
     </Switch>

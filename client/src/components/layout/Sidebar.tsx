@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { 
   LayoutDashboard, 
   Rss, 
@@ -14,9 +15,7 @@ import {
   Target,
   Rocket,
   Plus,
-  Search,
   Zap,
-  User,
   Settings,
   LogOut,
   Menu
@@ -39,16 +38,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { CreatePostModal, type CreatePostType } from "@/components/feed/CreatePostModal";
 
 type UserRole = "idea-holder" | "developer" | "investor";
 
@@ -56,8 +47,23 @@ interface AppSidebarProps {
   role?: UserRole;
 }
 
+const CREATE_OPTIONS: Record<UserRole, { label: string; type: CreatePostType }[]> = {
+  "idea-holder": [
+    { label: "Post Idea", type: "idea" },
+    { label: "Raise Fund", type: "fund" },
+  ],
+  developer: [
+    { label: "Post Project", type: "project" },
+    { label: "Post Job", type: "recruitment" },
+  ],
+  investor: [
+    { label: "Raise Fund", type: "fund" },
+  ],
+};
+
 export function AppSidebar({ role = "idea-holder" }: AppSidebarProps) {
   const [location] = useLocation();
+  const [createModal, setCreateModal] = useState<{ open: boolean; type: CreatePostType }>({ open: false, type: "idea" });
 
   const getGeneralItems = (role: UserRole) => {
     const base = [
@@ -124,14 +130,10 @@ export function AppSidebar({ role = "idea-holder" }: AppSidebarProps) {
     }
   };
 
-  const createOptions = {
-    "idea-holder": ["Post Idea", "Raise Fund"],
-    "developer": ["Post Project", "Post Job"],
-    "investor": ["Raise Fund"],
-  };
-
   const generalItems = getGeneralItems(role);
-  const currentCreateOptions = createOptions[role] || [];
+  const currentCreateOptions = CREATE_OPTIONS[role] || [];
+
+  const openCreate = (type: CreatePostType) => setCreateModal({ open: true, type });
 
   return (
     <>
@@ -140,8 +142,8 @@ export function AppSidebar({ role = "idea-holder" }: AppSidebarProps) {
         <div className="p-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="w-full justify-start gap-2 shadow-lg shadow-primary/20 group relative overflow-hidden h-11" size="default">
-                 <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
+              <Button className="w-full justify-start gap-2 shadow-lg shadow-primary/20 group relative overflow-hidden h-11" size="default" data-testid="button-create">
+                <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
                   <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
                 </div>
                 <Plus className="w-5 h-5 relative z-20" />
@@ -150,11 +152,16 @@ export function AppSidebar({ role = "idea-holder" }: AppSidebarProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="start" className="w-48 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl">
               {currentCreateOptions.map((option) => (
-                <DropdownMenuItem key={option} className="cursor-pointer group relative overflow-hidden py-2 focus:bg-primary/10">
+                <DropdownMenuItem
+                  key={option.type}
+                  onClick={() => openCreate(option.type)}
+                  className="cursor-pointer group relative overflow-hidden py-2 focus:bg-primary/10"
+                  data-testid={`button-create-${option.type}`}
+                >
                   <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
                     <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
                   </div>
-                  <span className="relative z-20 font-medium">{option}</span>
+                  <span className="relative z-20 font-medium">{option.label}</span>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -225,14 +232,14 @@ export function AppSidebar({ role = "idea-holder" }: AppSidebarProps) {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size="icon" className="h-12 w-12 rounded-full shadow-lg shadow-primary/20 -mt-8 border-4 border-background">
+            <Button size="icon" className="h-12 w-12 rounded-full shadow-lg shadow-primary/20 -mt-8 border-4 border-background" data-testid="button-create-mobile">
               <Plus className="w-6 h-6" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="center" className="w-48 glass-card border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl">
             {currentCreateOptions.map((option) => (
-              <DropdownMenuItem key={option} className="cursor-pointer py-3">
-                <span className="font-medium">{option}</span>
+              <DropdownMenuItem key={option.type} className="cursor-pointer py-3" onClick={() => openCreate(option.type)}>
+                <span className="font-medium">{option.label}</span>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -249,8 +256,13 @@ export function AppSidebar({ role = "idea-holder" }: AppSidebarProps) {
             </button>
           </Link>
         ))}
-
       </div>
+
+      <CreatePostModal
+        open={createModal.open}
+        onClose={() => setCreateModal((prev) => ({ ...prev, open: false }))}
+        postType={createModal.type}
+      />
     </>
   );
 }
