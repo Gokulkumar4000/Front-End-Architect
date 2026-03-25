@@ -820,3 +820,53 @@ export async function updateInvestmentStatus(
   const ref = doc(db, "investments", investmentId);
   await updateDoc(ref, { status });
 }
+
+// ─── Delete Account (all user data + Firebase Auth) ───────────────────────────
+
+export async function deleteUserAccount(uid: string): Promise<void> {
+  // 1. Delete user's posts from every global typed collection
+  const globalCols = ["ideas", "projects", "funds", "recruitment"];
+  for (const colName of globalCols) {
+    const q = query(collection(db, colName), where("authorUid", "==", uid));
+    const snap = await getDocs(q);
+    for (const d of snap.docs) {
+      await deleteDoc(d.ref);
+    }
+  }
+
+  // 2. Delete all user subcollections
+  const subCols = ["posts", "likes", "saves", "followings", "following", "followers"];
+  for (const sub of subCols) {
+    const snap = await getDocs(collection(db, "users", uid, sub));
+    for (const d of snap.docs) {
+      await deleteDoc(d.ref);
+    }
+  }
+
+  // 3. Delete investments made by this user
+  const investQ = query(collection(db, "investments"), where("investorUid", "==", uid));
+  const investSnap = await getDocs(investQ);
+  for (const d of investSnap.docs) {
+    await deleteDoc(d.ref);
+  }
+
+  // 4. Delete chat rooms the user participates in
+  const chatsQ = query(collection(db, "chats"), where("participants", "array-contains", uid));
+  const chatsSnap = await getDocs(chatsQ);
+  for (const d of chatsSnap.docs) {
+    await deleteDoc(d.ref);
+  }
+
+  // 5. Delete the user profile document
+  await deleteDoc(doc(db, "users", uid));
+
+  // 6. Delete the Firebase Auth account (must be last)
+  const { deleteUser } = await import("firebase/auth");
+  const { auth } = await import("./firebase");
+  if (auth.currentUser) {
+    await deleteUser(auth.currentUser);
+  }
+
+  // 7. Clear cached role from localStorage
+  try { localStorage.removeItem("dc_role"); } catch {}
+}

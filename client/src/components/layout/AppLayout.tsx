@@ -11,8 +11,22 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children, role: propRole }: AppLayoutProps) {
-  const { profile } = useUserProfile();
-  const role = propRole || (profile?.role as UserRole) || "idea-holder";
+  const { profile, loading } = useUserProfile();
+  // While profile is loading, fall back to the last-known role stored in
+  // localStorage to avoid the sidebar snapping between idea-holder items
+  // and the user's actual role items on every navigation.
+  const role: UserRole = (() => {
+    if (propRole) return propRole;
+    if (!loading && profile?.role) {
+      try { localStorage.setItem("dc_role", profile.role); } catch {}
+      return profile.role as UserRole;
+    }
+    try {
+      const cached = localStorage.getItem("dc_role") as UserRole | null;
+      if (cached) return cached;
+    } catch {}
+    return "idea-holder";
+  })();
   const style = {
     "--sidebar-width": "16rem",
     "--sidebar-width-icon": "4rem",

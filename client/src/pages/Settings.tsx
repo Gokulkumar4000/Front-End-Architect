@@ -9,12 +9,23 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Settings as SettingsIcon, ArrowLeft, User, Bell, Shield, LogOut, Save, Mail, Lock
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Settings as SettingsIcon, ArrowLeft, User, Bell, Shield, LogOut, Save, Mail, Lock, Trash2
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useFirebaseAuth } from "@/hooks/use-auth";
 import { useUserProfile } from "@/hooks/use-profile";
-import { updateUserProfile } from "@/lib/firestoreService";
+import { updateUserProfile, deleteUserAccount } from "@/lib/firestoreService";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Settings() {
@@ -32,6 +43,7 @@ export default function Settings() {
     investments: false,
   });
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -55,6 +67,24 @@ export default function Settings() {
   const handleLogout = async () => {
     await logout();
     setLocation("/login");
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    setDeleting(true);
+    try {
+      await deleteUserAccount(user.uid);
+      await logout();
+      setLocation("/");
+    } catch (err: any) {
+      toast({
+        title: "Could not delete account",
+        description: err?.message || "Please try signing out and back in, then try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const roleDisplay = (profile?.role || "idea-holder")
@@ -206,7 +236,7 @@ export default function Settings() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-bold uppercase tracking-widest text-destructive/80">Danger Zone</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium">Sign out of your account</p>
@@ -222,6 +252,47 @@ export default function Settings() {
                 <LogOut className="w-4 h-4" />
                 Log Out
               </Button>
+            </div>
+
+            <Separator className="bg-destructive/10" />
+
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">Delete Account</p>
+                <p className="text-xs text-muted-foreground">Permanently remove your account and all data. This cannot be undone.</p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-destructive/30 text-destructive hover:bg-destructive/10 gap-2"
+                    disabled={deleting}
+                    data-testid="button-delete-account"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    {deleting ? "Deleting..." : "Delete Account"}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="glass-card border-white/10">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete your profile, all your posts, investments, and chat history. <strong>This action cannot be undone.</strong>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="border-white/10">Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteAccount}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      data-testid="button-confirm-delete-account"
+                    >
+                      Yes, delete everything
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </CardContent>
         </Card>
