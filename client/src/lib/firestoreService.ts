@@ -613,9 +613,16 @@ export function subscribeToUserChats(
 ): () => void {
   const chatsCol = collection(db, "chats");
   const q = query(chatsCol, where("participants", "array-contains", uid), orderBy("lastMessageAt", "desc"));
-  return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as ChatRoom)));
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as ChatRoom)));
+    },
+    (_err) => {
+      // On error (e.g. missing index), return empty list so UI doesn't stay stuck loading
+      callback([]);
+    }
+  );
 }
 
 export function subscribeToMessages(

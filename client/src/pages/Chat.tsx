@@ -42,7 +42,7 @@ import {
 export default function ChatPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { user } = useFirebaseAuth();
+  const { user, loading: authLoading } = useFirebaseAuth();
   const { profile } = useUserProfile();
 
   const [chats, setChats] = useState<ChatRoom[]>([]);
@@ -70,13 +70,19 @@ export default function ChatPage() {
 
   // Subscribe to user's chats
   useEffect(() => {
-    if (!user) return;
+    // Auth still initialising — wait
+    if (authLoading) return;
+    // Auth done but no user logged in
+    if (!user) {
+      setLoadingChats(false);
+      return;
+    }
     const unsub = subscribeToUserChats(user.uid, (rooms) => {
       setChats(rooms);
       setLoadingChats(false);
     });
     return unsub;
-  }, [user]);
+  }, [user, authLoading]);
 
   // Subscribe to messages for selected chat
   useEffect(() => {
