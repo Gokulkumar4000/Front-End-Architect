@@ -1,69 +1,64 @@
 # DevConnect
 
-## Overview
-DevConnect is a web application that connects visionaries, builders, and investors in an all-in-one ecosystem. The platform aims to bridge ideas with code and capital.
+A startup networking platform where idea holders, developers, and investors connect — users post ideas, projects, funding opportunities, and job listings, then collaborate within a unified feed.
 
-## Tech Stack
-- **Frontend**: React 18 with TypeScript, Vite, TailwindCSS, Radix UI components
-- **Backend**: Express.js with TypeScript
-- **Database**: PostgreSQL with Drizzle ORM
-- **Styling**: TailwindCSS with shadcn/ui components
+## Run & Operate
 
-## Project Structure
-```
-├── client/           # React frontend
-│   ├── src/
-│   │   ├── components/  # UI components
-│   │   ├── App.tsx      # Main application
-│   │   └── main.tsx     # Entry point
-│   └── index.html
-├── server/           # Express backend
-│   ├── index.ts      # Server entry point
-│   ├── routes.ts     # API routes
-│   ├── vite.ts       # Vite dev server setup
-│   └── db.ts         # Database connection
-├── shared/           # Shared code between client/server
-│   └── schema.ts     # Database schema (Drizzle)
-└── migrations/       # Database migrations
-```
+- **Dev**: `npm run dev` (starts Express + Vite on port 5000)
+- **Build**: `npm run build`
+- **Production**: `npm start`
+- **DB push**: `npm run db:push`
+- **Required env vars**: `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`, `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`, `VITE_FIREBASE_MEASUREMENT_ID`, `DATABASE_URL`
 
-## Development Commands
-- `npm run dev` - Start development server (serves both frontend and backend on port 5000)
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run db:push` - Push database schema changes
+## Stack
 
-## Environment Variables
-- `DATABASE_URL` - PostgreSQL connection string (automatically provisioned)
-- `PORT` - Server port (defaults to 5000)
+- **Frontend**: React 18 + TypeScript, Vite, Tailwind CSS, Shadcn UI (Radix), Framer Motion, wouter (routing), TanStack Query
+- **Backend**: Express 5, Node 20, Drizzle ORM + PostgreSQL (Replit DB)
+- **Auth & Data**: Firebase Auth + Firestore (primary data store)
+- **Build**: tsx, esbuild
 
-## Authentication & Data Layer
-- **Firebase Auth**: Email/password login and signup via `signInWithEmailAndPassword` / `createUserWithEmailAndPassword`
-- **Firestore**: User profiles stored in `/users/{uid}`; posts stored in `/posts` collection
-- **Firebase Config**: Stored as `VITE_FIREBASE_*` environment variables
+## Where things live
 
-## Key Files
-- `client/src/lib/firebase.ts` — Firebase app, Auth, Firestore exports
-- `client/src/lib/firestoreService.ts` — All Firebase operations: posts, likes, saves, comments, following, user profiles
-- `client/src/hooks/use-auth.ts` — `useFirebaseAuth()`, `useUser()`, `useLogout()` hooks
-- `client/src/hooks/use-user-activity.tsx` — UserActivityContext: centralized state for likes, saves, following (all Firebase-backed)
-- `client/src/pages/Auth.tsx` — Multi-step signup + login with Firebase
-- `client/src/pages/Profile.tsx` — Reads/writes user profile from Firestore
-- `client/src/pages/Feed.tsx` — Posts from Firestore; likes/saves/comments/following via Firebase
-- `client/src/pages/Saved.tsx` — Saved posts from Firestore (per-user subcollection)
+- `client/src/` — all frontend code
+  - `pages/` — route-level views (Feed, Auth, Dashboard, Profile, etc.)
+  - `components/` — UI components (`ui/`, `layout/`, `feed/`, `saved/`)
+  - `hooks/` — `use-auth.ts` (Firebase auth), `use-profile.tsx`, `use-user-activity.tsx`
+  - `lib/firebase.ts` — Firebase init & re-exports
+  - `lib/firestoreService.ts` — all Firestore CRUD (posts, users, likes, saves, follows, comments)
+- `server/` — Express server (`index.ts`, `routes.ts`, `vite.ts`, `static.ts`)
+- `shared/schema.ts` — Drizzle/Zod schema (PostgreSQL, secondary to Firestore)
 
-## Firestore Data Structure
-- `posts/{postId}` — Post documents with stats (likes, comments), authorUid, domains
-- `posts/{postId}/comments/{commentId}` — Comments subcollection (with nested replies array)
-- `users/{uid}` — User profile + `likedPostIds[]`, `savedPostIds[]`, `following[]` arrays
-- `users/{uid}/savedPosts/{postId}` — Full saved post data including notes
+## Architecture decisions
 
-## Notes
-- Firestore Database must be enabled in Firebase Console (Build → Firestore Database → Create database → test mode)
-- No mock data fallbacks — all data persisted in Firebase
-- UserActivityProvider wraps the entire app in App.tsx
+- **Firestore is the primary database** — all user profiles, posts (ideas/projects/funds/recruitment), likes, saves, follows, and comments live in Firestore. The PostgreSQL/Drizzle setup is present but secondary.
+- **Firebase Auth** — email/password auth via Firebase; credentials flow through `VITE_*` env vars (client-side, safe for Firebase's client SDK model).
+- **Full-stack in one server** — Express serves both the API and the Vite dev middleware on port 5000.
+- **wouter** over React Router — lightweight client-side routing.
+- **Role-based onboarding** — users select Idea Holder / Developer / Investor at signup; profile fields differ per role.
 
-## Recent Changes
-- January 19, 2026: Initial import and Replit environment setup
-- March 17, 2026: Firebase Auth + Firestore fully integrated; Profile.tsx reads/writes from Firestore; Feed.tsx loads posts from Firestore
-- March 17, 2026: Full Firebase migration — likes, saves, comments, following all stored in Firestore; removed all localStorage usage for user activity data
+## Product
+
+- Landing page with role-specific pitch and sign-up flow
+- Multi-step registration with role-specific profile fields
+- Feed with posts across 4 types: ideas, projects, funds, recruitment
+- Post detail with likes, comments, replies
+- Save posts with personal notes
+- User profiles, connections/following, chat
+- Dashboard, analytics, and role-specific management pages (my-ideas, my-projects, my-fundraising, my-investments, portfolio, applied-jobs)
+- Settings page
+
+## User preferences
+
+_Populate as you build_
+
+## Gotchas
+
+- Firebase `VITE_*` env vars are exposed to the client — this is intentional for Firebase's client SDK pattern, not a leak.
+- Firestore requires composite indexes for queries with `where` + `orderBy`; missing indexes surface as Firestore console errors.
+- The `tsx` binary is in `node_modules/.bin/tsx`; the dev script uses it via npm scripts.
+
+## Pointers
+
+- Firebase console: https://console.firebase.google.com/project/devconnect-9c912
+- Firestore data model: see `client/src/lib/firestoreService.ts`
+- Drizzle schema: `shared/schema.ts`
