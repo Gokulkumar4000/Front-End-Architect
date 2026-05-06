@@ -2,66 +2,93 @@ import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
 
+const MOCK_USERS = [
+  { uid: "mock-1", fullName: "Alice Visionary", email: "alice@devconnect.mock", role: "idea-holder",
+    profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=AliceVisionary",
+    bio: "Serial entrepreneur building AI solutions for sustainable agriculture. 3x founder with exits.", tagline: "Turning green ideas into real-world impact." },
+  { uid: "mock-2", fullName: "Bob Builder", email: "bob@devconnect.mock", role: "developer",
+    profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=BobBuilder",
+    bio: "Full-stack developer passionate about open-source tools and non-profit tech.", tagline: "Code for good, build for all." },
+  { uid: "mock-3", fullName: "Charlie Capital", email: "charlie@devconnect.mock", role: "investor",
+    profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=CharlieCapital",
+    bio: "Early-stage GreenTech & CleanEnergy investor. 40+ portfolio companies.", tagline: "Funding tomorrow's green economy today." },
+  { uid: "mock-4", fullName: "Diana Dev", email: "diana@devconnect.mock", role: "developer",
+    profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=DianaDev",
+    bio: "React Native & TypeScript specialist building cross-platform mobile experiences.", tagline: "Mobile-first, always." },
+  { uid: "mock-5", fullName: "Eve Entrepreneur", email: "eve@devconnect.mock", role: "idea-holder",
+    profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=EveEntrepreneur",
+    bio: "Web3 visionary disrupting the freelance economy through smart contract automation.", tagline: "Decentralize everything." },
+  { uid: "mock-6", fullName: "Fiona Funds", email: "fiona@devconnect.mock", role: "investor",
+    profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=FionaFunds",
+    bio: "HealthTech investor with 15 years backing digital health & AI diagnostics innovation.", tagline: "Investing in healthier futures." },
+  { uid: "mock-7", fullName: "Greg Gig", email: "greg@devconnect.mock", role: "developer",
+    profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=GregGig",
+    bio: "Real-time systems engineer building collaborative developer tools with WebRTC and CRDT.", tagline: "Collab in real-time, ship in no time." },
+  { uid: "mock-8", fullName: "Hana HR", email: "hana@devconnect.mock", role: "idea-holder",
+    profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=HanaHR",
+    bio: "EdTech co-founder hunting for a visionary CTO to build the future of learning.", tagline: "Education powered by technology." },
+];
+
 const MOCK_POSTS = [
   {
-    type: "idea", authorUid: "mock", authorName: "Alice Visionary",
-    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice", authorRole: "Idea Holder",
+    type: "idea", authorUid: "mock-1", authorName: "Alice Visionary",
+    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AliceVisionary", authorRole: "Idea Holder",
     title: "AI-Powered Sustainable Farming",
     content: "We are developing a revolutionary automated sensor network for small-scale urban farmers. Our system uses advanced IoT devices and machine learning to monitor soil health, predict crop diseases before they manifest, and optimize water usage by up to 60%.",
     likesCount: 124, commentsCount: 2, domains: ["AI/ML", "Agriculture"],
     extraData: { problem: "Small-scale urban farmers struggle with crop diseases, inefficient water usage.", solution: "An IoT sensor network with ML that monitors soil moisture, pH, temperature in real-time.", traction: "Pilot tested with 12 urban farms in Berlin.", collaborationNeeds: "Looking for a Full-Stack Developer with IoT experience." }
   },
   {
-    type: "project", authorUid: "mock", authorName: "Bob Builder",
-    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob", authorRole: "Developer",
+    type: "project", authorUid: "mock-2", authorName: "Bob Builder",
+    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=BobBuilder", authorRole: "Developer",
     title: "Open Source CRM for Non-Profits",
     content: "Our team has just reached a major milestone in the DevConnect UI library project. We've successfully integrated accessible, high-performance components that enable non-profit organizations to manage donor relationships effectively.",
     likesCount: 85, commentsCount: 0, domains: ["Web3", "Open Source"],
     extraData: { rolesNeeded: "Backend Developer (Node.js/PostgreSQL), UX Designer, DevOps Engineer", skillsRequired: "React, Node.js, PostgreSQL, Docker, Figma", timeline: "MVP in 3 months, Beta in 6 months", benefits: "Open-source contribution credit, equity options, mentorship" }
   },
   {
-    type: "fund", authorUid: "mock", authorName: "Charlie Capital",
-    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie", authorRole: "Investor",
+    type: "fund", authorUid: "mock-3", authorName: "Charlie Capital",
+    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=CharlieCapital", authorRole: "Investor",
     title: "Seed Fund for GreenTech",
     content: "We are officially opening applications for our early-stage CleanTech Seed Fund. We are looking for visionary founders working on carbon capture, renewable energy storage, and circular economy solutions.",
     likesCount: 210, commentsCount: 45, domains: ["FinTech", "Sustainability"],
     extraData: { fundingGoal: 50000, minContribution: 100, deadline: "2026-06-30", fundUsage: "40% product development, 25% marketing, 20% operations, 15% legal", currentAmount: 32500, currentSupporters: 124 }
   },
   {
-    type: "recruitment", authorUid: "mock", authorName: "Diana Dev",
-    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Diana", authorRole: "Developer",
+    type: "recruitment", authorUid: "mock-4", authorName: "Diana Dev",
+    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=DianaDev", authorRole: "Developer",
     title: "Looking for a React Native Developer",
     content: "We are building a cross-platform mobile app for real-time team collaboration and need an experienced React Native developer to join us. This is a fully remote, equity-based role.",
     likesCount: 56, commentsCount: 12, domains: ["Mobile", "React Native"],
     extraData: { jobType: "Part-time / Contract", compensation: "Equity-based (1-3%), Remote", requirements: "2+ years React Native experience, TypeScript, Firebase, REST APIs." }
   },
   {
-    type: "idea", authorUid: "mock", authorName: "Eve Entrepreneur",
-    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Eve", authorRole: "Idea Holder",
+    type: "idea", authorUid: "mock-5", authorName: "Eve Entrepreneur",
+    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=EveEntrepreneur", authorRole: "Idea Holder",
     title: "Decentralized Freelance Marketplace",
     content: "A blockchain-based freelance platform where payments are handled by smart contracts, removing the need for intermediaries. Our goal is to reduce the 20% fee charged by existing platforms down to under 2%.",
     likesCount: 178, commentsCount: 33, domains: ["Web3", "FinTech"],
     extraData: { problem: "Freelancing platforms charge 20-30% in fees and hold payments for weeks.", solution: "A smart contract-based platform on Ethereum/Polygon with automated escrow.", collaborationNeeds: "Solidity developer, Web3 frontend developer, tokenomics advisor." }
   },
   {
-    type: "fund", authorUid: "mock", authorName: "Fiona Funds",
-    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Fiona", authorRole: "Investor",
+    type: "fund", authorUid: "mock-6", authorName: "Fiona Funds",
+    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=FionaFunds", authorRole: "Investor",
     title: "HealthTech Innovation Fund 2026",
     content: "Our HealthTech fund is seeking startups building next-generation digital health tools—remote patient monitoring, AI diagnostics, mental wellness platforms, and more.",
     likesCount: 143, commentsCount: 18, domains: ["HealthTech", "AI/ML"],
     extraData: { fundingGoal: 2000000, minContribution: 250000, deadline: "2026-12-31", fundUsage: "50% direct investment, 30% operational support, 15% legal, 5% reserve", currentAmount: 850000, currentSupporters: 7 }
   },
   {
-    type: "project", authorUid: "mock", authorName: "Greg Gig",
-    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Greg", authorRole: "Developer",
+    type: "project", authorUid: "mock-7", authorName: "Greg Gig",
+    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=GregGig", authorRole: "Developer",
     title: "Real-Time Collaborative Code Editor",
     content: "Building a VS Code-like browser IDE supporting real-time multi-user collaboration, integrated AI code suggestions, and one-click deployment pipelines using WebRTC and CRDT.",
     likesCount: 92, commentsCount: 7, domains: ["DevTools", "Web3"],
     extraData: { rolesNeeded: "Frontend Developer, AI/ML Engineer, DevOps/Cloud Engineer", skillsRequired: "React, WebRTC, CRDT algorithms, OpenAI API, AWS/GCP", timeline: "Alpha in 2 months, Public beta in 4 months", benefits: "Equity stake, remote-first, cutting-edge tech stack" }
   },
   {
-    type: "recruitment", authorUid: "mock", authorName: "Hana HR",
-    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Hana", authorRole: "Idea Holder",
+    type: "recruitment", authorUid: "mock-8", authorName: "Hana HR",
+    authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=HanaHR", authorRole: "Idea Holder",
     title: "Co-Founder & CTO Wanted",
     content: "We're a pre-seed EdTech startup looking for a technical co-founder with deep expertise in cloud infrastructure and AI. Shape the product from day one and own meaningful equity.",
     likesCount: 74, commentsCount: 9, domains: ["EdTech", "AI/ML"],
@@ -126,8 +153,15 @@ function commentToResponse(c: any, replies: any[] = []): CommentResponse {
 }
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
-  // Seed mock posts if empty
-  async function seedIfEmpty() {
+  async function seedMockData() {
+    // Always upsert mock user profiles so Connect works
+    for (const u of MOCK_USERS) {
+      await storage.upsertProfile(u.uid, u as any);
+    }
+
+    // Delete legacy mock posts (old uid was "mock") and re-seed if needed
+    await storage.deletePostsByAuthorUid("mock");
+
     const count = await storage.countPosts();
     if (count === 0) {
       for (const mock of MOCK_POSTS) {
@@ -135,7 +169,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       }
     }
   }
-  seedIfEmpty().catch(console.error);
+  seedMockData().catch(console.error);
 
   app.get("/api/status", (_req, res) => res.json({ status: "online" }));
 

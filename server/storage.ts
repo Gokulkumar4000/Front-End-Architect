@@ -73,6 +73,9 @@ export class DatabaseStorage implements IStorage {
     const all = await db.select().from(posts);
     return all.length;
   }
+  async deletePostsByAuthorUid(uid: string): Promise<void> {
+    await db.delete(posts).where(eq(posts.authorUid, uid));
+  }
 
   // Likes
   async getLikedPostIds(userId: string): Promise<string[]> {

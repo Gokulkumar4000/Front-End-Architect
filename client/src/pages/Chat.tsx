@@ -370,26 +370,32 @@ export default function ChatPage() {
                           )}
                           <div className={cn(
                             "p-4 rounded-2xl relative",
-                            isMe ? "bg-primary text-white rounded-tr-none shadow-lg shadow-primary/10" : "bg-white/5 text-white/90 rounded-tl-none border border-white/5"
+                            isMe ? "bg-primary text-white rounded-tr-none shadow-lg shadow-primary/10" : "bg-white/5 text-white/90 rounded-tl-none border border-white/5",
+                            msg.messageType === "connect-request" && "border-2 border-primary/60 bg-primary/10 shadow-lg shadow-primary/20 text-white/95",
+                            msg.messageType === "access-request" && "border-2 border-amber-500/50 bg-amber-500/10 shadow-lg shadow-amber-500/10 text-white/95"
                           )}>
-                            {(msg.messageType === "connect-request" || msg.text?.toLowerCase().includes("interested in connecting")) && (
-                              <div className="mb-3 pb-3 border-b border-white/10">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                                  <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Connection Request</span>
+                            {msg.messageType === "connect-request" && (
+                              <div className="mb-3 pb-3 border-b border-primary/20">
+                                <div className="flex items-center gap-2">
+                                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 border border-primary/40">
+                                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                                  </div>
+                                  <span className="text-[11px] font-black text-primary uppercase tracking-[0.25em]">Connection Request</span>
                                 </div>
                               </div>
                             )}
                             {msg.messageType === "access-request" && (
-                              <div className="mb-3 pb-3 border-b border-white/10">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                                  <span className="text-[10px] font-black text-amber-400 uppercase tracking-[0.3em]">Access Request</span>
+                              <div className="mb-3 pb-3 border-b border-amber-500/20">
+                                <div className="flex items-center gap-2">
+                                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-amber-500/20 border border-amber-500/40">
+                                    <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                                  </div>
+                                  <span className="text-[11px] font-black text-amber-400 uppercase tracking-[0.25em]">Access Request</span>
                                 </div>
                               </div>
                             )}
                             {msg.text && (
-                              <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                              <span className="text-sm leading-relaxed whitespace-pre-wrap block">{msg.text}</span>
                             )}
                             {msg.messageType === "access-request" && !isMe && (
                               <div className="mt-3 pt-3 border-t border-white/10">
