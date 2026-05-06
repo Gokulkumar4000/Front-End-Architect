@@ -259,6 +259,84 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     } catch (e: any) { res.status(500).json({ message: e.message }); }
   });
 
+  // ── Chat ───────────────────────────────────────────────────────────────────
+  app.get("/api/chats/user/:uid", async (req, res) => {
+    try {
+      const rooms = await storage.getChatRoomsForUser(req.params.uid);
+      res.json(rooms.map(r => ({
+        ...r,
+        id: String(r.id),
+        participants: r.participants,
+        participantNames: r.participantNames || {},
+        participantAvatars: r.participantAvatars || {},
+        participantRoles: r.participantRoles || {},
+        unreadCounts: r.unreadCounts || {},
+      })));
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
+  app.post("/api/chats", async (req, res) => {
+    try {
+      const { myUid, myName, myAvatar, myRole, targetUid, targetName, targetAvatar, targetRole, context } = req.body;
+      if (!myUid || !targetUid) return res.status(400).json({ message: "Missing uids" });
+      let room = await storage.findChatRoomBetween(myUid, targetUid);
+      if (!room) {
+        room = await storage.createChatRoom({
+          participants: [myUid, targetUid],
+          participantNames: { [myUid]: myName || "User", [targetUid]: targetName || "User" },
+          participantAvatars: { [myUid]: myAvatar || "", [targetUid]: targetAvatar || "" },
+          participantRoles: { [myUid]: myRole || "", [targetUid]: targetRole || "" },
+          context: context || null,
+        });
+      }
+      res.json({ ...room, id: String(room.id) });
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
+  app.get("/api/chats/:chatId/messages", async (req, res) => {
+    try {
+      const msgs = await storage.getMessages(Number(req.params.chatId));
+      res.json(msgs.map(m => ({
+        ...m,
+        id: String(m.id),
+        chatId: String(m.chatId),
+        text: m.text,
+        timestamp: m.createdAt,
+      })));
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
+  app.post("/api/chats/:chatId/messages", async (req, res) => {
+    try {
+      const { senderId, senderName, senderAvatar, text, messageType, postId, postAuthorUid, replyTo } = req.body;
+      if (!senderId || !text) return res.status(400).json({ message: "Missing senderId or text" });
+      const chatId = Number(req.params.chatId);
+      const room = await storage.getChatRoom(chatId);
+      if (!room) return res.status(404).json({ message: "Chat not found" });
+      const msg = await storage.addMessage({ chatId, senderId, senderName: senderName || "User", senderAvatar: senderAvatar || "", text, messageType, postId, postAuthorUid, replyTo });
+      await storage.updateChatRoomLastMessage(chatId, text, msg.createdAt!);
+      const otherUid = (room.participants as string[]).find(p => p !== senderId);
+      if (otherUid) await storage.incrementUnread(chatId, otherUid);
+      res.json({ ...msg, id: String(msg.id), timestamp: msg.createdAt });
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
+  app.patch("/api/chats/:chatId/read/:uid", async (req, res) => {
+    try {
+      const chatId = Number(req.params.chatId);
+      await storage.markChatRead(chatId, req.params.uid);
+      await storage.markMessagesRead(chatId, req.params.uid);
+      res.json({ success: true });
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
+  app.patch("/api/messages/:messageId/grant-access", async (req, res) => {
+    try {
+      await storage.grantAccess(Number(req.params.messageId));
+      res.json({ success: true });
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
   // ── Comments ───────────────────────────────────────────────────────────────
   app.get("/api/comments/:postId", async (req, res) => {
     try {

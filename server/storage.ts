@@ -1,8 +1,9 @@
 import { db } from "./db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, or } from "drizzle-orm";
 import {
-  users, profiles, posts, likes, saves, follows, comments,
+  users, profiles, posts, likes, saves, follows, comments, chatRooms, chatMessages,
   type User, type InsertUser, type Profile, type Post, type Save, type Follow, type Comment,
+  type ChatRoom, type ChatMessage,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -134,6 +135,101 @@ export class DatabaseStorage implements IStorage {
     const [p] = await db.select().from(posts).where(eq(posts.id, data.postId));
     if (p) await db.update(posts).set({ commentsCount: p.commentsCount + 1 }).where(eq(posts.id, data.postId));
     return c;
+  }
+
+  // Chat Rooms
+  async getChatRoomsForUser(uid: string): Promise<ChatRoom[]> {
+    const all = await db.select().from(chatRooms).orderBy(desc(chatRooms.lastMessageAt));
+    return all.filter(r => Array.isArray(r.participants) && r.participants.includes(uid));
+  }
+  async getChatRoom(id: number): Promise<ChatRoom | undefined> {
+    const [r] = await db.select().from(chatRooms).where(eq(chatRooms.id, id));
+    return r;
+  }
+  async findChatRoomBetween(uid1: string, uid2: string): Promise<ChatRoom | undefined> {
+    const all = await db.select().from(chatRooms);
+    return all.find(r =>
+      Array.isArray(r.participants) &&
+      r.participants.includes(uid1) &&
+      r.participants.includes(uid2) &&
+      r.participants.length === 2
+    );
+  }
+  async createChatRoom(data: {
+    participants: string[];
+    participantNames: Record<string, string>;
+    participantAvatars: Record<string, string>;
+    participantRoles: Record<string, string>;
+    context?: { type?: string; title?: string } | null;
+  }): Promise<ChatRoom> {
+    const [r] = await db.insert(chatRooms).values({
+      participants: data.participants,
+      participantNames: data.participantNames,
+      participantAvatars: data.participantAvatars,
+      participantRoles: data.participantRoles,
+      unreadCounts: {},
+      context: data.context ?? null,
+    } as any).returning();
+    return r;
+  }
+  async updateChatRoomLastMessage(chatId: number, text: string, timestamp: Date): Promise<void> {
+    await db.update(chatRooms).set({ lastMessage: text, lastMessageAt: timestamp }).where(eq(chatRooms.id, chatId));
+  }
+  async markChatRead(chatId: number, uid: string): Promise<void> {
+    const [r] = await db.select().from(chatRooms).where(eq(chatRooms.id, chatId));
+    if (!r) return;
+    const counts = { ...(r.unreadCounts as Record<string, number> || {}) };
+    counts[uid] = 0;
+    await db.update(chatRooms).set({ unreadCounts: counts } as any).where(eq(chatRooms.id, chatId));
+  }
+  async incrementUnread(chatId: number, uid: string): Promise<void> {
+    const [r] = await db.select().from(chatRooms).where(eq(chatRooms.id, chatId));
+    if (!r) return;
+    const counts = { ...(r.unreadCounts as Record<string, number> || {}) };
+    counts[uid] = (counts[uid] || 0) + 1;
+    await db.update(chatRooms).set({ unreadCounts: counts } as any).where(eq(chatRooms.id, chatId));
+  }
+
+  // Chat Messages
+  async getMessages(chatId: number): Promise<ChatMessage[]> {
+    return db.select().from(chatMessages).where(eq(chatMessages.chatId, chatId)).orderBy(chatMessages.createdAt);
+  }
+  async addMessage(data: {
+    chatId: number;
+    senderId: string;
+    senderName: string;
+    senderAvatar: string;
+    text: string;
+    messageType?: string;
+    postId?: string;
+    postAuthorUid?: string;
+    replyTo?: { id: string; senderId: string; text: string } | null;
+  }): Promise<ChatMessage> {
+    const [m] = await db.insert(chatMessages).values({
+      chatId: data.chatId,
+      senderId: data.senderId,
+      senderName: data.senderName,
+      senderAvatar: data.senderAvatar,
+      text: data.text,
+      messageType: data.messageType || "normal",
+      postId: data.postId,
+      postAuthorUid: data.postAuthorUid,
+      replyTo: data.replyTo ?? null,
+      status: "sent",
+    } as any).returning();
+    return m;
+  }
+  async grantAccess(messageId: number): Promise<void> {
+    await db.update(chatMessages).set({ accessGranted: true } as any).where(eq(chatMessages.id, messageId));
+  }
+  async markMessagesRead(chatId: number, uid: string): Promise<void> {
+    const msgs = await db.select().from(chatMessages)
+      .where(and(eq(chatMessages.chatId, chatId), eq(chatMessages.status, "sent")));
+    for (const m of msgs) {
+      if (m.senderId !== uid) {
+        await db.update(chatMessages).set({ status: "read" }).where(eq(chatMessages.id, m.id));
+      }
+    }
   }
 }
 

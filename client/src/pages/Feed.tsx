@@ -109,9 +109,10 @@ interface Post {
   authorUid?: string;
 }
 
-import { getPosts, seedMockPostsIfEmpty, getPostComments, addPostComment, addReplyToComment, type FirestoreComment } from "@/lib/firestoreService";
+import { getPosts, seedMockPostsIfEmpty, getPostComments, addPostComment, addReplyToComment, getOrCreateChat, sendMessage, type FirestoreComment } from "@/lib/firestoreService";
 import { useFirebaseAuth } from "@/hooks/use-auth";
 import { useUserActivity } from "@/hooks/use-user-activity";
+import { useUserProfile } from "@/hooks/use-profile";
 
 
 interface DetailsSidebarProps {
@@ -308,6 +309,7 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
   const [, setLocation] = useLocation();
   const userRole = localStorage.getItem("userRole") as string;
   const { user } = useFirebaseAuth();
+  const { profile } = useUserProfile();
   const activity = useUserActivity();
 
   const isFollowingAuthor = useMemo(() => {
@@ -503,18 +505,57 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
     const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
     const authorAvatar = typeof post.author === 'string' ? '' : (post.author as any)?.avatar || '';
     const authorRole = typeof post.author === 'string' ? '' : (post.author as any)?.role || '';
-    
+    const authorUid = (post as any).authorUid || (post.author as any)?.uid || '';
+
+    const myName = profile?.fullName || user?.displayName || 'User';
+    const myAvatar = profile?.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(myName)}`;
+    const myRole = profile?.role || userRole || 'member';
+
     const connectData = {
-      userId: post.id,
+      targetUid: authorUid,
       userName: authorName,
       userAvatar: authorAvatar,
       userRole: authorRole,
       postType: post.type,
       postTitle: post.title,
-      postContent: post.content?.substring(0, 100) || ''
+      myName,
+      myAvatar,
+      myRole,
+      autoSend: true,
+      messageType: 'connect-request',
     };
-    
+
     localStorage.setItem('pendingConnectRequest', JSON.stringify(connectData));
+    setLocation('/chat');
+  };
+
+  const handleRequestAccess = () => {
+    const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name;
+    const authorAvatar = typeof post.author === 'string' ? '' : (post.author as any)?.avatar || '';
+    const authorRole = typeof post.author === 'string' ? '' : (post.author as any)?.role || '';
+    const authorUid = (post as any).authorUid || (post.author as any)?.uid || '';
+
+    const myName = profile?.fullName || user?.displayName || 'User';
+    const myAvatar = profile?.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(myName)}`;
+    const myRole = profile?.role || userRole || 'member';
+
+    const accessData = {
+      targetUid: authorUid,
+      userName: authorName,
+      userAvatar: authorAvatar,
+      userRole: authorRole,
+      postType: post.type,
+      postTitle: post.title,
+      postId: String(post.id),
+      postAuthorUid: authorUid,
+      myName,
+      myAvatar,
+      myRole,
+      autoSend: true,
+      messageType: 'access-request',
+    };
+
+    localStorage.setItem('pendingConnectRequest', JSON.stringify(accessData));
     setLocation('/chat');
   };
 
@@ -1269,8 +1310,8 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
                       </p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 w-full max-w-xs">
-                      <Button className="flex-1 font-bold shadow-lg shadow-primary/20">Request Access</Button>
-                      <Button variant="outline" className="flex-1 font-bold border-white/10 hover:bg-white/5">Connect</Button>
+                      <Button className="flex-1 font-bold shadow-lg shadow-primary/20" onClick={handleRequestAccess}>Request Access</Button>
+                      <Button variant="outline" className="flex-1 font-bold border-white/10 hover:bg-white/5" onClick={handleConnect}>Connect</Button>
                     </div>
                   </div>
                 ) : (

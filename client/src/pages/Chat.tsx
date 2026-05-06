@@ -35,6 +35,7 @@ import {
   sendMessage,
   getOrCreateChat,
   markChatAsRead,
+  grantChatAccess,
   type ChatRoom,
   type ChatMessage,
 } from "@/lib/firestoreService";
@@ -103,33 +104,43 @@ export default function ChatPage() {
     }
   }, [selectedChatId, user]);
 
-  // Handle pending connect request from Feed
+  // Handle pending connect / access request from Feed
   useEffect(() => {
     const pendingRequest = localStorage.getItem("pendingConnectRequest");
     if (!pendingRequest || !user || !profile) return;
     const data = JSON.parse(pendingRequest);
     localStorage.removeItem("pendingConnectRequest");
 
-    if (!data.targetUid) {
-      setMessageInput(
-        `Hi ${data.userName}! I'm interested in connecting regarding your ${data.postType || "post"}: "${data.postTitle}".\n\nI'd love to discuss potential collaboration opportunities.`
-      );
-      return;
-    }
+    const myName = data.myName || profile.fullName || user.displayName || "User";
+    const myAvatar = data.myAvatar || profile.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(myName)}`;
+    const myRole = data.myRole || profile.role || "idea-holder";
 
-    const myName = profile.fullName || user.displayName || "User";
-    const myAvatar = profile.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(myName)}`;
-    const myRole = profile.role || "idea-holder";
+    if (!data.targetUid) return;
+
+    const isAccessRequest = data.messageType === "access-request";
+
+    const msgText = isAccessRequest
+      ? `Hi ${data.userName}! I'd like to request access to the restricted sections of your ${data.postType || "post"}: "${data.postTitle}".\n\nI'm interested in learning more and believe I can add value as a collaborator.`
+      : `Hi ${data.userName}! I'm interested in connecting regarding your ${data.postType || "post"}: "${data.postTitle}".\n\nI'd love to discuss potential collaboration opportunities.`;
 
     getOrCreateChat(
       user.uid, myName, myAvatar, myRole,
-      data.targetUid, data.userName, data.userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.userName}`, data.userRole || "member",
+      data.targetUid,
+      data.userName,
+      data.userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(data.userName || "user")}`,
+      data.userRole || "member",
       data.postType ? { type: data.postType, title: data.postTitle } : undefined
     ).then((chatId) => {
       setSelectedChatId(chatId);
-      setMessageInput(
-        `Hi ${data.userName}! I'm interested in connecting regarding your ${data.postType || "post"}: "${data.postTitle}".\n\nI'd love to discuss potential collaboration opportunities.`
-      );
+      if (data.autoSend) {
+        return sendMessage(chatId, user.uid, msgText, {
+          messageType: data.messageType || "connect-request",
+          senderName: myName,
+          senderAvatar: myAvatar,
+          ...(isAccessRequest ? { postId: data.postId, postAuthorUid: data.postAuthorUid } : {}),
+        });
+      }
+      setMessageInput(msgText);
     }).catch(() => {});
   }, [user, profile]);
 
@@ -154,13 +165,18 @@ export default function ChatPage() {
   const handleSendMessage = useCallback(async () => {
     if (!messageInput.trim() || !selectedChatId || !user || sending) return;
     setSending(true);
+    const myName = profile?.fullName || user.displayName || "User";
+    const myAvatar = profile?.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(myName)}`;
     try {
       await sendMessage(
         selectedChatId,
         user.uid,
         messageInput.trim(),
-        undefined,
-        replyToMessage ? { id: replyToMessage.id, senderId: replyToMessage.senderId, text: replyToMessage.text } : undefined
+        {
+          senderName: myName,
+          senderAvatar: myAvatar,
+          replyTo: replyToMessage ? { id: replyToMessage.id, senderId: replyToMessage.senderId, text: replyToMessage.text } : undefined,
+        }
       );
       setMessageInput("");
       setReplyToMessage(null);
@@ -169,7 +185,7 @@ export default function ChatPage() {
     } finally {
       setSending(false);
     }
-  }, [messageInput, selectedChatId, user, sending, replyToMessage, toast]);
+  }, [messageInput, selectedChatId, user, profile, sending, replyToMessage, toast]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -356,7 +372,7 @@ export default function ChatPage() {
                             "p-4 rounded-2xl relative",
                             isMe ? "bg-primary text-white rounded-tr-none shadow-lg shadow-primary/10" : "bg-white/5 text-white/90 rounded-tl-none border border-white/5"
                           )}>
-                            {msg.text?.toLowerCase().includes("interested in connecting") && (
+                            {(msg.messageType === "connect-request" || msg.text?.toLowerCase().includes("interested in connecting")) && (
                               <div className="mb-3 pb-3 border-b border-white/10">
                                 <div className="flex items-center gap-2 mb-1">
                                   <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
@@ -364,8 +380,37 @@ export default function ChatPage() {
                                 </div>
                               </div>
                             )}
+                            {msg.messageType === "access-request" && (
+                              <div className="mb-3 pb-3 border-b border-white/10">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                  <span className="text-[10px] font-black text-amber-400 uppercase tracking-[0.3em]">Access Request</span>
+                                </div>
+                              </div>
+                            )}
                             {msg.text && (
                               <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                            )}
+                            {msg.messageType === "access-request" && !isMe && (
+                              <div className="mt-3 pt-3 border-t border-white/10">
+                                {msg.accessGranted ? (
+                                  <div className="flex items-center gap-2 text-emerald-400">
+                                    <CheckCheck className="w-4 h-4" />
+                                    <span className="text-xs font-bold">Access Granted</span>
+                                  </div>
+                                ) : (
+                                  <button
+                                    onClick={async () => {
+                                      await grantChatAccess(msg.id);
+                                      toast({ title: "Access Granted", description: "The user now has access to your post details." });
+                                    }}
+                                    className="w-full py-2 px-4 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-400 text-xs font-bold transition-all flex items-center justify-center gap-2"
+                                  >
+                                    <CheckCheck className="w-3.5 h-3.5" />
+                                    Grant Access
+                                  </button>
+                                )}
+                              </div>
                             )}
                             <div className={cn("flex items-center gap-1 mt-2", isMe ? "justify-end" : "justify-start")}>
                               <span className="text-[9px] opacity-60 font-medium">{formatTime(msg.timestamp)}</span>

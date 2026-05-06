@@ -329,7 +329,7 @@ export async function updateInvestmentStatus(_id: string, _status: string): Prom
 
 export async function deleteUserAccount(_uid: string): Promise<void> {}
 
-// ── Chat (stub — real-time chat not yet migrated to new backend) ──────────
+// ── Chat ─────────────────────────────────────────────────────────────────────
 
 export interface ChatMessage {
   id: string;
@@ -341,6 +341,10 @@ export interface ChatMessage {
   timestamp?: any;
   read?: boolean;
   status?: string;
+  messageType?: string;
+  accessGranted?: boolean | null;
+  postId?: string;
+  postAuthorUid?: string;
   replyTo?: { id: string; content: string; text?: string; senderName: string; senderId?: string } | null;
   [key: string]: any;
 }
@@ -360,18 +364,70 @@ export interface ChatRoom {
   [key: string]: any;
 }
 
-export function subscribeToUserChats(_uid: string, _cb: (chats: ChatRoom[]) => void): () => void {
-  return () => {};
+const CHAT_POLL_MS = 3000;
+const MSG_POLL_MS = 2000;
+
+export function subscribeToUserChats(uid: string, cb: (chats: ChatRoom[]) => void): () => void {
+  let active = true;
+  const poll = async () => {
+    if (!active) return;
+    try {
+      const res = await fetch(`/api/chats/user/${uid}`);
+      if (res.ok) { const data = await res.json(); cb(data); }
+    } catch {}
+    if (active) setTimeout(poll, CHAT_POLL_MS);
+  };
+  poll();
+  return () => { active = false; };
 }
 
-export function subscribeToMessages(_chatId: string, _cb: (messages: ChatMessage[]) => void): () => void {
-  return () => {};
+export function subscribeToMessages(chatId: string, cb: (messages: ChatMessage[]) => void): () => void {
+  if (!chatId) return () => {};
+  let active = true;
+  const poll = async () => {
+    if (!active) return;
+    try {
+      const res = await fetch(`/api/chats/${chatId}/messages`);
+      if (res.ok) { const data = await res.json(); cb(data); }
+    } catch {}
+    if (active) setTimeout(poll, MSG_POLL_MS);
+  };
+  poll();
+  return () => { active = false; };
 }
 
-export async function sendMessage(..._args: any[]): Promise<void> {}
-
-export async function getOrCreateChat(..._args: any[]): Promise<string> {
-  return "";
+export async function sendMessage(
+  chatId: string,
+  senderId: string,
+  text: string,
+  options?: { messageType?: string; postId?: string; postAuthorUid?: string; replyTo?: any; senderName?: string; senderAvatar?: string }
+): Promise<void> {
+  await fetch(`/api/chats/${chatId}/messages`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ senderId, text, ...(options || {}) }),
+  });
 }
 
-export async function markChatAsRead(_chatId: string, _uid: string): Promise<void> {}
+export async function getOrCreateChat(
+  myUid: string, myName: string, myAvatar: string, myRole: string,
+  targetUid: string, targetName: string, targetAvatar: string, targetRole: string,
+  context?: { type?: string; title?: string }
+): Promise<string> {
+  const res = await fetch("/api/chats", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ myUid, myName, myAvatar, myRole, targetUid, targetName, targetAvatar, targetRole, context }),
+  });
+  if (!res.ok) throw new Error("Failed to create chat");
+  const room = await res.json();
+  return room.id;
+}
+
+export async function markChatAsRead(chatId: string, uid: string): Promise<void> {
+  await fetch(`/api/chats/${chatId}/read/${uid}`, { method: "PATCH" });
+}
+
+export async function grantChatAccess(messageId: string): Promise<void> {
+  await fetch(`/api/messages/${messageId}/grant-access`, { method: "PATCH" });
+}
