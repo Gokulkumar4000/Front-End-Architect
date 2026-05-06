@@ -837,17 +837,22 @@ export default function Auth() {
         await updateProfile(credential.user, { displayName: formData.fullName });
       }
       const { password: _p, confirmPassword: _cp, ...safeFormData } = formData;
-      await saveUserProfile(credential.user.uid, {
-        ...safeFormData,
-        uid: credential.user.uid,
-        role: selectedRole || "idea-holder",
-        fullName: formData.fullName || "",
-        email: formData.email,
-      });
+      try {
+        await saveUserProfile(credential.user.uid, {
+          ...safeFormData,
+          uid: credential.user.uid,
+          role: selectedRole || "idea-holder",
+          fullName: formData.fullName || "",
+          email: formData.email,
+        });
+      } catch (profileErr: any) {
+        console.error("Profile save error (non-fatal):", profileErr);
+      }
       toast({ title: "Account created!", description: "Welcome to DevConnect!" });
       setLocation("/feed");
     } catch (err: any) {
       const code = err?.code || "";
+      console.error("Registration error:", code, err);
       let message = "Registration failed. Please try again.";
       if (code === "auth/email-already-in-use") {
         message = "This email is already registered. Please log in instead.";
