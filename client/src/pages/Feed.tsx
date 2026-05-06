@@ -791,17 +791,14 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
             </div>
             
             {actionText && (
-              <Button 
-                size="sm" 
-                className="font-bold relative group overflow-hidden"
-                onClick={actionText === "Connect" ? handleConnect : undefined}
-                data-testid="button-connect"
-              >
-                 <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10">
-                  <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
-                </div>
-                <span className="relative z-20">{actionText}</span>
-              </Button>
+            <Button 
+              size="sm" 
+              className="font-bold relative group overflow-hidden"
+              onClick={actionText === "Connect" ? handleConnect : undefined}
+              data-testid="button-connect"
+            >
+              <span className="relative z-20">{actionText}</span>
+            </Button>
             )}
           </div>
         </CardFooter>
@@ -819,9 +816,9 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
               </div>
             </AlertDialogTitle>
             <AlertDialogDescription className="pt-4 space-y-4">
-              <p className="text-sm text-white/70">
+              <div className="text-sm text-white/70">
                 By following this <span className="text-primary font-bold">{post.author.role}</span>, you will:
-              </p>
+              </div>
               <ul className="space-y-3">
                 {getFollowBenefits(post.author.role).map((benefit, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm text-white/80">
@@ -858,9 +855,9 @@ export const FeedCard = memo(({ post, forceShowDetails = false, onClose }: { pos
               </div>
             </AlertDialogTitle>
             <AlertDialogDescription className="pt-4">
-              <p className="text-sm text-white/70">
+              <div className="text-sm text-white/70">
                 Are you sure you want to unfollow <span className="text-primary font-bold">{post.author.name}</span>? You will stop receiving updates from this visionary.
-              </p>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0 mt-6">
@@ -1561,8 +1558,8 @@ export default function Feed() {
         <div className="hidden lg:block w-[300px] shrink-0 sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
           <div className="space-y-6">
             <Card className="glass-card border-white/5 p-6">
-            <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Platform Stats</h4>
-            <div className="space-y-4">
+              <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Platform Stats</h4>
+              <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-emerald-500" />
@@ -1577,7 +1574,8 @@ export default function Feed() {
                 </div>
                 <span className="text-sm font-bold">45.2k</span>
               </div>
-            </div>
+              </div>
+            </Card>
           </Card>
 
           <Card className="glass-card border-white/5 p-6">

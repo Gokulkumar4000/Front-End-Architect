@@ -1,4 +1,9 @@
-import { initializeApp } from "firebase/app";
+let firebaseApp: any = null;
+let firebaseAuth: any = null;
+let firebaseDb: any = null;
+
+try {
+  const { initializeApp } = await import("firebase/app");
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -42,35 +47,44 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+  const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } = await import("firebase/auth");
+  const { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, getDocs, addDoc, query, orderBy, serverTimestamp, Timestamp, arrayUnion, arrayRemove, increment, deleteField, writeBatch, where, onSnapshot, limit } = await import("firebase/firestore");
+  firebaseApp = initializeApp(firebaseConfig);
+  firebaseAuth = getAuth(firebaseApp);
+  firebaseDb = getFirestore(firebaseApp);
 
-export {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  updateProfile,
-  type User,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-  collection,
-  getDocs,
-  addDoc,
-  query,
-  orderBy,
-  serverTimestamp,
-  Timestamp,
-  arrayUnion,
-  arrayRemove,
-  increment,
-  deleteField,
-  writeBatch,
-  where,
-  onSnapshot,
-  limit,
-};
+  export const auth = firebaseAuth;
+  export const db = firebaseDb;
+  export {
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+    updateProfile,
+    type User,
+    doc,
+    setDoc,
+    getDoc,
+    updateDoc,
+    deleteDoc,
+    collection,
+    getDocs,
+    addDoc,
+    query,
+    orderBy,
+    serverTimestamp,
+    Timestamp,
+    arrayUnion,
+    arrayRemove,
+    increment,
+    deleteField,
+    writeBatch,
+    where,
+    onSnapshot,
+    limit,
+  };
+} catch {
+  export const auth = null;
+  export const db = null;
+  export type User = any;
+}
