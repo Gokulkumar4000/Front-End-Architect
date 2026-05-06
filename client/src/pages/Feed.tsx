@@ -1560,25 +1560,24 @@ export default function Feed() {
             <Card className="glass-card border-white/5 p-6">
               <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Platform Stats</h4>
               <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-emerald-500" />
-                  <span className="text-xs text-muted-foreground">Active Ideas</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-emerald-500" />
+                    <span className="text-xs text-muted-foreground">Active Ideas</span>
+                  </div>
+                  <span className="text-sm font-bold">1,248</span>
                 </div>
-                <span className="text-sm font-bold">1,248</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-blue-500" />
-                  <span className="text-xs text-muted-foreground">Total Builders</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-blue-500" />
+                    <span className="text-xs text-muted-foreground">Total Builders</span>
+                  </div>
+                  <span className="text-sm font-bold">45.2k</span>
                 </div>
-                <span className="text-sm font-bold">45.2k</span>
-              </div>
               </div>
             </Card>
-          </Card>
 
-          <Card className="glass-card border-white/5 p-6">
+            <Card className="glass-card border-white/5 p-6">
             <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Trending Posts</h4>
             <div className="space-y-3">
               {TRENDING_POSTS_DATA.slice(0, 3).map((post, i) => (
@@ -1737,7 +1736,7 @@ export default function Feed() {
             </DialogContent>
           </Dialog>
 
-          <Card className="glass-card border-white/5 p-6">
+            <Card className="glass-card border-white/5 p-6">
             <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Suggested Connections</h4>
             <div className="space-y-4">
               {connectionsToShow.map(person => (
@@ -1780,10 +1779,9 @@ export default function Feed() {
               {showAllConnections ? "Search More" : "View More"}
             </Button>
           </Card>
+          </div>
         </div>
       </div>
-    </div>
-      
       {selectedTrendingPost && (
         <FeedCard 
           post={selectedTrendingPost} 
