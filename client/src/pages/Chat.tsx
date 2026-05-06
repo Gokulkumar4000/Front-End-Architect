@@ -107,15 +107,19 @@ export default function ChatPage() {
   // Handle pending connect / access request from Feed
   useEffect(() => {
     const pendingRequest = localStorage.getItem("pendingConnectRequest");
-    if (!pendingRequest || !user || !profile) return;
+    // Only require user — profile may be null for users who haven't completed onboarding
+    if (!pendingRequest || !user) return;
     const data = JSON.parse(pendingRequest);
+    if (!data.targetUid) {
+      localStorage.removeItem("pendingConnectRequest");
+      return;
+    }
     localStorage.removeItem("pendingConnectRequest");
 
-    const myName = data.myName || profile.fullName || user.displayName || "User";
-    const myAvatar = data.myAvatar || profile.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(myName)}`;
-    const myRole = data.myRole || profile.role || "idea-holder";
-
-    if (!data.targetUid) return;
+    // Use values baked into the payload first, then fallbacks
+    const myName = data.myName || profile?.fullName || user.displayName || "User";
+    const myAvatar = data.myAvatar || profile?.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(myName)}`;
+    const myRole = data.myRole || profile?.role || "member";
 
     const isAccessRequest = data.messageType === "access-request";
 
@@ -141,8 +145,8 @@ export default function ChatPage() {
         });
       }
       setMessageInput(msgText);
-    }).catch(() => {});
-  }, [user, profile]);
+    }).catch(console.error);
+  }, [user]);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
