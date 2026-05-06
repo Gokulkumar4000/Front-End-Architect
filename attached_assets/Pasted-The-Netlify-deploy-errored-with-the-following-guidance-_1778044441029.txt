@@ -1,0 +1,38 @@
+The Netlify deploy errored, with the following guidance provided:
+
+Diagnosis
+- I can’t isolate the failing error because the build log excerpt was not included in your message. Without the specific error lines I cannot identify the error type or cause.
+
+Solution / next steps
+1. Please paste the failing build log lines (or the full Netlify log). Include at minimum:
+   - The exact error lines and a few lines above and below the error.
+   - package.json
+   - vite.config.* (vite.config.js / vite.config.ts)
+   - netlify.toml (if present)
+   - Any custom build command configured in Netlify and the Node version used in the Netlify build settings.
+   This will let me point to the exact lines (I will link to lines using #L... as requested).
+
+2. While you gather the logs, run these local checks (they often catch common Vite/Netlify failure causes):
+   - Run the build locally: 
+```bash
+npm ci
+npm run build
+```
+   - If the local build fails, copy the failing lines and include them in your reply.
+   - If the local build succeeds but Netlify fails, confirm the Node version used by Netlify matches your local Node. If you need to change Netlify’s Node version, follow Netlify docs: https://docs.netlify.com/configure-builds/manage-dependencies/#node-js-and-javascript
+
+3. If the error mentions adding a package or file to an external configuration (e.g., build.rollupOptions.external):
+   - First verify the package is listed in package.json or the file was committed to the repo.
+   - Only if it is present and you still get bundling errors, add it to rollupOptions.external in vite.config.* (share your vite.config and I’ll suggest exact code).
+
+4. Common checks you can try now (copy results into your reply):
+   - Search the client code for use of Node-only modules (fs, path, child_process, net, tls). If these are imported in client-side code, they will break the Vite browser build.
+   - If you use SSR or libraries that require polyfills, confirm proper config or mark them external in Vite/Rollup.
+   - Ensure no files are gitignored that the build expects (e.g., .env, assets). If the error says “no such file” verify the file is committed.
+
+When you paste the log, I will:
+- Isolate the exact error lines and link to them (format #L123 or #L123-L125).
+- Identify the error type and root cause.
+- Provide a targeted fix (including exact code changes to vite.config, package.json, netlify.toml, or commands to run), and verify whether you must first ensure a package/file is present in package.json/repo before adding to external configuration.
+
+The relevant error logs are:

@@ -6,6 +6,10 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Use esbuild bundler — avoids zip-it-and-ship-it's supports-color scanner bug
+[functions]
+  node_bundler = "esbuild"
+
 # Redirect all /api/* calls to the serverless Express function
 [[redirects]]
   from = "/api/*"
