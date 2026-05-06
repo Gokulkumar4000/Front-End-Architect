@@ -24,7 +24,7 @@ export default function Portfolio() {
   }, [user]);
 
   const byCollection = investments.reduce<Record<string, number>>((acc, inv) => {
-    const label = inv.postCollection === "funds" ? "Funds" : inv.postCollection === "ideas" ? "Ideas" : inv.postCollection;
+    const label = inv.postCollection === "funds" ? "Funds" : inv.postCollection === "ideas" ? "Ideas" : (inv.postCollection || "Other");
     acc[label] = (acc[label] || 0) + 1;
     return acc;
   }, {});

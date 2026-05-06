@@ -1,47 +1,16 @@
-import {
-  db,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-  collection,
-  getDocs,
-  addDoc,
-  serverTimestamp,
-  deleteField,
-  query,
-  orderBy,
-  where,
-  increment,
-  onSnapshot,
-} from "./firebase";
-
-// ─── Type → Collection Mapping ───────────────────────────────────────────────
+// All data now served from the Express/PostgreSQL API. Firebase Auth is kept for login only.
 
 export type PostType = "idea" | "project" | "fund" | "recruitment";
 
 export function typeToCollection(type: PostType | string): string {
-  const map: Record<string, string> = {
-    idea: "ideas",
-    project: "projects",
-    fund: "funds",
-    recruitment: "recruitment",
-  };
+  const map: Record<string, string> = { idea: "ideas", project: "projects", fund: "funds", recruitment: "recruitment" };
   return map[type] || "ideas";
 }
 
 export function collectionToType(col: string): PostType {
-  const map: Record<string, PostType> = {
-    ideas: "idea",
-    projects: "project",
-    funds: "fund",
-    recruitment: "recruitment",
-  };
+  const map: Record<string, PostType> = { ideas: "idea", projects: "project", funds: "fund", recruitment: "recruitment" };
   return map[col] || "idea";
 }
-
-// ─── User Profile ─────────────────────────────────────────────────────────────
 
 export interface UserProfile {
   uid: string;
@@ -81,30 +50,19 @@ export interface UserProfile {
   createdAt?: any;
 }
 
-export async function saveUserProfile(uid: string, profileData: Partial<UserProfile>) {
-  const userRef = doc(db, "users", uid);
-  await setDoc(userRef, { ...profileData, uid, createdAt: serverTimestamp() }, { merge: true });
+export interface SavedPostData {
+  id: string;
+  type?: PostType | string;
+  collectionName?: string;
+  title?: string;
+  description?: string;
+  author?: { name: string; avatar?: string };
+  domains?: string[];
+  likes?: number;
+  note?: string;
+  savedAt?: any;
+  [key: string]: any;
 }
-
-export async function getUserProfile(uid: string): Promise<UserProfile | null> {
-  const userRef = doc(db, "users", uid);
-  const snap = await getDoc(userRef);
-  if (snap.exists()) return snap.data() as UserProfile;
-  return null;
-}
-
-export async function updateUserProfile(uid: string, data: Partial<UserProfile>) {
-  const userRef = doc(db, "users", uid);
-  await updateDoc(userRef, data as any);
-}
-
-export async function getAllUsers(): Promise<UserProfile[]> {
-  const usersCol = collection(db, "users");
-  const snap = await getDocs(usersCol);
-  return snap.docs.map((d) => d.data() as UserProfile);
-}
-
-// ─── Posts ────────────────────────────────────────────────────────────────────
 
 export interface FirestoreComment {
   id: string;
@@ -128,23 +86,17 @@ export interface FirestorePost {
   comments?: FirestoreComment[];
   createdAt?: any;
   authorUid?: string;
-
-  // ── Idea-specific ──
   problem?: string;
   solution?: string;
   traction?: string;
   market?: string;
   collaborationNeeds?: string;
-
-  // ── Project-specific ──
   projectDescription?: string;
   rolesNeeded?: string;
   skillsRequired?: string;
   timeline?: string;
   benefits?: string;
   teamInfo?: string;
-
-  // ── Fund-specific ──
   fundingGoal?: number;
   minContribution?: number;
   deadline?: string;
@@ -152,728 +104,274 @@ export interface FirestorePost {
   roadmap?: string;
   currentAmount?: number;
   currentSupporters?: number;
-
-  // ── Recruitment-specific ──
   jobType?: string;
   compensation?: string;
   requirements?: string;
 }
 
-async function fetchFromCollection(colName: string): Promise<FirestorePost[]> {
-  try {
-    const col = collection(db, colName);
-    const q = query(col, orderBy("createdAt", "desc"));
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => ({
-      id: d.id,
-      collectionName: colName,
-      ...d.data(),
-    } as FirestorePost));
-  } catch {
-    return [];
-  }
+async function apiFetch(path: string, options?: RequestInit) {
+  const res = await fetch(path, { headers: { "Content-Type": "application/json" }, ...options });
+  if (!res.ok) throw new Error(`API error ${res.status}`);
+  return res.json();
 }
 
+// ── Posts ──────────────────────────────────────────────────────────────────
+
 export async function getPosts(): Promise<FirestorePost[]> {
-  const [ideas, projects, funds, recruitment] = await Promise.all([
-    fetchFromCollection("ideas"),
-    fetchFromCollection("projects"),
-    fetchFromCollection("funds"),
-    fetchFromCollection("recruitment"),
-  ]);
-  return [...ideas, ...projects, ...funds, ...recruitment].sort((a, b) => {
-    const aTime = a.createdAt?.toMillis?.() ?? 0;
-    const bTime = b.createdAt?.toMillis?.() ?? 0;
-    return bTime - aTime;
-  });
+  return apiFetch("/api/posts");
 }
 
 export async function getPostsByType(type: PostType | string): Promise<FirestorePost[]> {
-  return fetchFromCollection(typeToCollection(type));
+  return apiFetch(`/api/posts/type/${type}`);
 }
 
 export async function getUserPosts(uid: string, type?: PostType | string): Promise<FirestorePost[]> {
-  const colNames = type
-    ? [typeToCollection(type)]
-    : ["ideas", "projects", "funds", "recruitment"];
-  const results = await Promise.all(
-    colNames.map(async (colName) => {
-      try {
-        const col = collection(db, colName);
-        const q = query(col, where("authorUid", "==", uid), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        return snap.docs.map((d) => ({
-          id: d.id,
-          collectionName: colName,
-          ...d.data(),
-        } as FirestorePost));
-      } catch {
-        return [] as FirestorePost[];
-      }
-    })
-  );
-  return results.flat().sort((a, b) => {
-    const aTime = a.createdAt?.toMillis?.() ?? 0;
-    const bTime = b.createdAt?.toMillis?.() ?? 0;
-    return bTime - aTime;
-  });
+  const all = await apiFetch(`/api/posts/user/${uid}`);
+  if (!type) return all;
+  return all.filter((p: FirestorePost) => p.type === type);
 }
 
-export async function createPost(
-  uid: string,
-  postData: Omit<FirestorePost, "id" | "createdAt" | "collectionName">
-): Promise<FirestorePost> {
-  const colName = typeToCollection(postData.type);
-  const col = collection(db, colName);
-  const ref = await addDoc(col, {
-    ...postData,
-    authorUid: uid,
-    createdAt: serverTimestamp(),
+export async function createPost(uid: string, postData: Omit<FirestorePost, "id" | "createdAt" | "collectionName">): Promise<FirestorePost> {
+  return apiFetch("/api/posts", {
+    method: "POST",
+    body: JSON.stringify({
+      type: postData.type,
+      authorUid: uid,
+      authorName: postData.author.name,
+      authorAvatar: postData.author.avatar,
+      authorRole: postData.author.role,
+      title: postData.title,
+      content: postData.content,
+      domains: postData.domains,
+      problem: postData.problem,
+      solution: postData.solution,
+      traction: postData.traction,
+      market: postData.market,
+      collaborationNeeds: postData.collaborationNeeds,
+      projectDescription: postData.projectDescription,
+      rolesNeeded: postData.rolesNeeded,
+      skillsRequired: postData.skillsRequired,
+      timeline: postData.timeline,
+      benefits: postData.benefits,
+      teamInfo: postData.teamInfo,
+      fundingGoal: postData.fundingGoal,
+      minContribution: postData.minContribution,
+      deadline: postData.deadline,
+      fundUsage: postData.fundUsage,
+      roadmap: postData.roadmap,
+      currentAmount: postData.currentAmount,
+      currentSupporters: postData.currentSupporters,
+      jobType: postData.jobType,
+      compensation: postData.compensation,
+      requirements: postData.requirements,
+    }),
   });
-  // Also store reference in users/{uid}/posts subcollection
-  const userPostRef = doc(db, "users", uid, "posts", ref.id);
-  await setDoc(userPostRef, {
-    postId: ref.id,
-    collection: colName,
-    type: postData.type,
-    title: postData.title,
-    content: postData.content,
-    domains: postData.domains || [],
-    createdAt: serverTimestamp(),
-    ...postData,
-    authorUid: uid,
-  });
-  return { id: ref.id, collectionName: colName, ...postData };
 }
 
 export async function deletePost(collectionName: string, postId: string): Promise<void> {
-  await deleteDoc(doc(db, collectionName, postId));
+  await apiFetch(`/api/posts/${postId}`, { method: "DELETE" });
 }
 
-export async function seedMockPostsIfEmpty() {
-  const ideasCol = collection(db, "ideas");
-  const existing = await getDocs(ideasCol);
-  if (!existing.empty) return;
+// No-op — seeding is handled server-side automatically
+export async function seedMockPostsIfEmpty(): Promise<void> {}
 
-  const mockPosts = [
-    {
-      type: "idea" as PostType,
-      author: { name: "Alice Visionary", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice", role: "Idea Holder" },
-      title: "AI-Powered Sustainable Farming",
-      content: "We are developing a revolutionary automated sensor network for small-scale urban farmers. Our system uses advanced IoT devices and machine learning to monitor soil health, predict crop diseases before they manifest, and optimize water usage by up to 60%.",
-      timestamp: "2h ago",
-      stats: { likes: 124, comments: 2 },
-      domains: ["AI/ML", "Agriculture"],
-      problem: "Small-scale urban farmers struggle with crop diseases, inefficient water usage, and lack of data-driven insights. Traditional methods waste up to 40% more water and result in lower yields.",
-      solution: "An IoT sensor network combined with a machine learning platform that monitors soil moisture, pH, temperature, and humidity in real-time. The AI predicts disease outbreaks 2 weeks in advance with 87% accuracy.",
-      traction: "Pilot tested with 12 urban farms in Berlin. Average yield improvement of 34% and water savings of 58%. Currently processing over 2M data points per day.",
-      market: "Global precision agriculture market valued at $9.5B in 2024, growing at 12.7% CAGR. Target market: 600M+ small-scale farmers worldwide. Initial focus on Europe and North America.",
-      collaborationNeeds: "Looking for a Full-Stack Developer with IoT experience, a Data Scientist specializing in time-series analysis, and an agricultural domain expert. Equity-based collaboration welcome.",
-    },
-    {
-      type: "project" as PostType,
-      author: { name: "Bob Builder", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob", role: "Developer" },
-      title: "Open Source CRM for Non-Profits",
-      content: "Our team has just reached a major milestone in the DevConnect UI library project. We've successfully integrated accessible, high-performance components that enable non-profit organizations to manage donor relationships effectively.",
-      timestamp: "4h ago",
-      stats: { likes: 85, comments: 0 },
-      domains: ["Web3", "Open Source"],
-      projectDescription: "A fully open-source CRM built specifically for non-profit organizations. Unlike commercial CRM solutions, we focus on simplicity, donor lifecycle management, grant tracking, and volunteer coordination — all in one place.",
-      rolesNeeded: "Backend Developer (Node.js/PostgreSQL), UX Designer, DevOps Engineer (CI/CD)",
-      skillsRequired: "React, Node.js, PostgreSQL, Docker, Figma",
-      timeline: "MVP in 3 months, Beta in 6 months, v1.0 release in 9 months",
-      benefits: "Open-source contribution credit, equity options, mentorship from senior engineers, real-world impact for hundreds of non-profits globally.",
-      teamInfo: "Team of 3 experienced developers. Looking to grow to 6-8 members for the beta phase.",
-    },
-    {
-      type: "fund" as PostType,
-      author: { name: "Charlie Capital", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie", role: "Investor" },
-      title: "Seed Fund for GreenTech",
-      content: "We are officially opening applications for our early-stage CleanTech Seed Fund. We are looking for visionary founders working on carbon capture, renewable energy storage, and circular economy solutions.",
-      timestamp: "6h ago",
-      stats: { likes: 210, comments: 45 },
-      domains: ["FinTech", "Sustainability"],
-      fundingGoal: 50000,
-      minContribution: 100,
-      deadline: "2026-06-30",
-      fundUsage: "40% product development, 25% marketing & growth, 20% operations, 10% legal & compliance, 5% contingency",
-      roadmap: "Q1 2026: Team expansion. Q2 2026: MVP launch. Q3 2026: Beta users & revenue. Q4 2026: Series A preparation.",
-      currentAmount: 32500,
-      currentSupporters: 124,
-    },
-    {
-      type: "recruitment" as PostType,
-      author: { name: "Diana Dev", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Diana", role: "Developer" },
-      title: "Looking for a React Native Developer",
-      content: "We are building a cross-platform mobile app for real-time team collaboration and need an experienced React Native developer to join us. This is a fully remote, equity-based role.",
-      timestamp: "8h ago",
-      stats: { likes: 56, comments: 12 },
-      domains: ["Mobile", "React Native"],
-      jobType: "Part-time / Contract",
-      compensation: "Equity-based (1-3%), Remote",
-      requirements: "2+ years React Native experience, TypeScript, Firebase, REST APIs. Bonus: WebRTC, CRDT algorithms.",
-    },
-    {
-      type: "idea" as PostType,
-      author: { name: "Eve Entrepreneur", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Eve", role: "Idea Holder" },
-      title: "Decentralized Freelance Marketplace",
-      content: "A blockchain-based freelance platform where payments are handled by smart contracts, removing the need for intermediaries. Our goal is to reduce the 20% fee charged by existing platforms down to under 2%.",
-      timestamp: "12h ago",
-      stats: { likes: 178, comments: 33 },
-      domains: ["Web3", "FinTech"],
-      problem: "Freelancing platforms like Upwork and Fiverr charge 20-30% in fees, hold payments for weeks, and have no transparent dispute resolution. Freelancers worldwide lose billions in unnecessary fees each year.",
-      solution: "A smart contract-based platform on Ethereum/Polygon where escrow is automated, payments release on milestone approval, and disputes are resolved by a decentralized jury of domain experts.",
-      traction: "Whitepaper complete, 3,000+ early interest signups, partnerships with 2 blockchain accelerators in Asia.",
-      market: "Global freelance economy worth $1.5 trillion. 59M+ Americans freelance. 3% market share = $45B opportunity.",
-      collaborationNeeds: "Solidity developer, Web3 frontend developer (wagmi/ethers.js), tokenomics advisor. Open to revenue share arrangement.",
-    },
-    {
-      type: "fund" as PostType,
-      author: { name: "Fiona Funds", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Fiona", role: "Investor" },
-      title: "HealthTech Innovation Fund 2026",
-      content: "Our HealthTech fund is seeking startups building next-generation digital health tools—remote patient monitoring, AI diagnostics, mental wellness platforms, and more.",
-      timestamp: "1d ago",
-      stats: { likes: 143, comments: 18 },
-      domains: ["HealthTech", "AI/ML"],
-      fundingGoal: 2000000,
-      minContribution: 250000,
-      deadline: "2026-12-31",
-      fundUsage: "50% direct investment to startups, 30% operational support & mentorship, 15% legal & fund management, 5% reserve",
-      roadmap: "Q1: Fund close. Q2: First 3 investments. Q3: Portfolio support. Q4: Follow-on decisions.",
-      currentAmount: 850000,
-      currentSupporters: 7,
-    },
-    {
-      type: "project" as PostType,
-      author: { name: "Greg Gig", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Greg", role: "Developer" },
-      title: "Real-Time Collaborative Code Editor",
-      content: "Building a VS Code-like browser IDE supporting real-time multi-user collaboration, integrated AI code suggestions, and one-click deployment pipelines using WebRTC and CRDT.",
-      timestamp: "2d ago",
-      stats: { likes: 92, comments: 7 },
-      domains: ["DevTools", "Web3"],
-      projectDescription: "A browser-based collaborative IDE that enables multiple developers to code together in real-time, with syntax highlighting for 50+ languages, AI-powered suggestions, and integrated Git.",
-      rolesNeeded: "Frontend Developer, AI/ML Engineer, DevOps/Cloud Engineer",
-      skillsRequired: "React, WebRTC, CRDT algorithms, OpenAI API, AWS/GCP, Monaco Editor",
-      timeline: "Alpha in 2 months, Public beta in 4 months",
-      benefits: "Equity stake, remote-first, cutting-edge tech stack, potential to be acquired by major IDE players.",
-      teamInfo: "Solo founder with 8 years experience. Ex-Google engineer. Looking for 2-3 co-founders.",
-    },
-    {
-      type: "recruitment" as PostType,
-      author: { name: "Hana HR", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Hana", role: "Idea Holder" },
-      title: "Co-Founder & CTO Wanted",
-      content: "We're a pre-seed EdTech startup looking for a technical co-founder with deep expertise in cloud infrastructure and AI. Shape the product from day one and own meaningful equity.",
-      timestamp: "3d ago",
-      stats: { likes: 74, comments: 9 },
-      domains: ["EdTech", "AI/ML"],
-      jobType: "Full-time / Co-founder",
-      compensation: "15-25% equity + future salary once funded",
-      requirements: "5+ years engineering experience, cloud infrastructure (AWS/GCP), LLM/AI experience, strong leadership. EdTech or consumer product background is a big plus.",
-    },
-  ];
+// ── User Profile ──────────────────────────────────────────────────────────
 
-  for (const post of mockPosts) {
-    const colName = typeToCollection(post.type);
-    await addDoc(collection(db, colName), { ...post, createdAt: serverTimestamp() });
+export async function saveUserProfile(uid: string, profileData: Partial<UserProfile>): Promise<void> {
+  await apiFetch(`/api/profiles/${uid}`, { method: "POST", body: JSON.stringify(profileData) });
+}
+
+export async function getUserProfile(uid: string): Promise<UserProfile | null> {
+  try {
+    return await apiFetch(`/api/profiles/${uid}`);
+  } catch {
+    return null;
   }
 }
 
-// ─── Likes (stored under users/{uid}/likes/) ──────────────────────────────────
-
-export async function toggleLikePost(
-  uid: string,
-  postId: string,
-  collectionName: string,
-  currentlyLiked: boolean
-): Promise<void> {
-  const likeRef = doc(db, "users", uid, "likes", postId);
-  const postRef = doc(db, collectionName, postId);
-  if (currentlyLiked) {
-    await deleteDoc(likeRef);
-    await updateDoc(postRef, { "stats.likes": increment(-1) });
-  } else {
-    await setDoc(likeRef, { postId, collectionName, likedAt: serverTimestamp() });
-    await updateDoc(postRef, { "stats.likes": increment(1) });
-  }
+export async function updateUserProfile(uid: string, data: Partial<UserProfile>): Promise<void> {
+  await apiFetch(`/api/profiles/${uid}`, { method: "POST", body: JSON.stringify(data) });
 }
+
+export async function getAllUsers(): Promise<UserProfile[]> {
+  return apiFetch("/api/profiles");
+}
+
+// ── Likes ─────────────────────────────────────────────────────────────────
 
 export async function getUserLikedPostIds(uid: string): Promise<string[]> {
   try {
-    const likesCol = collection(db, "users", uid, "likes");
-    const snap = await getDocs(likesCol);
-    return snap.docs.map((d) => d.id);
-  } catch {
-    return [];
-  }
+    const data = await apiFetch(`/api/activity/${uid}`);
+    return data.likedPostIds || [];
+  } catch { return []; }
 }
 
-// ─── Saves (stored under users/{uid}/saves/) ──────────────────────────────────
-
-export interface SavedPostData {
-  id: string;
-  type: PostType | string;
-  collectionName?: string;
-  title: string;
-  description: string;
-  author: { name: string; avatar?: string };
-  domains: string[];
-  likes: number;
-  note?: string;
-  savedAt?: any;
+export async function toggleLikePost(uid: string, postId: string, _collectionName: string, _currentlyLiked: boolean): Promise<void> {
+  await apiFetch("/api/likes", { method: "POST", body: JSON.stringify({ userId: uid, postId }) });
 }
 
-export async function toggleSavePost(
-  uid: string,
-  postId: string,
-  postData: SavedPostData | null,
-  currentlySaved: boolean
-): Promise<void> {
-  const saveRef = doc(db, "users", uid, "saves", postId);
-  if (currentlySaved) {
-    await deleteDoc(saveRef);
-  } else if (postData) {
-    await setDoc(saveRef, { ...postData, savedAt: serverTimestamp() });
-  }
-}
+// ── Saves ─────────────────────────────────────────────────────────────────
 
 export async function getUserSavedPosts(uid: string): Promise<SavedPostData[]> {
   try {
-    const savesCol = collection(db, "users", uid, "saves");
-    const snap = await getDocs(savesCol);
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as SavedPostData));
-  } catch {
-    return [];
-  }
+    const data = await apiFetch(`/api/activity/${uid}`);
+    return data.savedPosts || [];
+  } catch { return []; }
 }
 
-export async function updateSavedPostNote(
-  uid: string,
-  postId: string,
-  note: string
-): Promise<void> {
-  const saveRef = doc(db, "users", uid, "saves", postId);
-  await updateDoc(saveRef, { note });
+export async function toggleSavePost(uid: string, postId: string, postData: SavedPostData | null, _currentlySaved: boolean): Promise<void> {
+  await apiFetch("/api/saves", { method: "POST", body: JSON.stringify({ userId: uid, postId, postData }) });
+}
+
+export async function updateSavedPostNote(uid: string, postId: string, note: string): Promise<void> {
+  await apiFetch(`/api/saves/${uid}/${postId}`, { method: "PUT", body: JSON.stringify({ note }) });
 }
 
 export async function deleteSavedPostNote(uid: string, postId: string): Promise<void> {
-  const saveRef = doc(db, "users", uid, "saves", postId);
-  await updateDoc(saveRef, { note: deleteField() });
+  await apiFetch(`/api/saves/${uid}/${postId}/note`, { method: "DELETE" });
 }
 
-// ─── Following & Followers (stored under users/{uid}/following/ and users/{uid}/followers/) ──
-
-function encodeFollowKey(name: string): string {
-  return name.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 100);
-}
-
-export async function toggleFollowUser(
-  uid: string,
-  targetName: string,
-  currentlyFollowing: boolean,
-  targetUid?: string
-): Promise<void> {
-  // Write to current user's "followings" subcollection
-  const followingsRef = doc(db, "users", uid, "followings", encodeFollowKey(targetName));
-  // Legacy "following" subcollection (kept for backward compat)
-  const followingRef = doc(db, "users", uid, "following", encodeFollowKey(targetName));
-  if (currentlyFollowing) {
-    await deleteDoc(followingsRef);
-    try { await deleteDoc(followingRef); } catch {}
-    // Remove from target's followers subcollection
-    if (targetUid) {
-      const followerRef = doc(db, "users", targetUid, "followers", uid);
-      try { await deleteDoc(followerRef); } catch {}
-    }
-  } else {
-    await setDoc(followingsRef, { name: targetName, uid: targetUid || "", followedAt: serverTimestamp() });
-    // Write to target's followers subcollection
-    if (targetUid) {
-      const followerRef = doc(db, "users", targetUid, "followers", uid);
-      await setDoc(followerRef, { uid, followedAt: serverTimestamp() });
-    }
-  }
-}
+// ── Follows ───────────────────────────────────────────────────────────────
 
 export async function getUserFollowing(uid: string): Promise<string[]> {
   try {
-    // Try new "followings" subcollection first
-    const followingsCol = collection(db, "users", uid, "followings");
-    const snap = await getDocs(followingsCol);
-    if (!snap.empty) {
-      return snap.docs.map((d) => (d.data().name as string) || d.id);
-    }
-    // Fall back to legacy "following" subcollection
-    const followingCol = collection(db, "users", uid, "following");
-    const snap2 = await getDocs(followingCol);
-    return snap2.docs.map((d) => (d.data().name as string) || d.id);
-  } catch {
-    return [];
-  }
+    const data = await apiFetch(`/api/activity/${uid}`);
+    return data.following || [];
+  } catch { return []; }
 }
 
-export async function getUserFollowers(uid: string): Promise<string[]> {
+export async function toggleFollowUser(uid: string, targetName: string, _currentlyFollowing: boolean, targetUid?: string): Promise<void> {
+  await apiFetch("/api/follows", { method: "POST", body: JSON.stringify({ followerId: uid, targetName, targetUid }) });
+}
+
+export async function getUserFollowers(_uid: string): Promise<string[]> { return []; }
+export async function getFollowersCount(_uid: string): Promise<number> { return 0; }
+export async function getFollowingCount(_uid: string): Promise<number> { return 0; }
+
+// ── Comments ──────────────────────────────────────────────────────────────
+
+export async function getPostComments(postId: string, _collectionName: string): Promise<FirestoreComment[]> {
   try {
-    const followersCol = collection(db, "users", uid, "followers");
-    const snap = await getDocs(followersCol);
-    return snap.docs.map((d) => d.data().uid as string || d.id);
-  } catch {
-    return [];
-  }
+    return await apiFetch(`/api/comments/${postId}`);
+  } catch { return []; }
 }
 
-export async function getFollowersCount(uid: string): Promise<number> {
-  try {
-    const followersCol = collection(db, "users", uid, "followers");
-    const snap = await getDocs(followersCol);
-    return snap.size;
-  } catch {
-    return 0;
-  }
+export async function addPostComment(collectionName: string, postId: string, comment: Omit<FirestoreComment, "id">): Promise<FirestoreComment> {
+  return apiFetch(`/api/comments/${postId}`, {
+    method: "POST",
+    body: JSON.stringify({
+      authorUid: comment.author?.uid || "anonymous",
+      authorName: comment.author?.name || "Anonymous",
+      authorAvatar: comment.author?.avatar || "",
+      authorRole: comment.author?.role || "",
+      content: comment.content,
+    }),
+  });
 }
 
-export async function getFollowingCount(uid: string): Promise<number> {
-  try {
-    const followingCol = collection(db, "users", uid, "following");
-    const snap = await getDocs(followingCol);
-    return snap.size;
-  } catch {
-    return 0;
-  }
+export async function addReplyToComment(collectionName: string, postId: string, commentId: string, reply: FirestoreComment): Promise<void> {
+  await apiFetch(`/api/comments/${postId}`, {
+    method: "POST",
+    body: JSON.stringify({
+      authorUid: reply.author?.uid || "anonymous",
+      authorName: reply.author?.name || "Anonymous",
+      authorAvatar: reply.author?.avatar || "",
+      authorRole: reply.author?.role || "",
+      content: reply.content,
+      parentId: Number(commentId),
+    }),
+  });
 }
 
-// ─── Comments (per typed collection) ─────────────────────────────────────────
+// ── Applications (stub — feature not yet migrated) ────────────────────────
 
-export async function getPostComments(
-  collectionName: string,
-  postId: string
-): Promise<FirestoreComment[]> {
-  try {
-    const commentsCol = collection(db, collectionName, postId, "comments");
-    const q = query(commentsCol, orderBy("createdAt", "asc"));
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as FirestoreComment));
-  } catch {
-    return [];
-  }
+export interface Application {
+  id: string;
+  postId: string;
+  postTitle: string;
+  postType: PostType;
+  applicantUid: string;
+  applicantName: string;
+  applicantAvatar?: string;
+  coverLetter?: string;
+  message?: string;
+  status: "pending" | "accepted" | "rejected";
+  appliedAt?: any;
+  [key: string]: any;
 }
 
-export async function addPostComment(
-  collectionName: string,
-  postId: string,
-  comment: Omit<FirestoreComment, "id">
-): Promise<FirestoreComment> {
-  const commentsCol = collection(db, collectionName, postId, "comments");
-  const ref = await addDoc(commentsCol, { ...comment, createdAt: serverTimestamp() });
-  const postRef = doc(db, collectionName, postId);
-  await updateDoc(postRef, { "stats.comments": increment(1) });
-  return { id: ref.id, ...comment };
+export async function getMyApplications(_uid: string): Promise<Application[]> { return []; }
+export async function getApplicationsForMyPosts(_uid: string): Promise<Application[]> { return []; }
+export async function updateApplicationStatus(_applicationId: string, _status: string): Promise<void> {}
+
+// ── Investments (stub — feature not yet migrated) ─────────────────────────
+
+export interface Investment {
+  id: string;
+  fundPostId: string;
+  fundTitle?: string;
+  postTitle?: string;
+  postCollection?: string;
+  investorUid: string;
+  investorName: string;
+  amount: number;
+  status: string;
+  note?: string;
+  investedAt?: any;
+  returns?: number;
+  [key: string]: any;
 }
 
-export async function addReplyToComment(
-  collectionName: string,
-  postId: string,
-  commentId: string,
-  reply: FirestoreComment
-): Promise<void> {
-  const commentRef = doc(db, collectionName, postId, "comments", commentId);
-  const snap = await getDoc(commentRef);
-  if (snap.exists()) {
-    const existing = (snap.data().replies as FirestoreComment[]) || [];
-    await updateDoc(commentRef, { replies: [...existing, reply] });
-  }
-}
+export async function getMyInvestments(_uid: string): Promise<Investment[]> { return []; }
+export async function updateInvestmentStatus(_id: string, _status: string): Promise<void> {}
 
-// ─── Chat ─────────────────────────────────────────────────────────────────────
+// ── User Account ─────────────────────────────────────────────────────────
+
+export async function deleteUserAccount(_uid: string): Promise<void> {}
+
+// ── Chat (stub — real-time chat not yet migrated to new backend) ──────────
 
 export interface ChatMessage {
   id: string;
   senderId: string;
-  text: string;
-  image?: string;
-  timestamp: any;
-  status: "sent" | "delivered" | "read";
-  replyTo?: { id: string; senderId: string; text: string };
+  senderName: string;
+  senderAvatar?: string;
+  content: string;
+  text?: string;
+  timestamp?: any;
+  read?: boolean;
+  status?: string;
+  replyTo?: { id: string; content: string; text?: string; senderName: string; senderId?: string } | null;
+  [key: string]: any;
 }
 
 export interface ChatRoom {
   id: string;
   participants: string[];
+  participantIds?: string[];
   participantNames: Record<string, string>;
-  participantAvatars: Record<string, string>;
-  participantRoles: Record<string, string>;
-  lastMessage: string;
-  lastMessageAt: any;
-  context?: { type: string; title: string };
-  unreadCounts: Record<string, number>;
+  participantAvatars?: Record<string, string>;
+  participantRoles?: Record<string, string>;
+  lastMessage?: string;
+  lastMessageAt?: any;
+  unreadCounts?: Record<string, number>;
+  unreadCount?: Record<string, number>;
+  context?: { type?: string; title?: string } | null;
+  [key: string]: any;
 }
 
-export function subscribeToUserChats(
-  uid: string,
-  callback: (chats: ChatRoom[]) => void
-): () => void {
-  const chatsCol = collection(db, "chats");
-  const q = query(chatsCol, where("participants", "array-contains", uid), orderBy("lastMessageAt", "desc"));
-  return onSnapshot(
-    q,
-    (snap) => {
-      callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as ChatRoom)));
-    },
-    (_err) => {
-      // On error (e.g. missing index), return empty list so UI doesn't stay stuck loading
-      callback([]);
-    }
-  );
+export function subscribeToUserChats(_uid: string, _cb: (chats: ChatRoom[]) => void): () => void {
+  return () => {};
 }
 
-export function subscribeToMessages(
-  chatId: string,
-  callback: (msgs: ChatMessage[]) => void
-): () => void {
-  const msgsCol = collection(db, "chats", chatId, "messages");
-  const q = query(msgsCol, orderBy("timestamp", "asc"));
-  return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as ChatMessage)));
-  });
+export function subscribeToMessages(_chatId: string, _cb: (messages: ChatMessage[]) => void): () => void {
+  return () => {};
 }
 
-export async function getOrCreateChat(
-  myUid: string,
-  myName: string,
-  myAvatar: string,
-  myRole: string,
-  otherUid: string,
-  otherName: string,
-  otherAvatar: string,
-  otherRole: string,
-  context?: { type: string; title: string }
-): Promise<string> {
-  const chatsCol = collection(db, "chats");
-  const q = query(chatsCol, where("participants", "array-contains", myUid));
-  const snap = await getDocs(q);
-  const existing = snap.docs.find((d) => {
-    const p = d.data().participants as string[];
-    return p.includes(otherUid);
-  });
-  if (existing) return existing.id;
+export async function sendMessage(..._args: any[]): Promise<void> {}
 
-  const ref = await addDoc(chatsCol, {
-    participants: [myUid, otherUid],
-    participantNames: { [myUid]: myName, [otherUid]: otherName },
-    participantAvatars: { [myUid]: myAvatar, [otherUid]: otherAvatar },
-    participantRoles: { [myUid]: myRole, [otherUid]: otherRole },
-    lastMessage: "",
-    lastMessageAt: serverTimestamp(),
-    context: context || null,
-    unreadCounts: { [myUid]: 0, [otherUid]: 0 },
-  });
-  return ref.id;
+export async function getOrCreateChat(..._args: any[]): Promise<string> {
+  return "";
 }
 
-export async function sendMessage(
-  chatId: string,
-  senderId: string,
-  text: string,
-  image?: string,
-  replyTo?: { id: string; senderId: string; text: string }
-): Promise<void> {
-  const msgsCol = collection(db, "chats", chatId, "messages");
-  await addDoc(msgsCol, {
-    senderId,
-    text,
-    image: image || null,
-    replyTo: replyTo || null,
-    timestamp: serverTimestamp(),
-    status: "sent",
-  });
-  const chatRef = doc(db, "chats", chatId);
-  await updateDoc(chatRef, {
-    lastMessage: text || "📎 Attachment",
-    lastMessageAt: serverTimestamp(),
-  });
-}
-
-export async function markChatAsRead(chatId: string, uid: string): Promise<void> {
-  const chatRef = doc(db, "chats", chatId);
-  await updateDoc(chatRef, { [`unreadCounts.${uid}`]: 0 });
-}
-
-// ─── Applications ─────────────────────────────────────────────────────────────
-
-export interface Application {
-  id: string;
-  applicantUid: string;
-  applicantName: string;
-  applicantAvatar: string;
-  postId: string;
-  postTitle: string;
-  postAuthorUid: string;
-  message: string;
-  status: "pending" | "accepted" | "rejected";
-  appliedAt: any;
-}
-
-export async function applyToJob(
-  applicantUid: string,
-  applicantName: string,
-  applicantAvatar: string,
-  postId: string,
-  postTitle: string,
-  postAuthorUid: string,
-  message: string
-): Promise<void> {
-  const applicationsCol = collection(db, "applications");
-  await addDoc(applicationsCol, {
-    applicantUid,
-    applicantName,
-    applicantAvatar,
-    postId,
-    postTitle,
-    postAuthorUid,
-    message,
-    status: "pending",
-    appliedAt: serverTimestamp(),
-  });
-}
-
-export async function getMyApplications(uid: string): Promise<Application[]> {
-  try {
-    const col = collection(db, "applications");
-    const q = query(col, where("applicantUid", "==", uid), orderBy("appliedAt", "desc"));
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Application));
-  } catch {
-    return [];
-  }
-}
-
-export async function getApplicationsForMyPosts(uid: string): Promise<Application[]> {
-  try {
-    const col = collection(db, "applications");
-    const q = query(col, where("postAuthorUid", "==", uid), orderBy("appliedAt", "desc"));
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Application));
-  } catch {
-    return [];
-  }
-}
-
-export async function updateApplicationStatus(
-  applicationId: string,
-  status: "accepted" | "rejected"
-): Promise<void> {
-  const appRef = doc(db, "applications", applicationId);
-  await updateDoc(appRef, { status });
-}
-
-// ─── Investments ──────────────────────────────────────────────────────────────
-
-export interface Investment {
-  id: string;
-  investorUid: string;
-  investorName: string;
-  investorAvatar: string;
-  postId: string;
-  postTitle: string;
-  postAuthorUid: string;
-  postCollection: string;
-  amount?: string;
-  note?: string;
-  status: "interested" | "committed" | "completed";
-  investedAt: any;
-}
-
-export async function addInvestment(
-  investorUid: string,
-  investorName: string,
-  investorAvatar: string,
-  postId: string,
-  postTitle: string,
-  postAuthorUid: string,
-  postCollection: string,
-  amount?: string,
-  note?: string
-): Promise<void> {
-  const investmentsCol = collection(db, "investments");
-  await addDoc(investmentsCol, {
-    investorUid,
-    investorName,
-    investorAvatar,
-    postId,
-    postTitle,
-    postAuthorUid,
-    postCollection,
-    amount: amount || "",
-    note: note || "",
-    status: "interested",
-    investedAt: serverTimestamp(),
-  });
-}
-
-export async function getMyInvestments(uid: string): Promise<Investment[]> {
-  try {
-    const col = collection(db, "investments");
-    const q = query(col, where("investorUid", "==", uid), orderBy("investedAt", "desc"));
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Investment));
-  } catch {
-    return [];
-  }
-}
-
-export async function updateInvestmentStatus(
-  investmentId: string,
-  status: "interested" | "committed" | "completed"
-): Promise<void> {
-  const ref = doc(db, "investments", investmentId);
-  await updateDoc(ref, { status });
-}
-
-// ─── Delete Account (all user data + Firebase Auth) ───────────────────────────
-
-export async function deleteUserAccount(uid: string): Promise<void> {
-  // 1. Delete user's posts from every global typed collection
-  const globalCols = ["ideas", "projects", "funds", "recruitment"];
-  for (const colName of globalCols) {
-    const q = query(collection(db, colName), where("authorUid", "==", uid));
-    const snap = await getDocs(q);
-    for (const d of snap.docs) {
-      await deleteDoc(d.ref);
-    }
-  }
-
-  // 2. Delete all user subcollections
-  const subCols = ["posts", "likes", "saves", "followings", "following", "followers"];
-  for (const sub of subCols) {
-    const snap = await getDocs(collection(db, "users", uid, sub));
-    for (const d of snap.docs) {
-      await deleteDoc(d.ref);
-    }
-  }
-
-  // 3. Delete investments made by this user
-  const investQ = query(collection(db, "investments"), where("investorUid", "==", uid));
-  const investSnap = await getDocs(investQ);
-  for (const d of investSnap.docs) {
-    await deleteDoc(d.ref);
-  }
-
-  // 4. Delete chat rooms the user participates in
-  const chatsQ = query(collection(db, "chats"), where("participants", "array-contains", uid));
-  const chatsSnap = await getDocs(chatsQ);
-  for (const d of chatsSnap.docs) {
-    await deleteDoc(d.ref);
-  }
-
-  // 5. Delete the user profile document
-  await deleteDoc(doc(db, "users", uid));
-
-  // 6. Delete the Firebase Auth account (must be last)
-  const { deleteUser } = await import("firebase/auth");
-  const { auth } = await import("./firebase");
-  if (auth.currentUser) {
-    await deleteUser(auth.currentUser);
-  }
-
-  // 7. Clear cached role from localStorage
-  try { localStorage.removeItem("dc_role"); } catch {}
-}
+export async function markChatAsRead(_chatId: string, _uid: string): Promise<void> {}

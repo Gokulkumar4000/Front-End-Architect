@@ -23,12 +23,12 @@ export default function Saved() {
     () =>
       savedPosts.map((p) => ({
         id: p.id,
-        type: p.type as SavedPost["type"],
-        title: p.title,
-        description: p.description,
-        author: p.author,
-        domains: p.domains,
-        likes: p.likes,
+        type: (p.type as SavedPost["type"]) || "idea",
+        title: p.title || "",
+        description: p.description || "",
+        author: p.author || { name: "Unknown" },
+        domains: p.domains || [],
+        likes: p.likes || 0,
         note: p.note,
       })),
     [savedPosts]

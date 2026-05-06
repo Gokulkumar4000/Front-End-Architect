@@ -120,7 +120,7 @@ export default function MyInvestments() {
         ) : (
           <div className="space-y-4">
             {investments.map((inv) => {
-              const status = statusConfig[inv.status] || statusConfig.interested;
+              const status = statusConfig[inv.status as keyof typeof statusConfig] || statusConfig.interested;
               return (
                 <Card key={inv.id} className="glass-card border-white/5 hover:border-white/10 transition-all">
                   <CardContent className="p-6">
