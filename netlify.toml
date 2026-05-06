@@ -1,11 +1,18 @@
 [build]
-  command = "npx vite build"
+  command = "npx tsx script/build-netlify.ts"
   publish = "dist/public"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
 
-# SPA redirect — all routes must serve index.html so wouter can handle routing
+# Redirect all /api/* calls to the serverless Express function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# SPA redirect — all routes serve index.html so wouter handles routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
